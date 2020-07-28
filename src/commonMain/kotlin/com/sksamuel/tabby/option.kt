@@ -1,6 +1,8 @@
 package com.sksamuel.tabby
 
-sealed class Option<out A> {
+import kotlin.js.JsName
+
+sealed class Option<out A> : Optional<A> {
 
    data class Some<A>(val value: A) : Option<A>()
    object None : Option<Nothing>()
@@ -13,6 +15,8 @@ sealed class Option<out A> {
       operator fun <T> invoke(t: T?): Option<T> = t?.some() ?: None
    }
 
+   override fun toOption(): Option<A> = this
+
    inline fun forEach(f: (A) -> Unit): Option<A> {
       when (this) {
          is Some -> f(value)
@@ -22,10 +26,10 @@ sealed class Option<out A> {
       return this
    }
 
-   inline fun <B> map(f: (A) -> B): Option<B> = flatMap { f(it).toOption() }
+   inline fun <B> map(f: (A) -> B): Option<B> = if (isEmpty()) none else Some(f(this.getUnsafe()))
 
-   inline fun <B> flatMap(f: (A) -> Option<B>): Option<B> = when (this) {
-      is Some -> f(this.value)
+   inline fun <B> flatMap(f: (A) -> Optional<B>): Option<B> = when (this) {
+      is Some -> f(this.value).toOption()
       else -> None
    }
 
@@ -93,7 +97,7 @@ sealed class Option<out A> {
    fun <E> toValidated(isEmpty: () -> E): Validated<E, A> = fold({ isEmpty().invalid() }, { it.valid() })
 }
 
-inline fun <A> Option<A>.getOrElse(a: A): A = when (this) {
+fun <A> Option<A>.getOrElse(a: A): A = when (this) {
    is Option.None -> a
    is Option.Some -> this.value
 }
@@ -122,8 +126,10 @@ fun <A, B, C, D, R> applicative(a: Option<A>,
    return f(a.getUnsafe(), b.getUnsafe(), c.getUnsafe(), d.getUnsafe()).some()
 }
 
+@JsName("nonefun")
 fun none() = Option.None
 val none = Option.None
+
 fun <T> T.some(): Option<T> = Option.Some(this)
 
 fun <T> T?.toOption(): Option<T> = this?.some() ?: Option.None

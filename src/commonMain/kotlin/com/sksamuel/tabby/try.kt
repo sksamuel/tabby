@@ -1,6 +1,6 @@
 package com.sksamuel.tabby
 
-sealed class Try<out A> {
+sealed class Try<out A> : Optional<A> {
 
    data class Success<T>(val value: T) : Try<T>()
    data class Failure(val throwable: Throwable) : Try<Nothing>()
@@ -34,7 +34,11 @@ sealed class Try<out A> {
       is Failure -> null
    }
 
-   fun toOption(): Option<A> = fold({ none() }, { it.some() })
+   /**
+    * Returns an Option containing the value of this Try if a Success, otherwise if a Failure,
+    * returns a None.
+    */
+   override fun toOption(): Option<A> = fold({ none() }, { it.some() })
 
    fun <E> toValidated(error: E): Validated<E, A> = fold({ error.invalid() }, { it.valid() })
 }
