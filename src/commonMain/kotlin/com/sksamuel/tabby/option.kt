@@ -39,12 +39,25 @@ sealed class Option<out A> {
       else -> ifEmpty
    }
 
+   /**
+    * Returns the value of this Option if it is a Some, otherwise returns null.
+    */
    fun orNull(): A? = when (this) {
       is Some -> this.value
       else -> null
    }
 
-   fun filter(p: (A) -> Boolean): Option<A> = flatMap { if (p(it)) this else None }
+   /**
+    * Returns this option if it is nonempty and applying the predicate [p] to
+    * this option's value returns true. Otherwise, returns none.
+    */
+   fun filter(p: (A) -> Boolean): Option<A> = if (isEmpty() || p(this.getUnsafe())) this else none
+
+   /**
+    * Returns this option if it is nonempty and applying the predicate [p] to
+    * this option's value returns true. Otherwise, returns none.
+    */
+   fun filterNot(p: (A) -> Boolean): Option<A> = if (isEmpty() || !p(this.getUnsafe())) this else none
 
    fun isDefined(): Boolean = !isEmpty()
    fun isEmpty(): Boolean = this is None
@@ -98,6 +111,7 @@ fun <A, B, C, D, R> applicative(a: Option<A>,
 }
 
 fun none() = Option.None
+val none = Option.None
 fun <T> T.some(): Option<T> = Option.Some(this)
 
 fun <T> T?.toOption(): Option<T> = this?.some() ?: Option.None
