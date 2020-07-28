@@ -59,6 +59,12 @@ sealed class Option<out A> {
     */
    fun filterNot(p: (A) -> Boolean): Option<A> = if (isEmpty() || !p(this.getUnsafe())) this else none
 
+   /**
+    * Returns an [Either.Right] containing the options value if it is non empty, otherwise returns
+    * a [Either.Left] containing the result of the function [left].
+    */
+   fun <X> toRight(left: () -> X): Either<X, A> = if (isEmpty()) Either.Left(left()) else Either.Right(this.getUnsafe())
+
    fun isDefined(): Boolean = !isEmpty()
    fun isEmpty(): Boolean = this is None
 
