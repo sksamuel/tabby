@@ -15,7 +15,7 @@ sealed class Try<out A> : Optional<A> {
 
    inline fun <E> toEither(f: (Throwable) -> E): Either<E, A> = fold({ f(it).left() }, { it.right() })
 
-   inline fun <B> map(f: (A) -> B): Try<B> = fold({ Failure(it) }, { f(it).success() })
+   inline fun <B> map(f: (A) -> B): Try<B> = fold({ Failure(it) }, { Success(f(it)) })
 
    inline fun <B> flatMap(f: (A) -> Try<B>): Try<B> = fold({ Failure(it) }, { f(it) })
 
@@ -43,6 +43,5 @@ sealed class Try<out A> : Optional<A> {
    fun <E> toValidated(error: E): Validated<E, A> = fold({ error.invalid() }, { it.valid() })
 }
 
-fun <A> A.success(): Try<A> = Try.Success(this)
 fun <A> Try<A>.getOrElse(value: A): A = fold({ value }, { it })
 fun <A> Try<A>.getOrElse(ifFailure: (Throwable) -> A): A = fold(ifFailure, { it })
