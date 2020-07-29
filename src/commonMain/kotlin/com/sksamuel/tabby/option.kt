@@ -134,7 +134,10 @@ fun <T> T.some(): Option<T> = Option.Some(this)
 
 fun <T> T?.toOption(): Option<T> = this?.some() ?: Option.None
 
-fun <A> List<A>.headOption(): Option<A> = this.firstOrNone()
+/**
+ * Returns the first element of this List wrapped in a Some if the list is non empty,
+ * otherwise returns None.
+ */
 fun <A> List<A>.firstOrNone(): Option<A> = this.firstOrNull().toOption()
 
 inline fun <T, U : Any> List<T>.flatMapOption(f: (T) -> Option<U>): List<U> = mapNotNull { f(it).orNull() }
