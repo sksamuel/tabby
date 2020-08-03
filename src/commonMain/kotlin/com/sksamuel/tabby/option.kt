@@ -97,6 +97,8 @@ sealed class Option<out A> : Optional<A> {
    fun <E> toValidated(isEmpty: () -> E): Validated<E, A> = fold({ isEmpty().invalid() }, { it.valid() })
 }
 
+fun <A> Option<A>.orElse(other: Option<A>): Option<A> = fold({ other }, { it.some() })
+
 fun <A> Option<A>.getOrElse(a: A): A = when (this) {
    is Option.None -> a
    is Option.Some -> this.value
