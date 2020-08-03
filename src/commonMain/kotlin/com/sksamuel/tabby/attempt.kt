@@ -3,6 +3,7 @@ package com.sksamuel.tabby
 interface Err
 
 data class ThrowableErr(val throwable: Throwable) : Err
+data class StringErr(val msg: String) : Err
 
 sealed class Attempt<out A> : Optional<A> {
 
@@ -15,6 +16,9 @@ sealed class Attempt<out A> : Optional<A> {
       } catch (t: Throwable) {
          Failure(ThrowableErr(t))
       }
+
+      fun failed(t: Throwable): Attempt<Nothing> = Failure(ThrowableErr(t))
+      fun failed(msg: String): Attempt<Nothing> = Failure(StringErr(msg))
    }
 
    override fun toOption(): Option<A> = when (this) {
