@@ -26,6 +26,8 @@ sealed class Option<out A> : Optional<A> {
       return this
    }
 
+   inline fun onNone(f: () -> Unit): Option<A> = fold({ f(); none }, { it.some() })
+
    inline fun <B> map(f: (A) -> B): Option<B> = if (isEmpty()) none else Some(f(this.getUnsafe()))
 
    inline fun <B> flatMap(f: (A) -> Optional<B>): Option<B> = when (this) {
