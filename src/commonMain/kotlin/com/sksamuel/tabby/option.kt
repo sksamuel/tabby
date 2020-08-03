@@ -140,7 +140,10 @@ fun <T> T?.toOption(): Option<T> = this?.some() ?: Option.None
  */
 fun <A> List<A>.firstOrNone(): Option<A> = this.firstOrNull().toOption()
 
+@Deprecated("Use flatMap with Optional")
 inline fun <T, U : Any> List<T>.flatMapOption(f: (T) -> Option<U>): List<U> = mapNotNull { f(it).orNull() }
+
+inline fun <T, U : Any> List<T>.flatMap(f: (T) -> Optional<U>): List<U> = mapNotNull { f(it).toOption().orNull() }
 
 /**
  * For an Option of an Option, removees the inner option. If the receiver is a Some(Some(a)), returns Some(a),
@@ -154,3 +157,5 @@ fun <T> Option<Option<T>>.flatten(): Option<T> = when (this) {
    }
    else -> Option.None
 }
+
+
