@@ -149,6 +149,8 @@ inline fun <T, U : Any> List<T>.flatMapOption(f: (T) -> Option<U>): List<U> = ma
 
 inline fun <T, U : Any> List<T>.flatMap(f: (T) -> Optional<U>): List<U> = mapNotNull { f(it).toOption().orNull() }
 
+fun <A : Any> List<Option<A>>.flatten() = mapNotNull { it.orNull() }
+
 /**
  * For an Option of an Option, removees the inner option. If the receiver is a Some(Some(a)), returns Some(a),
  * otherwise returns None.
