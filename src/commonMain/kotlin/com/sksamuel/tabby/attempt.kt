@@ -54,4 +54,6 @@ sealed class Attempt<out A> : Optional<A> {
    }
 }
 
+fun <T> Attempt<Attempt<T>>.flatten() = fold({ this }, { it })
+
 inline fun <A : B, B> Attempt<A>.getOrElse(f: (Err) -> B): B = fold({ f(it) }, { it })
