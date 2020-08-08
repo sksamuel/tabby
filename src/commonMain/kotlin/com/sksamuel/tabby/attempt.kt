@@ -54,6 +54,8 @@ sealed class Attempt<out A> : Optional<A> {
    }
 }
 
+fun <T> T?.toAttempt(ifNull: () -> Err): Attempt<T> = if (this == null) Attempt.Failure(ifNull()) else Attempt.Success(this)
+
 fun <T> Attempt<Attempt<T>>.flatten() = fold({ this }, { it })
 
 inline fun <A : B, B> Attempt<A>.getOrElse(f: (Err) -> B): B = fold({ f(it) }, { it })
