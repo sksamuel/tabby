@@ -40,7 +40,9 @@ sealed class Either<out A, out B> {
          is Right -> this
       }
 
-   inline fun <D> mapRight(f: (B) -> D): Either<A, D> =
+   inline fun <D> mapRight(f: (B) -> D): Either<A, D> = map(f)
+
+   inline fun <D> map(f: (B) -> D): Either<A, D> =
       when (this) {
          is Left -> this
          is Right -> Right(f(b))
@@ -173,29 +175,35 @@ inline fun <A, B> catching(handle: (Throwable) -> A, thunk: () -> B): Either<A, 
 
 fun <A, B> Option<B>.either(ifEmpty: () -> A): Either<A, B> = fold({ ifEmpty().left() }, { it.right() })
 
-inline fun <A, B, E, R> applicative(a: Either<E, A>,
-                                    b: Either<E, B>,
-                                    fn: (A, B) -> R): Either<E, R> {
+inline fun <A, B, E, R> applicative(
+   a: Either<E, A>,
+   b: Either<E, B>,
+   fn: (A, B) -> R
+): Either<E, R> {
    if (a.isLeft) return a as Either<E, R>
    if (b.isLeft) return b as Either<E, R>
    return fn(a.getRightUnsafe(), b.getRightUnsafe()).right()
 }
 
-inline fun <A, B, C, E, R> applicative(a: Either<E, A>,
-                                       b: Either<E, B>,
-                                       c: Either<E, C>,
-                                       fn: (A, B, C) -> R): Either<E, R> {
+inline fun <A, B, C, E, R> applicative(
+   a: Either<E, A>,
+   b: Either<E, B>,
+   c: Either<E, C>,
+   fn: (A, B, C) -> R
+): Either<E, R> {
    if (a.isLeft) return a as Either<E, R>
    if (b.isLeft) return b as Either<E, R>
    if (c.isLeft) return c as Either<E, R>
    return fn(a.getRightUnsafe(), b.getRightUnsafe(), c.getRightUnsafe()).right()
 }
 
-inline fun <A, B, C, D, E, R> applicative(a: Either<E, A>,
-                                          b: Either<E, B>,
-                                          c: Either<E, C>,
-                                          d: Either<E, D>,
-                                          fn: (A, B, C, D) -> R): Either<E, R> {
+inline fun <A, B, C, D, E, R> applicative(
+   a: Either<E, A>,
+   b: Either<E, B>,
+   c: Either<E, C>,
+   d: Either<E, D>,
+   fn: (A, B, C, D) -> R
+): Either<E, R> {
    if (a.isLeft) return a as Either<E, R>
    if (b.isLeft) return b as Either<E, R>
    if (c.isLeft) return c as Either<E, R>
@@ -203,12 +211,14 @@ inline fun <A, B, C, D, E, R> applicative(a: Either<E, A>,
    return fn(a.getRightUnsafe(), b.getRightUnsafe(), c.getRightUnsafe(), d.getRightUnsafe()).right()
 }
 
-inline fun <A, B, C, D, E, L, R> applicative(a: Either<L, A>,
-                                             b: Either<L, B>,
-                                             c: Either<L, C>,
-                                             d: Either<L, D>,
-                                             e: Either<L, E>,
-                                             fn: (A, B, C, D, E) -> R): Either<L, R> {
+inline fun <A, B, C, D, E, L, R> applicative(
+   a: Either<L, A>,
+   b: Either<L, B>,
+   c: Either<L, C>,
+   d: Either<L, D>,
+   e: Either<L, E>,
+   fn: (A, B, C, D, E) -> R
+): Either<L, R> {
    if (a.isLeft) return a as Either<L, R>
    if (b.isLeft) return b as Either<L, R>
    if (c.isLeft) return c as Either<L, R>
@@ -217,13 +227,15 @@ inline fun <A, B, C, D, E, L, R> applicative(a: Either<L, A>,
    return fn(a.getRightUnsafe(), b.getRightUnsafe(), c.getRightUnsafe(), d.getRightUnsafe(), e.getRightUnsafe()).right()
 }
 
-inline fun <A, B, C, D, E, F, L, R> applicative(a: Either<L, A>,
-                                                b: Either<L, B>,
-                                                c: Either<L, C>,
-                                                d: Either<L, D>,
-                                                e: Either<L, E>,
-                                                f: Either<L, F>,
-                                                fn: (A, B, C, D, E, F) -> R): Either<L, R> {
+inline fun <A, B, C, D, E, F, L, R> applicative(
+   a: Either<L, A>,
+   b: Either<L, B>,
+   c: Either<L, C>,
+   d: Either<L, D>,
+   e: Either<L, E>,
+   f: Either<L, F>,
+   fn: (A, B, C, D, E, F) -> R
+): Either<L, R> {
    if (a.isLeft) return a as Either<L, R>
    if (b.isLeft) return b as Either<L, R>
    if (c.isLeft) return c as Either<L, R>
