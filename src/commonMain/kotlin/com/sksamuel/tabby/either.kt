@@ -99,6 +99,8 @@ sealed class Either<out A, out B> {
    }
 }
 
+inline fun <B> either(f: () -> B): Either<Throwable, B> = Try(f).toEither { it }
+
 // if this is a left, invokes the given function to return the error into a right, otherwise returns the right
 inline fun <A, B> Either<A, B>.recoverLeft(ifLeft: (A) -> B): Either<A, B> =
    fold({ ifLeft(it).right() }, { this })
