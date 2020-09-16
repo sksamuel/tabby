@@ -177,6 +177,8 @@ inline fun <A, B> catching(handle: (Throwable) -> A, thunk: () -> B): Either<A, 
 
 fun <A, B> Option<B>.either(ifEmpty: () -> A): Either<A, B> = fold({ ifEmpty().left() }, { it.right() })
 
+fun <A, B, C> Either<A, List<B>>.mapK(f: (B) -> C): Either<A, List<C>> = fold({ it.left() }, { it.map(f).right() })
+
 inline fun <A, B, E, R> applicative(
    a: Either<E, A>,
    b: Either<E, B>,
