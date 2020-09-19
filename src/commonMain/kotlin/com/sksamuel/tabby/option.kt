@@ -199,6 +199,11 @@ inline fun <T, U : Any> List<T>.flatMapOption(f: (T) -> Option<U>): List<U> = ma
 
 inline fun <T, U : Any> List<T>.flatMap(f: (T) -> Optional<U>): List<U> = mapNotNull { f(it).toOption().orNull() }
 
+/**
+ * Returns a new list that contains just the values of any [Some] instances in this list.
+ *
+ * In other words, listOf(Some(1), None, Some(2)) becomes listOf(1,2).
+ */
 fun <A : Any> List<Option<A>>.flatten() = mapNotNull { it.orNull() }
 
 /**

@@ -11,6 +11,9 @@ package com.sksamuel.tabby
  */
 sealed class Either<out A, out B> {
 
+   abstract val isRight: Boolean
+   abstract val isLeft: Boolean
+
    companion object {
 
       fun <A, B> cond(test: Boolean, ifFalse: () -> A, ifTrue: () -> B) = when (test) {
@@ -48,17 +51,15 @@ sealed class Either<out A, out B> {
          is Right -> Right(f(b))
       }
 
-   inline fun <C> fold(ifLeft: (A) -> C, ifRight: (B) -> C): C =
-      when (this) {
-         is Left -> ifLeft(a)
-         is Right -> ifRight(b)
-      }
+   inline fun <C> fold(ifLeft: (A) -> C, ifRight: (B) -> C): C = when (this) {
+      is Left -> ifLeft(a)
+      is Right -> ifRight(b)
+   }
 
-   fun <C> fold(ifLeft: C, ifRight: C): C =
-      when (this) {
-         is Left -> ifLeft
-         is Right -> ifRight
-      }
+   fun <C> fold(ifLeft: C, ifRight: C): C = when (this) {
+      is Left -> ifLeft
+      is Right -> ifRight
+   }
 
    fun swap(): Either<B, A> = fold({ it.right() }, { it.left() })
 
@@ -75,9 +76,6 @@ sealed class Either<out A, out B> {
 
    inline fun onRight(f: (B) -> Unit): Either<A, B> =
       fold({ this }, { f(it); this })
-
-   abstract val isRight: Boolean
-   abstract val isLeft: Boolean
 
    fun handleLeft(f: (A) -> Unit): Option<B> = fold({
       f(it)
@@ -99,6 +97,12 @@ sealed class Either<out A, out B> {
    }
 }
 
+/**
+ * Invokes the given function [f] wrapping the result into an [Either.Right], or, if an exception
+ * is thrown, will wrap the throwable into an [Either.Left].
+ *
+ * @return Either.Right<B> or an Either.Left<Throwable>.
+ */
 inline fun <B> either(f: () -> B): Either<Throwable, B> = Try(f).toEither { it }
 
 // if this is a left, invokes the given function to return the error into a right, otherwise returns the right
@@ -157,18 +161,21 @@ fun <A, B> B?.rightIfNotNull(ifNull: () -> A): Either<A, B> =
 fun <A> A.left() = Either.Left(this)
 fun <B> B.right() = Either.Right(this)
 
+@Deprecated("use either {} ")
 inline fun <B> catching(thunk: () -> B): Either<Throwable, B> = try {
    thunk().right()
 } catch (t: Throwable) {
    t.left()
 }
 
+@Deprecated("use either {} ")
 inline fun <A, B> catching(fn: () -> B, handle: (Throwable) -> A): Either<A, B> = try {
    fn().right()
 } catch (t: Throwable) {
    handle(t).left()
 }
 
+@Deprecated("use either {} ")
 inline fun <A, B> catching(handle: (Throwable) -> A, thunk: () -> B): Either<A, B> = try {
    thunk().right()
 } catch (t: Throwable) {
