@@ -93,14 +93,29 @@ sealed class Option<out A> : Optional<A> {
     */
    fun <X> toLeft(right: () -> X): Either<A, X> = if (isEmpty()) Either.Right(right()) else Either.Left(this.getUnsafe())
 
+   /**
+    * @return true if this is a [Some] and false if a [None].
+    */
    fun isDefined(): Boolean = !isEmpty()
+
+   /**
+    * @return true if this is a [None] and false if a [Some].
+    */
    fun isEmpty(): Boolean = this is None
 
+   /**
+    * @return true if this is a [Some] and the value of the predicate [p] evaluates to true given the contained
+    * value of the option, otherwise false.
+    */
    fun exists(p: (A) -> Boolean) = fold(false, p)
 
+   /**
+    * Transforms this option into a list.
+    *
+    * @return if this is a [None], returns an empty list, otherwise returns a list containing the value of this option.
+    */
    fun toList(): List<A> = fold(emptyList(), { listOf(it) })
 
-   fun <B> toEither(ifEmpty: () -> B): Either<B, A> = fold({ ifEmpty().left() }, { it.right() })
 
    fun <B, C> combine(other: Option<B>, f: (A, B) -> C): Option<C> = when (this) {
       is Some -> when (other) {
@@ -110,8 +125,27 @@ sealed class Option<out A> : Optional<A> {
       else -> None
    }
 
+   /**
+    * Returns the value of this option or throws.
+    *
+    * @return if a [Some] returns the contained value, otherwise throws an [IllegalStateException].
+    */
    fun getUnsafe(): A = fold({ throw IllegalStateException() }, { it })
 
+   /**
+    * If a [Some] returns an [Either.Right] containing the value of this option. Otherwise returns
+    * an [Either.Left] with the value of the function [ifEmpty].
+    *
+    * @return an either containing the value of this option or the value of the given function [ifEmpty].
+    */
+   fun <B> toEither(ifEmpty: () -> B): Either<B, A> = fold({ ifEmpty().left() }, { it.right() })
+
+   /**
+    * Transforms this option into a [Validated].
+    *
+    * @return if this is a [None], returns an [Validated.Invalid] with the result of the given
+    * function [isEmpty], otherwise returns a [Validated.Valid] with the value of the [Some].
+    */
    fun <E> toValidated(isEmpty: () -> E): Validated<E, A> = fold({ isEmpty().invalid() }, { it.valid() })
 }
 
