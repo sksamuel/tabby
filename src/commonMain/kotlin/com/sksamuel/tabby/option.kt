@@ -17,6 +17,11 @@ sealed class Option<out A> : Optional<A> {
 
    override fun toOption(): Option<A> = this
 
+   /**
+    * If a [Some], executes the given side effecting function [f] with the value of this option.
+    *
+    * @return this
+    */
    inline fun forEach(f: (A) -> Unit): Option<A> {
       when (this) {
          is Some -> f(value)
@@ -26,8 +31,19 @@ sealed class Option<out A> : Optional<A> {
       return this
    }
 
+   /**
+    * If a [None], executes the given side effecting function [f].
+    *
+    * @return this
+    */
    inline fun onNone(f: () -> Unit): Option<A> = fold({ f(); none }, { it.some() })
 
+   /**
+    * If a [Some], executes the given function [f] with the value of this option, returning
+    * a new option wrapping the return value of the function. Otherwise returns [None].
+    *
+    * @return a new option wrapping function f or none.
+    */
    inline fun <B> map(f: (A) -> B): Option<B> = if (isEmpty()) none else Some(f(this.getUnsafe()))
 
    inline fun <B> flatMap(f: (A) -> Optional<B>): Option<B> = when (this) {
