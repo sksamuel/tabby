@@ -34,3 +34,24 @@ data class Tuple6<A, B, C, D, E, F>(
    val e: E,
    val f: F
 )
+
+data class Tuple7<A, B, C, D, E, F, G>(
+   val a: A,
+   val b: B,
+   val c: C,
+   val d: D,
+   val e: E,
+   val f: F,
+   val g: G
+)
+
+data class Tuple8<A, B, C, D, E, F, G, H>(
+   val a: A,
+   val b: B,
+   val c: C,
+   val d: D,
+   val e: E,
+   val f: F,
+   val g: G,
+   val h: H
+)
