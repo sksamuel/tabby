@@ -53,8 +53,8 @@ sealed class IO<out E, out T> {
       }
    }
 
-   class MapFn<E, T, U>(val f: (T) -> U, private val underlying: IO<E, T>) : IO<E, U>() {
-      override suspend fun apply(): Either<E, U> = underlying.apply().map { f(it) }
+   class FlatMap<E, T, U>(val f: (T) -> IO<E, U>, private val underlying: IO<E, T>) : IO<E, U>() {
+      override suspend fun apply(): Either<E, U> = underlying.apply().flatMap { f(it).apply() }
    }
 
    class MapErrorFn<E, T, E2>(private val f: (E) -> E2, private val underlying: IO<E, T>) : IO<E2, T>() {
@@ -63,6 +63,18 @@ sealed class IO<out E, out T> {
 
    class WithContext<E, T>(private val io: IO<E, T>, private val context: CoroutineContext) : IO<E, T>() {
       override suspend fun apply(): Either<E, T> = withContext(context) { io.apply() }
+   }
+
+   class Zip<E, T, U, V>(private val left: IO<E, T>,
+                         private val right: IO<E, U>,
+                         private val f: (T, U) -> V) : IO<E, V>() {
+      override suspend fun apply(): Either<E, V> {
+         return left.apply().flatMap { t ->
+            right.apply().map { u ->
+               f(t, u)
+            }
+         }
+      }
    }
 
    class Bracket<T, U>(private val acquire: () -> T,
@@ -121,7 +133,7 @@ sealed class IO<out E, out T> {
          Bracket(acquire, use, release)
    }
 
-   fun <U> map(f: (T) -> U): IO<E, U> = MapFn(f, this)
+   fun <U> map(f: (T) -> U): IO<E, U> = FlatMap({ f(it).pure() }, this)
 
    fun <F> mapError(f: (E) -> F): IO<F, T> = MapErrorFn(f, this)
 
@@ -146,12 +158,16 @@ sealed class IO<out E, out T> {
    }
 }
 
+fun <T> T.pure(): UIO<T> = IO.pure(this)
+
+fun <E, T, U, V> IO<E, T>.zip(other: IO<E, U>, f: (T, U) -> V): IO<E, V> = IO.Zip(this, other, f)
+
 fun <E, T> IO<E, T>.timeout(millis: Long, ifError: (TimeoutCancellationException) -> E): IO<E, T> =
    IO.WithTimeout(millis, ifError, this)
 
 fun <E, F : E, T> IO<E, T>.refineOrDie(): IO<F, T> = TODO()
 
-fun <E, T, U> IO<E, T>.flatMap(f: (T) -> IO<E, U>): IO<E, U> = TODO()
+fun <E, T, U> IO<E, T>.flatMap(f: (T) -> IO<E, U>): IO<E, U> = IO.FlatMap(f, this)
 
 
 typealias UIO<T> = IO<Nothing, T>         // Succeed with an `T`, cannot fail
