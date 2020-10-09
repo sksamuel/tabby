@@ -8,4 +8,9 @@ object Libs {
       const val assertions = "io.kotest:kotest-assertions-core-jvm:$version"
       const val junit5 = "io.kotest:kotest-runner-junit5-jvm:$version"
    }
+
+   object Coroutines {
+      private const val version = "1.3.9"
+      const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
+   }
 }

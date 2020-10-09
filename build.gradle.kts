@@ -40,6 +40,7 @@ kotlin {
       val commonMain by getting {
          dependencies {
             implementation(kotlin("stdlib-common"))
+            implementation(Libs.Coroutines.core)
          }
       }
 
@@ -54,6 +55,15 @@ kotlin {
          dependsOn(commonMain)
          dependencies {
             implementation(kotlin("stdlib-jdk8"))
+         }
+      }
+
+      val jvmTest by getting {
+         dependencies {
+            implementation(kotlin("reflect"))
+            implementation("io.kotest:kotest-framework-api:4.2.5")
+            implementation("io.kotest:kotest-framework-discovery:4.2.5")
+            implementation("io.kotest:kotest-framework-engine:4.2.5")
          }
       }
    }
@@ -135,14 +145,14 @@ publishing {
       register("mavenJava", MavenPublication::class) {
          from(components["java"])
          pom {
-            name.set("kotest-console-runner")
-            description.set("kotest-console-runner")
-            url.set("http://www.github.com/kotest/kotest-console-runner")
+            name.set("tabby")
+            description.set("tabby")
+            url.set("http://www.github.com/sksamuel/tabby")
 
             scm {
-               connection.set("scm:git:http://www.github.com/kotest/kotest-console-runner/")
-               developerConnection.set("scm:git:http://github.com/kotest/")
-               url.set("http://www.github.com/kotest")
+               connection.set("scm:git:http://www.github.com/sksamuel/tabby")
+               developerConnection.set("scm:git:http://github.com/sksamuel")
+               url.set("http://www.github.com/sksamuel/tabby")
             }
 
             licenses {
