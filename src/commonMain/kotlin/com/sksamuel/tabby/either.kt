@@ -226,6 +226,24 @@ inline fun <A, B, C, D, E, R> applicative(
    return fn(a.getRightUnsafe(), b.getRightUnsafe(), c.getRightUnsafe(), d.getRightUnsafe()).right()
 }
 
+fun <A, B, C, D, E, R> app(
+   a: Either<E, A>,
+   b: Either<E, B>,
+   c: Either<E, C>,
+   d: Either<E, D>,
+   fn: (A, B, C, D) -> R
+): Either<E, R> {
+   return a.flatMap { _a ->
+      b.flatMap { _b ->
+         c.flatMap { _c ->
+            d.map { _d ->
+               fn(_a, _b, _c, _d)
+            }
+         }
+      }
+   }
+}
+
 inline fun <A, B, C, D, E, L, R> applicative(
    a: Either<L, A>,
    b: Either<L, B>,
