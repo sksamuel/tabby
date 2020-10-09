@@ -152,6 +152,13 @@ abstract class IO<out E, out T> {
 
    fun <E2> flatMapError(f: (E) -> FIO<E2>): IO<E2, T> = FlatMapErrorFn(f, this)
 
+   fun swap(): IO<T, E> {
+      val self = this
+      return object : IO<T, E>() {
+         override suspend fun apply(): Either<T, E> = self.apply().swap()
+      }
+   }
+
    /**
     * Provides a context switch for this IO.
     */
