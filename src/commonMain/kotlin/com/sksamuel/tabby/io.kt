@@ -17,16 +17,20 @@ abstract class IO<out E, out T> {
 
    abstract suspend fun apply(): Either<E, T>
 
-   class Pure<T>(private val t: T) : UIO<T>() {
+   class Succeeded<T>(private val t: T) : UIO<T>() {
       override suspend fun apply() = t.right()
    }
 
-   class Failure<T>(private val t: T) : FIO<T>() {
-      override suspend fun apply() = t.left()
+   class Success<T>(private val f: () -> T) : IO<Nothing, T>() {
+      override suspend fun apply() = f().right()
    }
 
-   class Success<T>(private val f: () -> T) : IO<Nothing, T>() {
-      override suspend fun apply(): Either<Nothing, T> = f().right()
+   class Failed<E>(private val error: E) : FIO<E>() {
+      override suspend fun apply() = error.left()
+   }
+
+   class Failure<E>(private val f: () -> E) : FIO<E>() {
+      override suspend fun apply() = f().left()
    }
 
    class Effect<T>(private val f: suspend () -> T) : IO<Throwable, T>() {
@@ -103,17 +107,22 @@ abstract class IO<out E, out T> {
       /**
        * Wraps a strict value as a successfully completed IO.
        */
-      fun <T> pure(t: T): UIO<T> = Pure(t)
-
-      /**
-       * Wraps a strict value as a failed IO.
-       */
-      fun <E> failure(e: E): FIO<E> = Failure(e)
+      fun <T> success(t: T): UIO<T> = Succeeded(t)
 
       /**
        * Wraps a function as a successfully completed IO.
        */
       fun <T> success(f: () -> T): UIO<T> = Success(f)
+
+      /**
+       * Wraps a strict value as a failed IO.
+       */
+      fun <E> failure(e: E): FIO<E> = Failed(e)
+
+      /**
+       * Wraps a function as a failed IO.
+       */
+      fun <E> failure(f: () -> E): FIO<E> = Failure(f)
 
       /**
        * Wraps a potentially throwing effectful function as a lazy IO.
@@ -137,7 +146,7 @@ abstract class IO<out E, out T> {
          Bracket(acquire, use, release)
    }
 
-   fun <U> map(f: (T) -> U): IO<E, U> = FlatMap({ f(it).pure() }, this)
+   fun <U> map(f: (T) -> U): IO<E, U> = FlatMap({ f(it).success() }, this)
 
    fun <E2> mapError(f: (E) -> E2): IO<E2, T> = MapErrorFn(f, this)
 
@@ -164,7 +173,7 @@ abstract class IO<out E, out T> {
    }
 }
 
-fun <T> T.pure(): UIO<T> = IO.pure(this)
+fun <T> T.success(): UIO<T> = IO.success(this)
 
 fun <E, T, U, V> IO<E, T>.zip(other: IO<E, U>, f: (T, U) -> V): IO<E, V> = IO.Zip(this, other, f)
 
