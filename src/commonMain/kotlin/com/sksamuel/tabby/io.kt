@@ -177,6 +177,8 @@ abstract class IO<out E, out T> {
    }
 }
 
+fun <A> IO<A, A>.fail(): IO<A, Nothing> = fail { it }
+
 /**
  * Coalesces an IO<E,T> to an FIO<E> using the supplied function to convert a success to a failure.
  */
