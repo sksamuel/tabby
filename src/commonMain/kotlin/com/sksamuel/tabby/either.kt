@@ -155,6 +155,10 @@ inline fun <A, B> Either<A, B>.leftIfRightIsNull(f: () -> A): Either<A, B> =
 fun <A, B> B?.leftIfNull(ifNull: () -> A): Either<A, B> =
    this?.right() ?: ifNull().left()
 
+fun <A, B> B.leftIf(a: A, eval: (B) -> Boolean): Either<A, B> = if (eval(this)) a.left() else this.rightIf()
+
+fun <A, B> B.rightIf(a: A, eval: (B) -> Boolean): Either<A, B> = if (eval(this)) this.right() else a.left()
+
 fun <A, B> B?.rightIfNotNull(ifNull: () -> A): Either<A, B> =
    this?.right() ?: ifNull().left()
 
