@@ -13,37 +13,37 @@ import kotlin.coroutines.CoroutineContext
  *
  * IO can be executed as a regular suspendable function in the current coroutine scope.
  */
-interface IO<out E, out T> {
+abstract class IO<out E, out T> {
 
    abstract suspend fun apply(): Either<E, T>
 
-   class Failure<E>(private val error: E) : IO<E, Nothing> {
-      override suspend fun apply() = error.left()
-   }
-
-   class Pure<T>(private val t: T) : IO<Nothing, T> {
+   class Pure<T>(private val t: T) : UIO<T>() {
       override suspend fun apply() = t.right()
    }
 
-   class Success<T>(private val f: () -> T) : IO<Nothing, T> {
+   class Failure<T>(private val t: T) : FIO<T>() {
+      override suspend fun apply() = t.left()
+   }
+
+   class Success<T>(private val f: () -> T) : IO<Nothing, T>() {
       override suspend fun apply(): Either<Nothing, T> = f().right()
    }
 
-   class Effect<T>(private val f: suspend () -> T) : IO<Throwable, T> {
+   class Effect<T>(private val f: suspend () -> T) : IO<Throwable, T>() {
       override suspend fun apply() = either { f() }
    }
 
-   class EffectE<E, T>(private val f: suspend () -> Either<E, T>) : IO<E, T> {
+   class EffectE<E, T>(private val f: suspend () -> Either<E, T>) : IO<E, T>() {
       override suspend fun apply(): Either<E, T> = f()
    }
 
-   class EffectTotal<T>(private val f: suspend () -> T) : UIO<T> {
+   class EffectTotal<T>(private val f: suspend () -> T) : UIO<T>() {
       override suspend fun apply() = f().right()
    }
 
    class WithTimeout<E, T>(private val duration: Long,
                            private val ifError: (TimeoutCancellationException) -> E,
-                           private val underlying: IO<E, T>) : IO<E, T> {
+                           private val underlying: IO<E, T>) : IO<E, T>() {
       override suspend fun apply(): Either<E, T> {
          return try {
             withTimeout(duration) { underlying.apply() }
@@ -53,25 +53,25 @@ interface IO<out E, out T> {
       }
    }
 
-   class FlatMap<E, T, U>(val f: (T) -> IO<E, U>, private val underlying: IO<E, T>) : IO<E, U> {
+   class FlatMap<E, T, U>(val f: (T) -> IO<E, U>, private val underlying: IO<E, T>) : IO<E, U>() {
       override suspend fun apply(): Either<E, U> = underlying.apply().flatMap { f(it).apply() }
    }
 
-   class MapErrorFn<E, T, E2>(private val f: (E) -> E2, private val underlying: IO<E, T>) : IO<E2, T> {
+   class MapErrorFn<E, T, E2>(private val f: (E) -> E2, private val underlying: IO<E, T>) : IO<E2, T>() {
       override suspend fun apply() = underlying.apply().mapLeft(f)
    }
 
-   class FlatMapErrorFn<E, T, E2>(private val f: (E) -> FIO<E2>, private val underlying: IO<E, T>) : IO<E2, T> {
+   class FlatMapErrorFn<E, T, E2>(private val f: (E) -> FIO<E2>, private val underlying: IO<E, T>) : IO<E2, T>() {
       override suspend fun apply() = underlying.apply().flatMapLeft { f(it).apply() }
    }
 
-   class WithContext<E, T>(private val io: IO<E, T>, private val context: CoroutineContext) : IO<E, T> {
+   class WithContext<E, T>(private val io: IO<E, T>, private val context: CoroutineContext) : IO<E, T>() {
       override suspend fun apply(): Either<E, T> = withContext(context) { io.apply() }
    }
 
    class Zip<E, T, U, V>(private val left: IO<E, T>,
                          private val right: IO<E, U>,
-                         private val f: (T, U) -> V) : IO<E, V> {
+                         private val f: (T, U) -> V) : IO<E, V>() {
       override suspend fun apply(): Either<E, V> {
          return left.apply().flatMap { t ->
             right.apply().map { u ->
@@ -83,7 +83,7 @@ interface IO<out E, out T> {
 
    class Bracket<T, U>(private val acquire: () -> T,
                        private val use: (T) -> U,
-                       private val release: (T) -> Unit) : Task<U> {
+                       private val release: (T) -> Unit) : Task<U>() {
       override suspend fun apply(): Either<Throwable, U> {
          return try {
             val t = acquire()
@@ -141,7 +141,7 @@ interface IO<out E, out T> {
 
    fun <E2> mapError(f: (E) -> E2): IO<E2, T> = MapErrorFn(f, this)
 
-   fun <E2> mapError(f: (E) -> FIO<E2>): IO<E2, T> = FlatMapErrorFn(f, this)
+   fun <E2> flatMapError(f: (E) -> FIO<E2>): IO<E2, T> = FlatMapErrorFn(f, this)
 
    /**
     * Provides a context switch for this IO.

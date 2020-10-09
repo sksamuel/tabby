@@ -2,7 +2,7 @@ package com.sksamuel.tabby
 
 import kotlinx.coroutines.delay
 
-fun <E, T> IO<E, T>.retry(attempts: Int, interval: Long): IO<E, T> = object : IO<E, T> {
+fun <E, T> IO<E, T>.retry(attempts: Int, interval: Long): IO<E, T> = object : IO<E, T>() {
 
    private suspend fun attempt(remaining: Int): Either<E, T> {
       return this@retry.apply().fold(
