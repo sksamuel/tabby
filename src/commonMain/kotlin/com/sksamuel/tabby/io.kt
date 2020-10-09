@@ -102,6 +102,27 @@ abstract class IO<out E, out T> {
       }
    }
 
+   /**
+    * Surrounds this IO with a before and after operation.
+    * If before fails, after will not be invoked.
+    * If this IO fails, after will be invoked but its return value will be ignored.
+    */
+   fun <E, T, A> IO<E, T>.brace(before: IO<E, A>, after: (A) -> IO<E, Unit>): IO<E, T> = object : IO<E, T>() {
+      override suspend fun apply(): Either<E, T> {
+         return before.apply().flatMap { a ->
+            this@brace.apply().fold(
+               {
+                  after(a)
+                  it.left()
+               },
+               { t ->
+                  after(a).apply().map { t }
+               }
+            )
+         }
+      }
+   }
+
    companion object {
 
       /**
