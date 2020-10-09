@@ -178,8 +178,7 @@ abstract class IO<out E, out T> {
 }
 
 /**
- * If this IO is an error, returns this IO, otherwise returns a failed IO
- * created from the given function, invoked against the successful value of this IO.
+ * Coalesces an IO<E,T> to an FIO<E> using the supplied function to convert a success to a failure.
  */
 fun <E, T> IO<E, T>.fail(ifSuccess: (T) -> E): FIO<E> = object : IO<E, Nothing>() {
    override suspend fun apply(): Either<E, Nothing> {
@@ -193,6 +192,18 @@ fun <E, T> IO<E, T>.fail(ifSuccess: (T) -> E): FIO<E> = object : IO<E, Nothing>(
 fun <T> T.success(): UIO<T> = IO.success(this)
 
 fun <E, T, U, V> IO<E, T>.zip(other: IO<E, U>, f: (T, U) -> V): IO<E, V> = IO.Zip(this, other, f)
+
+fun <E, U, V> IO<E, *>.zipRight(other: IO<E, U>, f: (U) -> V): IO<E, V> = object : IO<E, V>() {
+   override suspend fun apply(): Either<E, V> = this@zipRight.apply().flatMap {
+      other.apply().map(f)
+   }
+}
+
+fun <E, T, V> IO<E, T>.zipLeft(other: IO<E, *>, f: (T) -> V): IO<E, V> = object : IO<E, V>() {
+   override suspend fun apply(): Either<E, V> = this@zipLeft.apply().flatMap { t ->
+      other.apply().map { f(t) }
+   }
+}
 
 fun <E, T> IO<E, T>.timeout(millis: Long, ifError: (TimeoutCancellationException) -> E): IO<E, T> =
    IO.WithTimeout(millis, ifError, this)
