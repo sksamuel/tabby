@@ -61,6 +61,10 @@ sealed class IO<out E, out T> {
       override suspend fun apply() = underlying.apply().mapLeft(f)
    }
 
+   class FlatMapErrorFn<E, T, E2>(private val f: (E) -> FIO<E2>, private val underlying: IO<E, T>) : IO<E2, T>() {
+      override suspend fun apply() = underlying.apply().flatMapLeft { f(it).apply() }
+   }
+
    class WithContext<E, T>(private val io: IO<E, T>, private val context: CoroutineContext) : IO<E, T>() {
       override suspend fun apply(): Either<E, T> = withContext(context) { io.apply() }
    }
@@ -104,7 +108,7 @@ sealed class IO<out E, out T> {
       /**
        * Wraps a strict value as a failed IO.
        */
-      fun <E> fail(e: E): Failed<E> = Failure(e)
+      fun <E> failure(e: E): FIO<E> = Failure(e)
 
       /**
        * Wraps a function as a successfully completed IO.
@@ -135,7 +139,9 @@ sealed class IO<out E, out T> {
 
    fun <U> map(f: (T) -> U): IO<E, U> = FlatMap({ f(it).pure() }, this)
 
-   fun <F> mapError(f: (E) -> F): IO<F, T> = MapErrorFn(f, this)
+   fun <E2> mapError(f: (E) -> E2): IO<E2, T> = MapErrorFn(f, this)
+
+   fun <E2> mapError(f: (E) -> FIO<E2>): IO<E2, T> = FlatMapErrorFn(f, this)
 
    /**
     * Provides a context switch for this IO.
@@ -165,11 +171,13 @@ fun <E, T, U, V> IO<E, T>.zip(other: IO<E, U>, f: (T, U) -> V): IO<E, V> = IO.Zi
 fun <E, T> IO<E, T>.timeout(millis: Long, ifError: (TimeoutCancellationException) -> E): IO<E, T> =
    IO.WithTimeout(millis, ifError, this)
 
-fun <E, F : E, T> IO<E, T>.refineOrDie(): IO<F, T> = TODO()
+fun <E, E2, T> IO<E, T>.refineOrDie(): IO<E2, T> = TODO()
 
 fun <E, T, U> IO<E, T>.flatMap(f: (T) -> IO<E, U>): IO<E, U> = IO.FlatMap(f, this)
 
-
+// Infallible IO, will never fail
 typealias UIO<T> = IO<Nothing, T>         // Succeed with an `T`, cannot fail
 typealias Task<T> = IO<Throwable, T>      // Succeed with an `T`, may fail with `Throwable`
-typealias Failed<E> = IO<E, Nothing>      // Cannot suceed
+
+// Unproductive IO, will never succeed
+typealias FIO<E> = IO<E, Nothing>      // Cannot succeed
