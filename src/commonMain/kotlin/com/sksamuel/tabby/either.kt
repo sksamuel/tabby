@@ -226,6 +226,33 @@ inline fun <A, B, C, D, E, R> applicative(
    return fn(a.getRightUnsafe(), b.getRightUnsafe(), c.getRightUnsafe(), d.getRightUnsafe()).right()
 }
 
+fun <A, B, E, R> app(
+   a: Either<E, A>,
+   b: Either<E, B>,
+   fn: (A, B) -> R
+): Either<E, R> {
+   return a.flatMap { _a ->
+      b.map { _b ->
+         fn(_a, _b)
+      }
+   }
+}
+
+fun <A, B, C, E, R> app(
+   a: Either<E, A>,
+   b: Either<E, B>,
+   c: Either<E, C>,
+   fn: (A, B, C) -> R
+): Either<E, R> {
+   return a.flatMap { _a ->
+      b.flatMap { _b ->
+         c.map { _c ->
+            fn(_a, _b, _c)
+         }
+      }
+   }
+}
+
 fun <A, B, C, D, E, R> app(
    a: Either<E, A>,
    b: Either<E, B>,
@@ -238,6 +265,27 @@ fun <A, B, C, D, E, R> app(
          c.flatMap { _c ->
             d.map { _d ->
                fn(_a, _b, _c, _d)
+            }
+         }
+      }
+   }
+}
+
+fun <A, B, C, D, E, ERROR, RETURN> app(
+   a: Either<ERROR, A>,
+   b: Either<ERROR, B>,
+   c: Either<ERROR, C>,
+   d: Either<ERROR, D>,
+   e: Either<ERROR, E>,
+   fn: (A, B, C, D, E) -> RETURN
+): Either<ERROR, RETURN> {
+   return a.flatMap { _a ->
+      b.flatMap { _b ->
+         c.flatMap { _c ->
+            d.flatMap { _d ->
+               e.map { _e ->
+                  fn(_a, _b, _c, _d, _e)
+               }
             }
          }
       }
