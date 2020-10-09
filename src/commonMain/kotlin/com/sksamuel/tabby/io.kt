@@ -228,6 +228,9 @@ fun <E, T, V> IO<E, T>.zipLeft(other: IO<E, *>, f: (T) -> V): IO<E, V> = object 
    }
 }
 
+fun <E, T> IO<E, T>.timeout(millis: Long, error: E): IO<E, T> =
+   IO.WithTimeout(millis, { error }, this)
+
 fun <E, T> IO<E, T>.timeout(millis: Long, ifError: (TimeoutCancellationException) -> E): IO<E, T> =
    IO.WithTimeout(millis, ifError, this)
 
