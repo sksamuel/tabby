@@ -152,11 +152,8 @@ abstract class IO<out E, out T> {
 
    fun <E2> flatMapError(f: (E) -> FIO<E2>): IO<E2, T> = FlatMapErrorFn(f, this)
 
-   fun swap(): IO<T, E> {
-      val self = this
-      return object : IO<T, E>() {
-         override suspend fun apply(): Either<T, E> = self.apply().swap()
-      }
+   fun swap(): IO<T, E> = object : IO<T, E>() {
+      override suspend fun apply(): Either<T, E> = this@IO.apply().swap()
    }
 
    /**
@@ -177,6 +174,19 @@ abstract class IO<out E, out T> {
       return withContext(dispatcher) {
          this@IO.apply()
       }
+   }
+}
+
+/**
+ * If this IO is an error, returns this IO, otherwise returns a failed IO
+ * created from the given function, invoked against the successful value of this IO.
+ */
+fun <E, T> IO<E, T>.fail(ifSuccess: (T) -> E): FIO<E> = object : IO<E, Nothing>() {
+   override suspend fun apply(): Either<E, Nothing> {
+      return this@fail.apply().fold(
+         { it.left() },
+         { ifSuccess(it).left() }
+      )
    }
 }
 
