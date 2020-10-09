@@ -79,7 +79,7 @@ sealed class Either<out A, out B> {
 
    fun handleLeft(f: (A) -> Unit): Option<B> = fold({
       f(it)
-      none()
+      none
    }, { it.some() })
 
    fun getRightUnsafe(): B = fold({ throw RuntimeException("Expected right but was $it") }, { it })

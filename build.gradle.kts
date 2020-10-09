@@ -29,10 +29,6 @@ kotlin {
             }
          }
       }
-      js {
-         browser()
-         nodejs()
-      }
    }
 
    sourceSets {
@@ -44,17 +40,11 @@ kotlin {
          }
       }
 
-      val jsMain by getting {
-         dependsOn(commonMain)
-         dependencies {
-            implementation(kotlin("stdlib-js"))
-         }
-      }
-
       val jvmMain by getting {
          dependsOn(commonMain)
          dependencies {
             implementation(kotlin("stdlib-jdk8"))
+            implementation(Libs.Coroutines.coreJvm)
          }
       }
 

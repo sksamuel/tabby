@@ -38,7 +38,7 @@ sealed class Try<out A> : Optional<A> {
     * Returns an Option containing the value of this Try if a Success, otherwise if a Failure,
     * returns a None.
     */
-   override fun toOption(): Option<A> = fold({ none() }, { it.some() })
+   override fun toOption(): Option<A> = fold({ none }, { it.some() })
 
    fun <E> toValidated(error: E): Validated<E, A> = fold({ error.invalid() }, { it.valid() })
 }

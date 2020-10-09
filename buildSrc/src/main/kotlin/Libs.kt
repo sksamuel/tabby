@@ -12,5 +12,7 @@ object Libs {
    object Coroutines {
       private const val version = "1.3.9"
       const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
+      const val coreJs = "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$version"
+      const val coreJvm = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$version"
    }
 }

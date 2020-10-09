@@ -1,7 +1,5 @@
 package com.sksamuel.tabby
 
-import kotlin.js.JsName
-
 sealed class Option<out A> : Optional<A> {
 
    data class Some<A>(val value: A) : Option<A>()
@@ -180,8 +178,6 @@ fun <A, B, C, D, R> applicative(a: Option<A>,
    return f(a.getUnsafe(), b.getUnsafe(), c.getUnsafe(), d.getUnsafe()).some()
 }
 
-@JsName("nonefun")
-fun none() = Option.None
 val none = Option.None
 
 fun <T> T.some(): Option<T> = Option.Some(this)
