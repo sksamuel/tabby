@@ -1,5 +1,6 @@
 package com.sksamuel.tabby
 
+import com.sksamuel.tabby.io.IO
 import kotlinx.coroutines.delay
 
 fun <E, T> IO<E, T>.retry(attempts: Int, interval: Long): IO<E, T> = object : IO<E, T>() {

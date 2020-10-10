@@ -1,10 +1,12 @@
-package com.sksamuel.tabby
+package com.sksamuel.tabby.io
 
+import com.sksamuel.tabby.Either
+import com.sksamuel.tabby.right
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 
-class ZipTest : FunSpec() {
+class MapTest : FunSpec() {
    init {
       test("zip should invoke combinator on two successful inputs") {
          IO.success("foo").zip(IO.success("bar")) { a, b -> a + b }.run() shouldBe "foobar".right()

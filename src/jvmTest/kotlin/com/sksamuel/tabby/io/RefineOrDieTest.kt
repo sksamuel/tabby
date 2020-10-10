@@ -1,5 +1,6 @@
-package com.sksamuel.tabby
+package com.sksamuel.tabby.io
 
+import com.sksamuel.tabby.left
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

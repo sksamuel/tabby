@@ -1,5 +1,11 @@
-package com.sksamuel.tabby
+package com.sksamuel.tabby.io
 
+import com.sksamuel.tabby.Either
+import com.sksamuel.tabby.either
+import com.sksamuel.tabby.flatMap
+import com.sksamuel.tabby.flatMapLeft
+import com.sksamuel.tabby.left
+import com.sksamuel.tabby.right
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withContext
