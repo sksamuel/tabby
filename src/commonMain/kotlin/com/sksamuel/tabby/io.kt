@@ -234,7 +234,14 @@ fun <E, T> IO<E, T>.timeout(millis: Long, error: E): IO<E, T> =
 fun <E, T> IO<E, T>.timeout(millis: Long, ifError: (TimeoutCancellationException) -> E): IO<E, T> =
    IO.WithTimeout(millis, ifError, this)
 
-fun <E, E2, T> IO<E, T>.refineOrDie(): IO<E2, T> = TODO()
+inline fun <reified E> IO<*, *>.refineOrDie(): FIO<E> = object : FIO<E>() {
+   override suspend fun apply(): Either<E, Nothing> {
+      return this@refineOrDie.apply().fold(
+         { if (it is E) it.left() else error("Result not an instance of ${E::class}") },
+         { error("Result not an instance of ${E::class}") }
+      )
+   }
+}
 
 fun <E, T, U> IO<E, T>.flatMap(f: (T) -> IO<E, U>): IO<E, U> = IO.FlatMap(f, this)
 
