@@ -178,20 +178,20 @@ abstract class IO<out E, out T> {
 
       fun <E, T> par(vararg ios: IO<E, T>): IO<E, List<T>> = object : IO<E, List<T>>() {
          override suspend fun apply(): Either<E, List<T>> {
-            return coroutineScope {
-               val ds = ios.map {
-                  async {
-                     it.run().fold(
-                        { throw FailedIO(it) },
-                        { it }
-                     )
+            return try {
+               coroutineScope {
+                  val ds = ios.map {
+                     async {
+                        it.run().fold(
+                           { throw FailedIO(it) },
+                           { it }
+                        )
+                     }
                   }
-               }
-               try {
                   ds.awaitAll().right()
-               } catch (e: FailedIO) {
-                  (e.error as E).left()
                }
+            } catch (e: FailedIO) {
+               (e.error as E).left()
             }
          }
       }
