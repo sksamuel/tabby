@@ -6,8 +6,12 @@ import com.sksamuel.tabby.flatMap
 import com.sksamuel.tabby.flatMapLeft
 import com.sksamuel.tabby.left
 import com.sksamuel.tabby.right
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.CoroutineContext
@@ -171,7 +175,29 @@ abstract class IO<out E, out T> {
        */
       fun <T, U> bracket(acquire: () -> T, use: (T) -> U, release: (T) -> Unit): Task<U> =
          Bracket(acquire, use, release)
+
+      fun <E, T> par(vararg ios: IO<E, T>): IO<E, List<T>> = object : IO<E, List<T>>() {
+         override suspend fun apply(): Either<E, List<T>> {
+            return coroutineScope {
+               val ds = ios.map {
+                  async {
+                     it.run().fold(
+                        { throw FailedIO(it) },
+                        { it }
+                     )
+                  }
+               }
+               try {
+                  ds.awaitAll().right()
+               } catch (e: FailedIO) {
+                  (e.error as E).left()
+               }
+            }
+         }
+      }
    }
+
+   class FailedIO(val error: Any?) : RuntimeException()
 
    fun <U> map(f: (T) -> U): IO<E, U> = FlatMap({ f(it).success() }, this)
 
@@ -186,7 +212,7 @@ abstract class IO<out E, out T> {
    /**
     * Provides a context switch for this IO.
     */
-   fun context(context: CoroutineContext): IO<E, T> = WithContext(this, context)
+   fun onContext(context: CoroutineContext): IO<E, T> = WithContext(this, context)
 
    /**
     * Executes this IO.
