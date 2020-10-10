@@ -51,9 +51,10 @@ kotlin {
       val jvmTest by getting {
          dependencies {
             implementation(kotlin("reflect"))
-            implementation("io.kotest:kotest-framework-api:4.2.5")
-            implementation("io.kotest:kotest-framework-discovery:4.2.5")
-            implementation("io.kotest:kotest-framework-engine:4.2.5")
+            implementation("io.kotest:kotest-assertions-core:4.2.6")
+            implementation("io.kotest:kotest-framework-api:4.2.6")
+            implementation("io.kotest:kotest-framework-discovery:4.2.6")
+            implementation("io.kotest:kotest-framework-engine:4.2.6")
          }
       }
    }
