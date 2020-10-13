@@ -13,7 +13,7 @@ import kotlin.time.milliseconds
 class ParTest : FunSpec() {
    init {
 
-      test("multiple ios should run in parallel").config(timeout = 350.milliseconds) {
+      test("IO.par should run in parallel").config(timeout = 350.milliseconds) {
          val a = IO.effect {
             delay(250)
             "foo"
@@ -25,7 +25,7 @@ class ParTest : FunSpec() {
          IO.par(a, b).run() shouldBe listOf("foo", "bar").right()
       }
 
-      test("a failure should short circuit").config(timeout = 1000.milliseconds) {
+      test("a failure should short circuit IO.par").config(timeout = 1000.milliseconds) {
          val a = IO.effect {
             delay(100)
             error("boom")

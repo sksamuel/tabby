@@ -4,6 +4,7 @@ import com.sksamuel.tabby.Either
 import com.sksamuel.tabby.either
 import com.sksamuel.tabby.flatMap
 import com.sksamuel.tabby.flatMapLeft
+import com.sksamuel.tabby.flatten
 import com.sksamuel.tabby.left
 import com.sksamuel.tabby.right
 import kotlinx.coroutines.CancellationException
@@ -227,6 +228,12 @@ abstract class IO<out E, out T> {
       return withContext(dispatcher) {
          this@IO.apply()
       }
+   }
+}
+
+fun <E, T> IO<E, Either<E, T>>.flatten(): IO<E, T> = object : IO<E, T>() {
+   override suspend fun apply(): Either<E, T> {
+      return this@flatten.apply().flatten()
    }
 }
 
