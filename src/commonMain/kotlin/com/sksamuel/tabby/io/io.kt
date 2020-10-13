@@ -48,10 +48,6 @@ abstract class IO<out E, out T> {
       override suspend fun apply() = either { f() }
    }
 
-   class EffectE<E, T>(private val f: suspend () -> Either<E, T>) : IO<E, T>() {
-      override suspend fun apply(): Either<E, T> = f()
-   }
-
    class EffectTotal<T>(private val f: suspend () -> T) : UIO<T>() {
       override suspend fun apply() = f().right()
    }
@@ -160,11 +156,6 @@ abstract class IO<out E, out T> {
        * Wraps a potentially throwing effectful function as a lazy IO.
        */
       fun <T> effect(f: suspend () -> T): Task<T> = Effect(f)
-
-      /**
-       * Wraps a effectful either function as a lazy IO.
-       */
-      fun <E, T> effectE(f: suspend () -> Either<E, T>): IO<E, T> = EffectE(f)
 
       /**
        * Wraps an infallible effectful function as a lazy IO.
