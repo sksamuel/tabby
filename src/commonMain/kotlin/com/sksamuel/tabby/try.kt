@@ -24,6 +24,8 @@ sealed class Try<out A> : Optional<A> {
       is Failure -> ifFailure(throwable)
    }
 
+   fun getUnsafe(): A = fold({ throw it }, { it })
+
    inline fun onFailure(f: (Throwable) -> Unit): Try<A> {
       fold({ f(it) }, {})
       return this
