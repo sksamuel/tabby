@@ -292,6 +292,11 @@ inline fun <reified E> IO<*, *>.refineOrDie(): FIO<E> = object : FIO<E>() {
    }
 }
 
+/**
+ * Wraps an Either in an IO.
+ */
+fun <A, B> Either<A, B>.effect(): IO<A, B> = fold({ IO.failure(it) }, { IO.success(it) })
+
 fun <E, T, U> IO<E, T>.flatMap(f: (T) -> IO<E, U>): IO<E, U> = IO.FlatMap(f, this)
 
 // Infallible IO, will never fail
