@@ -130,8 +130,7 @@ abstract class IO<out E, out T> {
    }
 
    /**
-    * Runs a side effecting, but safe, function if this IO is a success.
-    * Returns this IO.
+    * Returns an effect that runs the safe, side effecting function on the success of this effect.
     */
    fun forEach(f: (T) -> Unit): IO<E, T> = object : IO<E, T>() {
       override suspend fun apply(): Either<E, T> = this@IO.apply().onRight { f(it) }
@@ -236,6 +235,16 @@ fun <E, T> IO<E, Either<E, T>>.flatten(): IO<E, T> = object : IO<E, T>() {
 }
 
 fun <A> IO<A, A>.fail(): IO<A, Nothing> = fail { it }
+
+/**
+ * Returns an effect that peeks at the success of this effect.
+ * The result of the tap function is ignored.
+ */
+fun <E, T> IO<E, T>.tap(f: (T) -> IO<E, Any>): IO<E, T> = object : IO<E, T>() {
+   override suspend fun apply(): Either<E, T> {
+      return this@tap.apply().onRight { f(it) }
+   }
+}
 
 /**
  * Coalesces an IO<E,T> to an FIO<E> using the supplied function to convert a success to a failure.
