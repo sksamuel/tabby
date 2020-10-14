@@ -7,7 +7,6 @@ import com.sksamuel.tabby.flatMapLeft
 import com.sksamuel.tabby.flatten
 import com.sksamuel.tabby.left
 import com.sksamuel.tabby.right
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
@@ -128,6 +127,14 @@ abstract class IO<out E, out T> {
             )
          }
       }
+   }
+
+   /**
+    * Runs a side effecting, but safe, function if this IO is a success.
+    * Returns this IO.
+    */
+   fun forEach(f: (T) -> Unit): IO<E, T> = object : IO<E, T>() {
+      override suspend fun apply(): Either<E, T> = this@IO.apply().onRight { f(it) }
    }
 
    companion object {
