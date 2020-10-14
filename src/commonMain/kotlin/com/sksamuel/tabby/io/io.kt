@@ -174,6 +174,9 @@ abstract class IO<out E, out T> {
       fun <T, U> bracket(acquire: () -> T, use: (T) -> U, release: (T) -> Unit): Task<U> =
          Bracket(acquire, use, release)
 
+      fun <E, A, B, C> zip(first: IO<E, A>, second: IO<E, B>, f: (A, B) -> C): IO<E, C> =
+         first.zip(second, f)
+
       fun <E, T> par(vararg ios: IO<E, T>): IO<E, List<T>> = object : IO<E, List<T>>() {
          override suspend fun apply(): Either<E, List<T>> {
             return try {
