@@ -243,9 +243,19 @@ fun <A> IO<A, A>.fail(): IO<A, Nothing> = fail { it }
  * Returns an effect that peeks at the success of this effect.
  * The result of the tap function is ignored.
  */
-fun <E, T> IO<E, T>.tap(f: (T) -> IO<E, Any>): IO<E, T> = object : IO<E, T>() {
+fun <E, T> IO<E, T>.tap(f: (T) -> IO<*, *>): IO<E, T> = object : IO<E, T>() {
    override suspend fun apply(): Either<E, T> {
       return this@tap.apply().onRight { f(it) }
+   }
+}
+
+/**
+ * Returns an effect that peeks at the failure of this effect.
+ * The result of the tap function is ignored.
+ */
+fun <E, T> IO<E, T>.tapError(f: (E) -> IO<*, *>): IO<E, T> = object : IO<E, T>() {
+   override suspend fun apply(): Either<E, T> {
+      return this@tapError.apply().onLeft { f(it) }
    }
 }
 
