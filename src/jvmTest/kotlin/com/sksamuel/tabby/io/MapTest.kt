@@ -8,6 +8,7 @@ class MapTest : FunSpec() {
    init {
       test("map should invoke combinator on success") {
          IO.effect { "foo" }.map { it.length }.run() shouldBe 3.right()
+         IO.effect { "foo" }.map { it.length }.map { it + 3 }.run() shouldBe 6.right()
       }
    }
 }
