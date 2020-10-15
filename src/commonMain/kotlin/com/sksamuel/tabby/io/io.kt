@@ -143,6 +143,9 @@ abstract class IO<out E, out T> {
        */
       fun <T> success(t: T): UIO<T> = Succeeded(t)
 
+      // synonym for success
+      fun <T> pure(t: T): UIO<T> = success(t)
+
       /**
        * Wraps a function as a successfully completed IO.
        */
