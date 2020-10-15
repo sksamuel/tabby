@@ -248,7 +248,7 @@ fun <A> IO<A, A>.fail(): IO<A, Nothing> = fail { it }
  */
 fun <E, T> IO<E, T>.tap(f: (T) -> IO<*, *>): IO<E, T> = object : IO<E, T>() {
    override suspend fun apply(): Either<E, T> {
-      return this@tap.apply().onRight { f(it) }
+      return this@tap.apply().onRight { f(it).run() }
    }
 }
 
@@ -258,7 +258,7 @@ fun <E, T> IO<E, T>.tap(f: (T) -> IO<*, *>): IO<E, T> = object : IO<E, T>() {
  */
 fun <E, T> IO<E, T>.tapError(f: (E) -> IO<*, *>): IO<E, T> = object : IO<E, T>() {
    override suspend fun apply(): Either<E, T> {
-      return this@tapError.apply().onLeft { f(it) }
+      return this@tapError.apply().onLeft { f(it).run() }
    }
 }
 
