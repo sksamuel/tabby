@@ -275,6 +275,7 @@ fun <E, T> IO<E, T>.fail(ifSuccess: (T) -> E): FIO<E> = object : IO<E, Nothing>(
 }
 
 fun <T> T.success(): UIO<T> = IO.success(this)
+fun <E> E.failure(): FIO<T> = IO.failure(this)
 
 fun <E, T, U, V> IO<E, T>.zip(other: IO<E, U>, f: (T, U) -> V): IO<E, V> = IO.Zip(this, other, f)
 
