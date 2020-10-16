@@ -54,6 +54,11 @@ abstract class IO<out E, out T> {
       override suspend fun apply() = f().right()
    }
 
+   class OnError<E, T>(private val effect: IO<E, T>,
+                       private val onError: (E) -> Unit) : IO<E, T>() {
+      override suspend fun apply(): Either<E, T> = effect.apply().onLeft(onError)
+   }
+
    class WithTimeout<E, T>(private val duration: Long,
                            private val ifError: (TimeoutCancellationException) -> E,
                            private val underlying: IO<E, T>) : IO<E, T>() {
@@ -264,6 +269,12 @@ abstract class IO<out E, out T> {
    }
 
    fun <U> map(f: (T) -> U): IO<E, U> = FlatMap({ f(it).success() }, this)
+
+   /**
+    * Executes the given function if this is an error.
+    * Returns this
+    */
+   fun onError(f: (E) -> Unit): IO<E, T> = OnError(this, f)
 
    fun <E2> mapError(f: (E) -> E2): IO<E2, T> = MapErrorFn(f, this)
 
