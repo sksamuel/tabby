@@ -314,10 +314,10 @@ fun <E, T> IO<E, T>.filterOrFail(p: (T) -> Boolean, elseIf: (T) -> E): IO<E, T> 
 }
 
 /**
- * Recovers from an error by using the given value.
+ * Recovers from an error by using the given function.
  */
-fun <E, T> IO<E, T>.recover(recovery: T): IO<E, T> = object : UIO<T>() {
-   override suspend fun apply(): Either<Nothing, T> = this@recover.apply().fold({ recovery.right() }, { it.right() })
+fun <E, T> IO<E, T>.recover(f: (E) -> T): IO<E, T> = object : UIO<T>() {
+   override suspend fun apply(): Either<Nothing, T> = this@recover.apply().fold({ f(it).right() }, { it.right() })
 }
 
 fun <E, T> IO<E, T>.recoverWith(f: (E) -> IO<E, T>): IO<E, T> = object : IO<E, T>() {
