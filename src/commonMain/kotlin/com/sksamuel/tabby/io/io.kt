@@ -172,6 +172,20 @@ abstract class IO<out E, out T> {
       fun <T> effectTotal(f: suspend () -> T): UIO<T> = EffectTotal(f)
 
       /**
+       * Evaluate the predicate, returning T as success if the predicate is true,
+       * returning E as other otherwise.
+       */
+      fun <E, T> cond(predicate: Boolean, success: () -> T, error: () -> E): IO<E, T> =
+         if (predicate) IO.success(success()) else IO.failure(error())
+
+      /**
+       * Evaluate the predicate fn, returning T as success if the predicate is true,
+       * returning E as other otherwise.
+       */
+      fun <E, T> cond(predicate: () -> Boolean, success: () -> T, error: () -> E): IO<E, T> =
+         if (predicate()) IO.success(success()) else IO.failure(error())
+
+      /**
        * Acquires a resource, uses that resource, with a guaranteed release operation.
        */
       fun <T, U> bracket(acquire: () -> T, use: (T) -> U, release: (T) -> Unit): Task<U> =
