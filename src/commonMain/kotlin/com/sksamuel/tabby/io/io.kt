@@ -6,6 +6,7 @@ import com.sksamuel.tabby.filter
 import com.sksamuel.tabby.flatMap
 import com.sksamuel.tabby.flatMapLeft
 import com.sksamuel.tabby.flatten
+import com.sksamuel.tabby.getRightOrElse
 import com.sksamuel.tabby.left
 import com.sksamuel.tabby.right
 import kotlinx.coroutines.CoroutineDispatcher
@@ -313,10 +314,14 @@ fun <E, T> IO<E, T>.filterOrFail(p: (T) -> Boolean, elseIf: (T) -> E): IO<E, T> 
 }
 
 /**
- * Recovers from an error by executing the provided function, otherwise returns this.
+ * Recovers from an error by using the given value.
  */
-fun <E, T> IO<E, T>.recover(f: (E) -> IO<E, T>): IO<E, T> = object : IO<E, T>() {
-   override suspend fun apply(): Either<E, T> = this@recover.apply().fold({ f(it).apply() }, { it.right() })
+fun <E, T> IO<E, T>.recover(recovery: T): IO<E, T> = object : UIO<T>() {
+   override suspend fun apply(): Either<Nothing, T> = this@recover.apply().fold({ recovery.right() }, { it.right() })
+}
+
+fun <E, T> IO<E, T>.recoverWith(f: (E) -> IO<E, T>): IO<E, T> = object : IO<E, T>() {
+   override suspend fun apply(): Either<E, T> = this@recoverWith.apply().fold({ f(it).apply() }, { it.right() })
 }
 
 fun <E, T> IO<E, Either<E, T>>.flatten(): IO<E, T> = object : IO<E, T>() {
