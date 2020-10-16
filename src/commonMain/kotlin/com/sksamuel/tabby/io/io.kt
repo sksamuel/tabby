@@ -13,9 +13,11 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.ExperimentalTime
 
 /**
  * A value of type IO[E, T] describes an effect that may fail with an E, run forever, or produce a single T.
@@ -91,6 +93,8 @@ abstract class IO<out E, out T> {
          }.right()
       }
    }
+
+   class FailedIO(val error: Any?) : RuntimeException()
 
    class Zip<E, T, U, V>(private val left: IO<E, T>,
                          private val right: IO<E, U>,
@@ -236,7 +240,28 @@ abstract class IO<out E, out T> {
       }
    }
 
-   class FailedIO(val error: Any?) : RuntimeException()
+   /**
+    * Returns a new effect that repeats this effect according to the specified
+    * schedule or until the first failure. Scheduled recurrences are in addition
+    * to the first execution, so that `io.repeat(Schedule.once)` yields an
+    * effect that executes `io`, and then if that succeeds, executes `io` an
+    * additional time.
+    */
+   @OptIn(ExperimentalTime::class)
+   fun repeat(schedule: Schedule): IO<E, T> = object : IO<E, T>() {
+      override suspend fun apply(): Either<E, T> {
+         var result: Either<E, T> = this@IO.apply()
+         val scheduler = schedule.schedule<T>()
+         while (result.isRight) {
+            val delay = scheduler.invoke(result.getRightUnsafe())
+            if (delay.isEmpty()) return result else {
+               delay(delay.getUnsafe())
+               result = this@IO.apply()
+            }
+         }
+         return result
+      }
+   }
 
    fun <U> map(f: (T) -> U): IO<E, U> = FlatMap({ f(it).success() }, this)
 

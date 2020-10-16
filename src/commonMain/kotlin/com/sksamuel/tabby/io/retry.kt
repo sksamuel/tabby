@@ -1,40 +1,61 @@
 package com.sksamuel.tabby.io
 
 import com.sksamuel.tabby.Either
+import com.sksamuel.tabby.Option
 import com.sksamuel.tabby.left
-import com.sksamuel.tabby.recoverWith
+import com.sksamuel.tabby.none
 import com.sksamuel.tabby.right
+import com.sksamuel.tabby.some
 import kotlinx.coroutines.delay
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
+import kotlin.time.milliseconds
 
 @OptIn(ExperimentalTime::class)
-sealed class Schedule {
+interface Schedule {
 
    /**
-    * Execute once and do not retry.
+    * Returns a function, which is used to determine when, or if, to re-run the effect.
+    * If none is returned, then the scheduling will conclude.
+    * The function will be passed the output of the previous execution.
     */
-   object Once : Schedule() {
-      override suspend fun <E, T> schedule(effect: IO<E, T>): Either<E, T> = effect.apply()
-   }
+   suspend fun <T> schedule(): (T) -> Option<Duration>
 
    /**
-    * Repeat once, after the given delay has elapsed.
+    * Execute once after the initial run.
     */
-   class Delayed(private val duration: Duration) : Schedule() {
-      override suspend fun <E, T> schedule(effect: IO<E, T>): Either<E, T> {
-         return effect.apply().recoverWith {
-            delay(duration)
-            effect.apply()
+   object Once : Schedule {
+      override suspend fun <T> schedule(): (T) -> Option<Duration> {
+         var ran = false
+         return {
+            if (ran) none else {
+               ran = true
+               0.milliseconds.some()
+            }
          }
       }
    }
 
-   abstract suspend fun <E, T> schedule(effect: IO<E, T>): Either<E, T>
+   /**
+    * Executes forever, until the first error.
+    */
+   object Forever : Schedule {
+      override suspend fun <T> schedule(): (T) -> Option<Duration> = { 0.milliseconds.some() }
+   }
 }
 
-fun <E, T> IO<E, T>.retry(policy: Schedule) = object : IO<E, T>() {
-   override suspend fun apply(): Either<E, T> = policy.schedule(this)
+/**
+ * Introduce a delay to this scheduler, adding [interval] between executions.
+ */
+@OptIn(ExperimentalTime::class)
+fun Schedule.delay(interval: Duration): Schedule = object : Schedule {
+   override suspend fun <T> schedule(): (T) -> Option<Duration> {
+      val underlying = this@delay.schedule<T>()
+      return { t ->
+         delay(interval)
+         underlying(t)
+      }
+   }
 }
 
 fun <E, T> IO<E, T>.retryN(attempts: Int, interval: Long): IO<E, T> {
