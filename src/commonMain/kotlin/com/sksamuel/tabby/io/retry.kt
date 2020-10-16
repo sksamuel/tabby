@@ -61,6 +61,13 @@ fun <T> Schedule<T>.delay(interval: (T) -> Duration): Schedule<T> = object : Sch
    }
 }
 
+@OptIn(ExperimentalTime::class)
+fun <T> Schedule<T>.delayIf(interval: Duration, predicate: (T) -> Boolean) = object : Schedule<T> {
+   override suspend fun schedule(): (T) -> Option<Duration> = {
+      if (predicate(it)) interval.some() else 0.milliseconds.some()
+   }
+}
+
 fun <E, T> IO<E, T>.retryN(attempts: Int, interval: Long): IO<E, T> {
    require(attempts > 0)
    return object : IO<E, T>() {
