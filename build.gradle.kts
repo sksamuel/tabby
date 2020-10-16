@@ -50,30 +50,25 @@ kotlin {
 
       val jvmTest by getting {
          dependencies {
-            implementation(kotlin("reflect"))
             implementation("io.kotest:kotest-assertions-core:4.3.0")
-            implementation("io.kotest:kotest-framework-api:4.3.0")
-            implementation("io.kotest:kotest-framework-discovery:4.3.0")
-            implementation("io.kotest:kotest-framework-engine:4.3.0")
+            implementation("io.kotest:kotest-runner-junit5-jvm:4.3.0")
          }
       }
    }
 }
 
-allprojects {
 
-   repositories {
-      mavenCentral()
-   }
-
-   group = "com.sksamuel.tabby"
-   version = Ci.publishVersion.value
+repositories {
+   mavenCentral()
 }
 
-tasks.named<Test>("test") {
+group = "com.sksamuel.tabby"
+version = Ci.publishVersion.value
+
+tasks.named<Test>("jvmTest") {
    useJUnitPlatform()
    filter {
-      isFailOnNoMatchingTests = false
+      isFailOnNoMatchingTests = true
    }
    testLogging {
       showExceptions = true
