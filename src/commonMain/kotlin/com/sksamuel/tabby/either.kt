@@ -146,7 +146,7 @@ inline fun <B> Either<*, B>.getRightOrElse(default: () -> B): B =
 inline fun <A, B> Either<A, B>.getRightOrHandle(default: (A) -> B): B =
    fold({ default(it) }, { it })
 
-inline fun <A, B> Either<A, B>.filterRight(predicate: (B) -> Boolean, elseIf: (B) -> A): Either<A, B> =
+inline fun <A, B> Either<A, B>.filter(predicate: (B) -> Boolean, elseIf: (B) -> A): Either<A, B> =
    flatMapRight { if (predicate(it)) it.right() else elseIf(it).left() }
 
 inline fun <A, B> Either<A, B>.leftIfRightIsNull(f: () -> A): Either<A, B> =

@@ -2,11 +2,11 @@ package com.sksamuel.tabby.io
 
 import com.sksamuel.tabby.Either
 import com.sksamuel.tabby.either
+import com.sksamuel.tabby.filter
 import com.sksamuel.tabby.flatMap
 import com.sksamuel.tabby.flatMapLeft
 import com.sksamuel.tabby.flatten
 import com.sksamuel.tabby.left
-import com.sksamuel.tabby.recover
 import com.sksamuel.tabby.right
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.TimeoutCancellationException
@@ -250,7 +250,14 @@ abstract class IO<out E, out T> {
 }
 
 /**
- * Recovers from an error by executing the provided function, otherwise returns this
+ * Fails with [elseIf] if the predicate fails.
+ */
+fun <E, T> IO<E, T>.filterOrFail(p: (T) -> Boolean, elseIf: (T) -> E): IO<E, T> = object : IO<E, T>() {
+   override suspend fun apply(): Either<E, T> = this@filterOrFail.apply().filter(p, elseIf)
+}
+
+/**
+ * Recovers from an error by executing the provided function, otherwise returns this.
  */
 fun <E, T> IO<E, T>.recover(f: (E) -> IO<E, T>): IO<E, T> = object : IO<E, T>() {
    override suspend fun apply(): Either<E, T> = this@recover.apply().fold({ f(it).apply() }, { it.right() })
