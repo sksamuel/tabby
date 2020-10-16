@@ -80,6 +80,18 @@ abstract class IO<out E, out T> {
       override suspend fun apply(): Either<E, T> = withContext(context) { io.apply() }
    }
 
+   class WrapEither<E, T>(private val either: Either<E, T>) : IO<E, T>() {
+      override suspend fun apply(): Either<E, T> = either
+   }
+
+   class CollectSuccess<E, T>(private val effects: List<IO<E, T>>) : UIO<List<T>>() {
+      override suspend fun apply(): Either<Nothing, List<T>> {
+         return effects.fold(emptyList<T>()) { acc, op ->
+            op.apply().fold({ acc }, { acc + it })
+         }.right()
+      }
+   }
+
    class Zip<E, T, U, V>(private val left: IO<E, T>,
                          private val right: IO<E, U>,
                          private val f: (T, U) -> V) : IO<E, V>() {
@@ -185,6 +197,14 @@ abstract class IO<out E, out T> {
        */
       fun <E, T> cond(predicate: () -> Boolean, success: () -> T, error: () -> E): IO<E, T> =
          if (predicate()) IO.success(success()) else IO.failure(error())
+
+      /**
+       * Evaluate and run each effect in the structure, in sequence,
+       * and collect discarding failed ones.
+       */
+      fun <E, T> collectSuccess(vararg effects: IO<E, T>) = CollectSuccess(effects.asList())
+
+      fun <E, T> either(either: Either<E, T>) = WrapEither(either)
 
       /**
        * Acquires a resource, uses that resource, with a guaranteed release operation.
@@ -334,6 +354,8 @@ inline fun <reified E> IO<*, *>.refineOrDie(): FIO<E> = object : FIO<E>() {
       )
    }
 }
+
+internal val Nil = emptyList<Nothing>()
 
 /**
  * Wraps an Either in an IO.
