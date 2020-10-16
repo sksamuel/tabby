@@ -261,7 +261,8 @@ abstract class IO<out E, out T> {
          while (result.isRight) {
             val delay = scheduler.invoke(result.getRightUnsafe())
             if (delay.isEmpty()) return result else {
-               delay(delay.getUnsafe())
+               if (delay.getUnsafe().inMilliseconds > 0)
+                  delay(delay.getUnsafe())
                result = this@IO.apply()
             }
          }
