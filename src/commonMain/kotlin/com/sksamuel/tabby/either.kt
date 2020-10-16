@@ -109,6 +109,11 @@ inline fun <B> either(f: () -> B): Either<Throwable, B> = Try(f).toEither { it }
 inline fun <A, B> Either<A, B>.recover(ifLeft: (A) -> B): Either<A, B> =
    fold({ ifLeft(it).right() }, { this })
 
+inline fun <A, B> Either<A, B>.recoverWith(ifLeft: (A) -> Either<A, B>): Either<A, B> = when (this) {
+   is Either.Left -> ifLeft(this.a)
+   is Either.Right -> this
+}
+
 fun <A, B> Either<A, Either<A, B>>.flatten(): Either<A, B> = when (this) {
    is Either.Left -> this
    is Either.Right -> b
