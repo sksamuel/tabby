@@ -51,10 +51,7 @@ interface Schedule {
 fun Schedule.delay(interval: Duration): Schedule = object : Schedule {
    override suspend fun <T> schedule(): (T) -> Option<Duration> {
       val underlying = this@delay.schedule<T>()
-      return { t ->
-         delay(interval)
-         underlying(t)
-      }
+      return { t -> underlying(t).map { it + interval } }
    }
 }
 
