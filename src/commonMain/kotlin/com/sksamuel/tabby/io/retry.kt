@@ -12,20 +12,20 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
 
 @OptIn(ExperimentalTime::class)
-interface Schedule {
+interface Schedule<in T> {
 
    /**
     * Returns a function, which is used to determine when, or if, to re-run the effect.
     * If none is returned, then the scheduling will conclude.
     * The function will be passed the output of the previous execution.
     */
-   suspend fun <T> schedule(): (T) -> Option<Duration>
+   suspend fun schedule(): (T) -> Option<Duration>
 
    /**
     * Execute once after the initial run.
     */
-   object Once : Schedule {
-      override suspend fun <T> schedule(): (T) -> Option<Duration> {
+   object Once : Schedule<Any> {
+      override suspend fun schedule(): (Any) -> Option<Duration> {
          var ran = false
          return {
             if (ran) none else {
@@ -39,8 +39,8 @@ interface Schedule {
    /**
     * Executes forever, until the first error.
     */
-   object Forever : Schedule {
-      override suspend fun <T> schedule(): (T) -> Option<Duration> = { 0.milliseconds.some() }
+   object Forever : Schedule<Any> {
+      override suspend fun schedule(): (Any) -> Option<Duration> = { 0.milliseconds.some() }
    }
 }
 
@@ -48,10 +48,16 @@ interface Schedule {
  * Introduce a delay to this scheduler, adding [interval] between executions.
  */
 @OptIn(ExperimentalTime::class)
-fun Schedule.delay(interval: Duration): Schedule = object : Schedule {
-   override suspend fun <T> schedule(): (T) -> Option<Duration> {
-      val underlying = this@delay.schedule<T>()
-      return { t -> underlying(t).map { it + interval } }
+fun <T> Schedule<T>.delay(interval: Duration): Schedule<T> = delay { interval }
+
+/**
+ * Introduce a delay to this scheduler, invoking the given function to calculate the delay
+ */
+@OptIn(ExperimentalTime::class)
+fun <T> Schedule<T>.delay(interval: (T) -> Duration): Schedule<T> = object : Schedule<T> {
+   override suspend fun schedule(): (T) -> Option<Duration> {
+      val underlying = this@delay.schedule()
+      return { t -> underlying(t).map { it + interval(t) } }
    }
 }
 

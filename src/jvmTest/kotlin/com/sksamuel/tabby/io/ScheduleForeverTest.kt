@@ -34,5 +34,21 @@ class ScheduleForeverTest : FunSpec() {
          counter shouldBe 10
          duration.shouldBeBetween(750, 1250)
       }
+
+
+      test("schedule forever should run until an error with added delay from function") {
+         var counter = 0
+         val start = System.currentTimeMillis()
+         val effect = IO.effect {
+            counter++
+            if (counter == 10)
+               error("stop")
+            counter
+         }
+         effect.repeat(Schedule.Forever.delay<Int> { (it * 25).milliseconds }).run()
+         val duration = System.currentTimeMillis() - start
+         counter shouldBe 10
+         duration.shouldBeBetween(925, 1325)
+      }
    }
 }

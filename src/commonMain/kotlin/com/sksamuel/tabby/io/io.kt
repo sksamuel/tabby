@@ -248,10 +248,10 @@ abstract class IO<out E, out T> {
     * additional time.
     */
    @OptIn(ExperimentalTime::class)
-   fun repeat(schedule: Schedule): IO<E, T> = object : IO<E, T>() {
+   fun repeat(schedule: Schedule<T>): IO<E, T> = object : IO<E, T>() {
       override suspend fun apply(): Either<E, T> {
          var result: Either<E, T> = this@IO.apply()
-         val scheduler = schedule.schedule<T>()
+         val scheduler = schedule.schedule()
          while (result.isRight) {
             val delay = scheduler.invoke(result.getRightUnsafe())
             if (delay.isEmpty()) return result else {
