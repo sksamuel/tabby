@@ -71,16 +71,16 @@ fun interface Schedule<in A> {
          val next = whileTrue(test)
          if (test(it)) Decision.Continue(none, next) else halt()
       }
-   }
 
-   /**
-    * Returns a new schedule that recurs k times.
-    */
-   fun <T> attempts(k: Int): Schedule<T> {
-      fun loop(counter: Int): Schedule<T> = Schedule {
-         if (counter < k) Decision.Continue(none, loop(counter + 1)) else halt()
+      /**
+       * Returns a new schedule that repeats k times.
+       */
+      fun <T> iterations(k: Int): Schedule<T> {
+         fun loop(counter: Int): Schedule<T> = Schedule {
+            if (counter < k) Decision.Continue(none, loop(counter + 1)) else halt()
+         }
+         return loop(0)
       }
-      return loop(0)
    }
 }
 

@@ -5,6 +5,9 @@ import com.sksamuel.tabby.left
 import com.sksamuel.tabby.right
 import kotlinx.coroutines.delay
 
+/**
+ * Retries this effect while it is an error, using the given schedule.
+ */
 fun <E, T> IO<E, T>.retryN(attempts: Int, interval: Long): IO<E, T> {
    require(attempts > 0)
    return object : IO<E, T>() {
