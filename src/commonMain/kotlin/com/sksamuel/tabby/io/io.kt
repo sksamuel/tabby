@@ -214,9 +214,9 @@ abstract class IO<out E, out T> {
        * Evaluate and run each effect in the structure, in sequence,
        * and collect discarding failed ones.
        */
-      fun <E, T> collectSuccess(vararg effects: IO<E, T>) = CollectSuccess(effects.asList())
+      fun <E, T> collectSuccess(vararg effects: IO<E, T>): Task<List<T>> = CollectSuccess(effects.asList())
 
-      fun <E, T> collectSuccess(effects: List<IO<E, T>>) = CollectSuccess(effects)
+      fun <E, T> collectSuccess(effects: List<IO<E, T>>): Task<List<T>> = CollectSuccess(effects)
 
       fun <E, T> either(either: Either<E, T>) = WrapEither(either)
 
@@ -229,23 +229,23 @@ abstract class IO<out E, out T> {
       fun <E, A, B, C> zip(first: IO<E, A>, second: IO<E, B>, f: (A, B) -> C): IO<E, C> =
          first.zip(second, f)
 
-//      /**
-//       * Reduces IOs using the supplied function, working sequentially, or returns the
-//       * first failure.
-//       */
-//      fun <E, T> reduceAll(first: IO<E, T>, vararg rest: IO<E, T>, f: (T, T) -> T): IO<E, T> = object : IO<E, T>() {
-//         override suspend fun apply(): Either<E, T> {
-//            if (rest.isEmpty()) return first.apply()
-//            val a = first.apply()
-//            if (a.isLeft) return a
-//            rest.forEach { b ->
-//               when (val bresult = b.apply()) {
-//                  is Either.Left -> return bresult
-//                  is Either.Right ->
-//               }
-//            }
-//         }
-//      }
+      /**
+       * Reduces IOs using the supplied function, working sequentially, or returns the
+       * first failure.
+       */
+      fun <E, T> reduce(first: IO<E, T>, vararg rest: IO<E, T>, f: (T, T) -> T): IO<E, T> = object : IO<E, T>() {
+         override suspend fun apply(): Either<E, T> {
+            if (rest.isEmpty()) return first.apply()
+            var acc = first.apply().fold({ return it.left() }, { it })
+            rest.forEach { op ->
+               when (val result = op.apply()) {
+                  is Either.Left -> return result
+                  is Either.Right -> acc = f(acc, result.b)
+               }
+            }
+            return acc.right()
+         }
+      }
 
       fun <E, T> par(vararg ios: IO<E, T>): IO<E, List<T>> = object : IO<E, List<T>>() {
          override suspend fun apply(): Either<E, List<T>> {
@@ -302,6 +302,13 @@ abstract class IO<out E, out T> {
       return withContext(dispatcher) {
          this@IO.apply()
       }
+   }
+
+   /**
+    * Ignores any success value, returning an effect that producess Unit.
+    */
+   fun unit(): IO<E, Unit> = object : IO<E, Unit>() {
+      override suspend fun apply(): Either<E, Unit> = this@IO.apply().map { Unit }
    }
 }
 
@@ -395,9 +402,11 @@ inline fun <reified E> IO<*, *>.refineOrDie(): FIO<E> = object : FIO<E>() {
    }
 }
 
+fun <T, U> Task<T>.mapEffect(f: (T) -> U): Task<U> = flatMap { t -> IO.effect { f(t) } }
+
 internal val Nil = emptyList<Nothing>()
 
-fun <E, T> List<IO<E, T>>.collectSuccess() = IO.collectSuccess(this)
+fun <E, T> List<IO<E, T>>.collectSuccess(): Task<List<T>> = IO.collectSuccess(this)
 
 /**
  * Wraps an Either in an IO.
