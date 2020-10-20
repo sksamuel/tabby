@@ -9,21 +9,21 @@ import kotlin.time.ExperimentalTime
 class ScheduleWhileTest : FunSpec() {
    init {
 
-      test("schedule while should run while predicate is true") {
+      test("Schedule.whileState should run while predicate is true") {
          val counter = AtomicInteger(0)
          val effect = IO.effect { counter.incrementAndGet() }
-         effect.repeat(Schedule.While { it < 10 }).run()
+         effect.repeat(Schedule.whileState { it < 10 }).run()
          counter.get() shouldBe 10
       }
 
-      test("schedule while should run while predicate is true or an error is reached") {
+      test("Schedule.whileState should run while predicate is true or an error is reached") {
          var counter = 0
          val effect = IO.effect {
             counter++
             if (counter == 5) error("boom")
             counter
          }
-         effect.repeat(Schedule.While { it < 10 }).run()
+         effect.repeat(Schedule.whileState { it < 10 }).run()
          counter shouldBe 5
       }
    }

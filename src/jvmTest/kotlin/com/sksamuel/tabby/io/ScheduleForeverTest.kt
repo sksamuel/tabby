@@ -44,7 +44,7 @@ class ScheduleForeverTest : FunSpec() {
                error("stop")
             counter
          }
-         effect.repeat(Schedule.Forever.delay<Int> { (it * 25).milliseconds }).run()
+         effect.repeat(Schedule.Forever.delay { (it * 25).milliseconds }).run()
          val duration = System.currentTimeMillis() - start
          counter shouldBe 10
          duration.shouldBeBetween(925, 1325)
@@ -59,7 +59,7 @@ class ScheduleForeverTest : FunSpec() {
                error("stop")
             counter
          }
-         effect.repeat(Schedule.Forever.delayIf<Int>(100.milliseconds) { it < 3 }).run()
+         effect.repeat(Schedule.Forever.delayIf(100.milliseconds) { it < 3 }).run()
          val duration = System.currentTimeMillis() - start
          counter shouldBe 10
          duration.shouldBeBetween(100, 350)

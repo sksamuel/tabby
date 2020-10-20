@@ -6,7 +6,6 @@ import com.sksamuel.tabby.filter
 import com.sksamuel.tabby.flatMap
 import com.sksamuel.tabby.flatMapLeft
 import com.sksamuel.tabby.flatten
-import com.sksamuel.tabby.getRightOrElse
 import com.sksamuel.tabby.left
 import com.sksamuel.tabby.right
 import kotlinx.coroutines.CoroutineDispatcher
@@ -254,16 +253,16 @@ abstract class IO<out E, out T> {
     * additional time.
     */
    @OptIn(ExperimentalTime::class)
-   fun repeat(schedule: Schedule<T>): IO<E, T> = object : IO<E, T>() {
+   fun repeat(schedule: Schedule<T, Any>): IO<E, T> = object : IO<E, T>() {
       override suspend fun apply(): Either<E, T> {
          var result: Either<E, T> = this@IO.apply()
-         val scheduler = schedule.schedule()
+         var next = schedule
          while (result.isRight) {
-            val delay = scheduler.invoke(result.getRightUnsafe())
-            if (delay.isEmpty()) return result else {
-               if (delay.getUnsafe().inMilliseconds > 0)
-                  delay(delay.getUnsafe())
+            val decision = next.invoke(result.getRightUnsafe())
+            if (decision is Decision.Continue) {
+               decision.duration.forEach { delay(it) }
                result = this@IO.apply()
+               next = decision.next
             }
          }
          return result
