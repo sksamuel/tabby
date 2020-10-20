@@ -1,52 +1,39 @@
-//package com.sksamuel.tabby.io
-//
-//import com.sksamuel.tabby.right
-//import io.kotest.core.spec.style.FunSpec
-//import io.kotest.matchers.longs.shouldBeGreaterThanOrEqual
-//import io.kotest.matchers.shouldBe
-//
-//class RetryTest : FunSpec() {
-//   init {
-//
-//      test("io retry should be invoked up to max times") {
-//         var iterations = 0
-//         IO.effect {
-//            iterations++
-//            error("boom")
-//         }.retry(5, 10).run()
-//         iterations shouldBe 5
-//      }
-//
-//      test("io retry should return if successful") {
-//         var iterations = 0
-//         IO.effect {
-//            iterations++
-//            "foo"
-//         }.retry(5, 10).run() shouldBe "foo".right()
-//         iterations shouldBe 1
-//      }
-//
-//      test("io retry should not retry once successful") {
-//         var iterations = 0
-//         IO.effect {
-//            iterations++
-//            if (iterations > 2)
-//               "foo"
-//            else
-//               error("boom")
-//         }.retry(5, 10).run()
-//         iterations shouldBe 3
-//      }
-//
-//      test("io should delay between attempts") {
-//         var iterations = 0
-//         val start = 0
-//         IO.effect {
-//            iterations++
-//            error("boom")
-//         }.retry(5, 250).run()
-//         iterations shouldBe 5
-//         System.currentTimeMillis() - start shouldBeGreaterThanOrEqual 250 * 5
-//      }
-//   }
-//}
+package com.sksamuel.tabby.io
+
+import com.sksamuel.tabby.none
+import com.sksamuel.tabby.right
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import java.util.concurrent.atomic.AtomicBoolean
+
+class RetryTest : FunSpec() {
+   init {
+
+      test("IO.retry should invoke up to Schedule.iterations") {
+         var iterations = 0
+         IO.effect {
+            iterations++
+            error("boom")
+         }.retry(Schedule.iterations(5)).run().getLeftUnsafe().message shouldBe "boom"
+         iterations shouldBe 6
+      }
+
+      test("IO.retry should return once successful") {
+         var iterations = 0
+         IO.effect {
+            iterations++
+            if (iterations == 5) "foo" else error("boom")
+         }.retry(Schedule.forever()).run() shouldBe "foo".right()
+         iterations shouldBe 5
+      }
+
+      test("IO.retry should not use schedule if successful") {
+         val triggered = AtomicBoolean(false)
+         IO.effect { "foo" }.retry {
+            triggered.set(true)
+            Decision.Continue(none, Schedule.forever())
+         }.run()
+         triggered.get() shouldBe false
+      }
+   }
+}

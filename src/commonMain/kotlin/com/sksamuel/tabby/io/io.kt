@@ -245,32 +245,6 @@ abstract class IO<out E, out T> {
       }
    }
 
-   /**
-    * Returns a new effect that repeats this effect according to the specified
-    * schedule or until the first failure. Scheduled recurrences are in addition
-    * to the first execution, so that `io.repeat(Schedule.once)` yields an
-    * effect that executes `io`, and then if that succeeds, executes `io` an
-    * additional time.
-    */
-   @OptIn(ExperimentalTime::class)
-   fun repeat(schedule: Schedule<T>): IO<E, T> = object : IO<E, T>() {
-      override suspend fun apply(): Either<E, T> {
-         var result: Either<E, T> = this@IO.apply()
-         var next = schedule
-         while (result.isRight) {
-            when (val decision = next.invoke(result.getRightUnsafe())) {
-               is Decision.Continue -> {
-                  decision.duration.forEach { delay(it) }
-                  result = this@IO.apply()
-                  next = decision.next
-               }
-               is Decision.Halt -> return result
-            }
-         }
-         return result
-      }
-   }
-
    fun <U> map(f: (T) -> U): IO<E, U> = FlatMap({ f(it).success() }, this)
 
    /**

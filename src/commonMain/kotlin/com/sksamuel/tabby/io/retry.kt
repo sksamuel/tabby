@@ -1,29 +1,28 @@
 package com.sksamuel.tabby.io
 
 import com.sksamuel.tabby.Either
-import com.sksamuel.tabby.left
-import com.sksamuel.tabby.right
 import kotlinx.coroutines.delay
+import kotlin.time.ExperimentalTime
 
 /**
  * Retries this effect while it is an error, using the given schedule.
  */
-fun <E, T> IO<E, T>.retryN(attempts: Int, interval: Long): IO<E, T> {
-   require(attempts > 0)
-   return object : IO<E, T>() {
-      override suspend fun apply(): Either<E, T> = attempt(attempts - 1)
-      private suspend fun attempt(remaining: Int): Either<E, T> {
-         return this@retryN.apply().fold(
-            {
-               if (remaining > 0) {
-                  delay(interval)
-                  attempt(remaining - 1)
-               } else {
-                  it.left()
-               }
-            },
-            { it.right() }
-         )
+@OptIn(ExperimentalTime::class)
+fun <E, T> IO<E, T>.retry(schedule: Schedule<E>): IO<E, T> = object : IO<E, T>() {
+
+   override suspend fun apply(): Either<E, T> {
+      var result: Either<E, T> = this@retry.apply()
+      var next = schedule
+      while (result.isLeft) {
+         when (val decision = next.invoke(result.getLeftUnsafe())) {
+            is Decision.Continue -> {
+               decision.duration.forEach { delay(it) }
+               result = this@retry.apply()
+               next = decision.next
+            }
+            is Decision.Halt -> return result
+         }
       }
+      return result
    }
 }
