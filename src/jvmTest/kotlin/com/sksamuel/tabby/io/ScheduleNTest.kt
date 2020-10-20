@@ -1,8 +1,12 @@
 package com.sksamuel.tabby.io
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.longs.shouldBeBetween
 import io.kotest.matchers.shouldBe
+import kotlin.time.ExperimentalTime
+import kotlin.time.milliseconds
 
+@OptIn(ExperimentalTime::class)
 class ScheduleNTest : FunSpec() {
    init {
 
@@ -28,6 +32,16 @@ class ScheduleNTest : FunSpec() {
          val effect = IO.effect { counter++ }
          effect.repeat(Schedule.iterations(8)).run()
          counter shouldBe 9
+      }
+
+      test("Schedule.iterations with delay") {
+         var counter = 0
+         val start = System.currentTimeMillis()
+         val effect = IO.effect { counter++ }
+         effect.repeat(Schedule.iterations<Int>(5).delay(75.milliseconds)).run()
+         counter shouldBe 6
+         val duration = System.currentTimeMillis() - start
+         duration.shouldBeBetween(275, 475)
       }
    }
 }

@@ -1,10 +1,12 @@
 package com.sksamuel.tabby.io
 
 import com.sksamuel.tabby.Option
+import com.sksamuel.tabby.getOrElse
 import com.sksamuel.tabby.none
 import com.sksamuel.tabby.some
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
+import kotlin.time.milliseconds
 
 @OptIn(ExperimentalTime::class)
 sealed class Decision<in A> {
@@ -18,19 +20,22 @@ sealed class Decision<in A> {
     * A decision to re-run the effect after the optional delay.
     * A schedule must be provided to evaluate the next loop.
     */
-   data class Continue<in Result>(val duration: Option<Duration>,
-                                  val next: Schedule<Result>) : Decision<Result>()
+   data class Continue<in A>(val duration: Option<Duration>,
+                             val next: Schedule<A>) : Decision<A>()
 
-   fun plusDuration(plus: Duration): Decision<A> = when (this) {
-      is Continue -> Continue(this.duration.map { it + plus }, this.next)
-      is Halt -> this
+   fun plusDuration(plus: Duration): Decision<A> {
+      println("Adding duration $plus")
+      return when (this) {
+         is Continue -> Continue(this.duration.map { it + plus }, this.next)
+         is Halt -> this
+      }
    }
 }
 
 @OptIn(ExperimentalTime::class)
 fun interface Schedule<in A> {
 
-   operator fun invoke(result: A): Decision<A>
+   fun invoke(result: A): Decision<A>
 
    companion object {
 
@@ -90,17 +95,6 @@ private fun <K> unfold(initial: K, f: (K) -> K): Schedule<K> {
 }
 
 /**
- * Returns a new schedule that decorates this schedule, continuing as long the decorated schedule
- * returns true, and while the given test on the result evaluates to true.
- */
-fun <A> Schedule<A>.whileTrue(test: (A) -> Boolean): Schedule<A> = Schedule {
-   when (val decision = this@whileTrue.invoke(it)) {
-      is Decision.Halt -> decision
-      is Decision.Continue -> if (test(it)) Decision.Continue(decision.duration, whileTrue(test)) else Schedule.halt()
-   }
-}
-
-/**
  * Returns a new schedule that decorates this schedule, adding the given delay to each decision to continue.
  */
 @OptIn(ExperimentalTime::class)
@@ -111,7 +105,15 @@ fun <A> Schedule<A>.delay(duration: Duration): Schedule<A> = delay { duration }
  * function to each decision to continue.
  */
 @OptIn(ExperimentalTime::class)
-fun <A> Schedule<A>.delay(f: (A) -> Duration): Schedule<A> = Schedule { this@delay(it).plusDuration(f(it)) }
+fun <A> Schedule<A>.delay(f: (A) -> Duration): Schedule<A> = Schedule<A> { result ->
+   when (val d = this@delay.invoke(result)) {
+      is Decision.Halt -> d
+      is Decision.Continue -> {
+         val duration = d.duration.getOrElse(0.milliseconds) + f(result)
+         Decision.Continue(duration.some(), d.next.delay(f))
+      }
+   }
+}
 
 /**
  * Returns a new schedule that decorates this schedule, adding a delay if the test evaluates to true,

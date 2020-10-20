@@ -229,6 +229,24 @@ abstract class IO<out E, out T> {
       fun <E, A, B, C> zip(first: IO<E, A>, second: IO<E, B>, f: (A, B) -> C): IO<E, C> =
          first.zip(second, f)
 
+//      /**
+//       * Reduces IOs using the supplied function, working sequentially, or returns the
+//       * first failure.
+//       */
+//      fun <E, T> reduceAll(first: IO<E, T>, vararg rest: IO<E, T>, f: (T, T) -> T): IO<E, T> = object : IO<E, T>() {
+//         override suspend fun apply(): Either<E, T> {
+//            if (rest.isEmpty()) return first.apply()
+//            val a = first.apply()
+//            if (a.isLeft) return a
+//            rest.forEach { b ->
+//               when (val bresult = b.apply()) {
+//                  is Either.Left -> return bresult
+//                  is Either.Right ->
+//               }
+//            }
+//         }
+//      }
+
       fun <E, T> par(vararg ios: IO<E, T>): IO<E, List<T>> = object : IO<E, List<T>>() {
          override suspend fun apply(): Either<E, List<T>> {
             return try {
