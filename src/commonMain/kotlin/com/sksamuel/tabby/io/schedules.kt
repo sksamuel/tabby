@@ -4,9 +4,11 @@ import com.sksamuel.tabby.Option
 import com.sksamuel.tabby.getOrElse
 import com.sksamuel.tabby.none
 import com.sksamuel.tabby.some
+import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
+import kotlin.time.nanoseconds
 
 @OptIn(ExperimentalTime::class)
 sealed class Decision<in A> {
@@ -94,11 +96,37 @@ private fun <K> unfold(initial: K, f: (K) -> K): Schedule<K> {
    return loop(initial)
 }
 
+
+/**
+ * Returns a new [Schedule] that randomly modifies the size of the intervals of this schedule.
+ */
+fun <A> Schedule<A>.jittered(): Schedule<A> = jittered(0.0, 2.0)
+
+/**
+ * Returns a new [Schedule] that randomly modifies the size of the intervals of this schedule.
+ */
+@OptIn(ExperimentalTime::class)
+fun <A> Schedule<A>.jittered(min: Double, max: Double): Schedule<A> = delayM { duration ->
+   duration.map { (it.inNanoseconds * Random.nextDouble(min, max)).nanoseconds }
+}
+
 /**
  * Returns a new schedule that decorates this schedule, adding the given delay to each decision to continue.
  */
 @OptIn(ExperimentalTime::class)
 fun <A> Schedule<A>.delay(duration: Duration): Schedule<A> = delay { duration }
+
+/**
+ * Returns a new schedule that decorates this schedule by modifiying the existing delay (if any) using
+ * the given function.
+ */
+@OptIn(ExperimentalTime::class)
+fun <A> Schedule<A>.delayM(f: (Option<Duration>) -> Option<Duration>): Schedule<A> = Schedule<A> { result ->
+   when (val d = this@delayM.invoke(result)) {
+      is Decision.Halt -> d
+      is Decision.Continue -> Decision.Continue(f(d.duration), d.next.delayM(f))
+   }
+}
 
 /**
  * Returns a new schedule that decorates this schedule, adding the delay returned from the specified
