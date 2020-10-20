@@ -253,16 +253,18 @@ abstract class IO<out E, out T> {
     * additional time.
     */
    @OptIn(ExperimentalTime::class)
-   fun repeat(schedule: Schedule<T, Any>): IO<E, T> = object : IO<E, T>() {
+   fun repeat(schedule: Schedule<T>): IO<E, T> = object : IO<E, T>() {
       override suspend fun apply(): Either<E, T> {
          var result: Either<E, T> = this@IO.apply()
          var next = schedule
          while (result.isRight) {
-            val decision = next.invoke(result.getRightUnsafe())
-            if (decision is Decision.Continue) {
-               decision.duration.forEach { delay(it) }
-               result = this@IO.apply()
-               next = decision.next
+            when (val decision = next.invoke(result.getRightUnsafe())) {
+               is Decision.Continue -> {
+                  decision.duration.forEach { delay(it) }
+                  result = this@IO.apply()
+                  next = decision.next
+               }
+               is Decision.Halt -> return result
             }
          }
          return result

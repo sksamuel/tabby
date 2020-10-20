@@ -9,7 +9,7 @@ class ScheduleOnceTest : FunSpec() {
       test("schedule once should run the effect twice, if the initial is successful") {
          var counter = 0
          val effect = IO.effect { counter++ }
-         effect.repeat(Schedule.Once).run()
+         effect.repeat(Schedule.once()).run()
          counter shouldBe 2
       }
 
@@ -17,9 +17,9 @@ class ScheduleOnceTest : FunSpec() {
          var counter = 0
          val effect = IO.effect {
             counter++
-            error("Boom")
+            error("Boom") // failure here means no repeat
          }
-         effect.repeat(Schedule.Once).run()
+         effect.repeat(Schedule.once()).run()
          counter shouldBe 1
       }
    }
