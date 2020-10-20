@@ -158,6 +158,11 @@ abstract class IO<out E, out T> {
       override suspend fun apply(): Either<E, T> = this@IO.apply().onRight { f(it) }
    }
 
+   /**
+    * Alias for forEach
+    */
+   fun onSuccess(f: (T) -> Unit): IO<E, T> = forEach(f)
+
    companion object {
 
       /**
