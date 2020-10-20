@@ -397,6 +397,8 @@ inline fun <reified E> IO<*, *>.refineOrDie(): FIO<E> = object : FIO<E>() {
 
 internal val Nil = emptyList<Nothing>()
 
+fun <E, T> List<IO<E, T>>.collectSuccess() = IO.collectSuccess(this)
+
 /**
  * Wraps an Either in an IO.
  */
