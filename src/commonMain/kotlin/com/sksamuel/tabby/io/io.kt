@@ -13,11 +13,9 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.CoroutineContext
-import kotlin.time.ExperimentalTime
 
 /**
  * A value of type IO[E, T] describes an effect that may fail with an E, run forever, or produce a single T.
@@ -217,6 +215,8 @@ abstract class IO<out E, out T> {
        * and collect discarding failed ones.
        */
       fun <E, T> collectSuccess(vararg effects: IO<E, T>) = CollectSuccess(effects.asList())
+
+      fun <E, T> collectSuccess(effects: List<IO<E, T>>) = CollectSuccess(effects)
 
       fun <E, T> either(either: Either<E, T>) = WrapEither(either)
 
