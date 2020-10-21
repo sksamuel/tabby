@@ -442,7 +442,16 @@ inline fun <reified E> IO<*, *>.refineOrDie(): FIO<E> = object : FIO<E>() {
    }
 }
 
-fun <T, U> Task<T>.mapEffect(f: (T) -> U): Task<U> = flatMap { t -> IO.effect { f(t) } }
+
+/**
+ * Returns an effect which applies the given side effecting function to it's success,
+ * wrapping the supplied function in an effect before execution.
+ *
+ * In other words, this is a shorthand for the following.
+ *
+ * task.flatMap { IO.effect { f(it) } }
+ */
+fun <T, U> Task<T>.mapEffect(f: suspend (T) -> U): Task<U> = flatMap { t -> IO.effect { f(t) } }
 
 internal val Nil = emptyList<Nothing>()
 
