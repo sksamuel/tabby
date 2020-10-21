@@ -226,8 +226,6 @@ abstract class IO<out E, out T> {
       fun <T, U> bracket(acquire: () -> T, use: (T) -> U, release: (T) -> Unit): Task<U> =
          Bracket(acquire, use, release)
 
-      fun <E, A, B, C> zip(first: IO<E, A>, second: IO<E, B>, f: (A, B) -> C): IO<E, C> =
-         first.zip(second, f)
 
       /**
        * Reduces IOs using the supplied function, working sequentially, or returns the
@@ -246,6 +244,46 @@ abstract class IO<out E, out T> {
             return acc.right()
          }
       }
+
+      fun <E, A, B, R> mapN(first: IO<E, A>, second: IO<E, B>, f: (A, B) -> R): IO<E, R> = object : IO<E, R>() {
+         override suspend fun apply(): Either<E, R> {
+            return first.apply().flatMap { a -> second.apply().map { b -> f(a, b) } }
+         }
+      }
+
+      fun <E, A, B, C, R> mapN(first: IO<E, A>,
+                               second: IO<E, B>,
+                               third: IO<E, C>,
+                               f: (A, B, C) -> R): IO<E, R> = object : IO<E, R>() {
+         override suspend fun apply(): Either<E, R> {
+            return first.apply().flatMap { a ->
+               second.apply().flatMap { b ->
+                  third.apply().map { c ->
+                     f(a, b, c)
+                  }
+               }
+            }
+         }
+      }
+
+      fun <E, A, B, C, D, R> mapN(first: IO<E, A>,
+                                  second: IO<E, B>,
+                                  third: IO<E, C>,
+                                  fourth: IO<E, D>,
+                                  f: (A, B, C, D) -> R): IO<E, R> = object : IO<E, R>() {
+         override suspend fun apply(): Either<E, R> {
+            return first.apply().flatMap { a ->
+               second.apply().flatMap { b ->
+                  third.apply().flatMap { c ->
+                     fourth.apply().map { d ->
+                        f(a, b, c, d)
+                     }
+                  }
+               }
+            }
+         }
+      }
+
 
       fun <E, T> par(vararg ios: IO<E, T>): IO<E, List<T>> = object : IO<E, List<T>>() {
          override suspend fun apply(): Either<E, List<T>> {
@@ -373,17 +411,9 @@ fun <E, T> IO<E, T>.fail(ifSuccess: (T) -> E): FIO<E> = object : IO<E, Nothing>(
 fun <T> T.success(): UIO<T> = IO.success(this)
 fun <E> E.failure(): FIO<E> = IO.failure(this)
 
-fun <E, T, U, V> IO<E, T>.zip(other: IO<E, U>, f: (T, U) -> V): IO<E, V> = IO.Zip(this, other, f)
-
-fun <E, U, V> IO<E, *>.zipRight(other: IO<E, U>, f: (U) -> V): IO<E, V> = object : IO<E, V>() {
-   override suspend fun apply(): Either<E, V> = this@zipRight.apply().flatMap {
-      other.apply().map(f)
-   }
-}
-
-fun <E, T, V> IO<E, T>.zipLeft(other: IO<E, *>, f: (T) -> V): IO<E, V> = object : IO<E, V>() {
-   override suspend fun apply(): Either<E, V> = this@zipLeft.apply().flatMap { t ->
-      other.apply().map { f(t) }
+fun <E, A, B> IO<E, A>.zip(other: IO<E, B>): IO<E, Pair<A, B>> = object : IO<E, Pair<A, B>>() {
+   override suspend fun apply(): Either<E, Pair<A, B>> {
+      return this@zip.apply().flatMap { a -> other.apply().map { b -> Pair(a, b) } }
    }
 }
 
