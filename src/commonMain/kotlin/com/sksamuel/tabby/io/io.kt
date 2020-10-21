@@ -349,11 +349,16 @@ abstract class IO<out E, out T> {
    }
 }
 
-fun <E, A, B, R> IO<E, A>.mapN(other: IO<E, B>, f: (A, B) -> R): IO<E, R> = object : IO<E, R>() {
-   override suspend fun apply(): Either<E, R> {
-      return this@mapN.apply().flatMap { a -> other.apply().map { b -> f(a, b) } }
-   }
-}
+fun <E, A, B, R> IO<E, A>.mapN(other: IO<E, B>, f: (A, B) -> R): IO<E, R> = IO.mapN(this, other, f)
+
+fun <E, A, B, C, R> IO<E, A>.mapN(second: IO<E, B>, third: IO<E, C>, f: (A, B, C) -> R): IO<E, R> =
+   IO.mapN(this, second, third, f)
+
+fun <E, A, B, C, D, R> IO<E, A>.mapN(second: IO<E, B>,
+                                     third: IO<E, C>,
+                                     fourth: IO<E, D>,
+                                     f: (A, B, C, D) -> R): IO<E, R> =
+   IO.mapN(this, second, third, fourth, f)
 
 /**
  * Fails with [elseIf] if the predicate fails.
