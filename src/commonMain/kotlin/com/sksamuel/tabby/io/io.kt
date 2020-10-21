@@ -226,7 +226,6 @@ abstract class IO<out E, out T> {
       fun <T, U> bracket(acquire: () -> T, use: (T) -> U, release: (T) -> Unit): Task<U> =
          Bracket(acquire, use, release)
 
-
       /**
        * Reduces IOs using the supplied function, working sequentially, or returns the
        * first failure.
@@ -347,6 +346,12 @@ abstract class IO<out E, out T> {
     */
    fun unit(): IO<E, Unit> = object : IO<E, Unit>() {
       override suspend fun apply(): Either<E, Unit> = this@IO.apply().map { Unit }
+   }
+}
+
+fun <E, A, B, R> IO<E, A>.mapN(other: IO<E, B>, f: (A, B) -> R): IO<E, R> = object : IO<E, R>() {
+   override suspend fun apply(): Either<E, R> {
+      return this@mapN.apply().flatMap { a -> other.apply().map { b -> f(a, b) } }
    }
 }
 
