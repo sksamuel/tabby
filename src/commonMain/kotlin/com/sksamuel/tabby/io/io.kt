@@ -13,6 +13,8 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.CoroutineContext
@@ -312,6 +314,17 @@ abstract class IO<out E, out T> {
     * Returns this
     */
    fun onError(f: (E) -> Unit): IO<E, T> = OnError(this, f)
+
+   /**
+    * Wraps this IO in a synchronization operation that will ensure the effect
+    * only takes place once a permit is acquired from the given semaphore.
+    *
+    * While waiting to acquire, the effect will suspend.
+    */
+   fun synchronize(semaphore: Semaphore): IO<E, T> = object : IO<E, T>() {
+      override suspend fun apply(): Either<E, T> =
+         semaphore.withPermit { this@IO.apply() }
+   }
 
    fun <E2> mapError(f: (E) -> E2): IO<E2, T> = MapErrorFn(f, this)
 
