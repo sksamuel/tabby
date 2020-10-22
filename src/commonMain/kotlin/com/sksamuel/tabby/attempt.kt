@@ -5,6 +5,7 @@ interface Err
 data class ThrowableErr(val throwable: Throwable) : Err
 data class StringErr(val msg: String) : Err
 
+@Deprecated("use IO")
 sealed class Attempt<out A> : Optional<A> {
 
    data class Success<T>(val value: T) : Attempt<T>()
@@ -54,7 +55,8 @@ sealed class Attempt<out A> : Optional<A> {
    }
 }
 
-fun <T> T?.toAttempt(ifNull: () -> Err): Attempt<T> = if (this == null) Attempt.Failure(ifNull()) else Attempt.Success(this)
+fun <T> T?.toAttempt(ifNull: () -> Err): Attempt<T> = if (this == null) Attempt.Failure(ifNull()) else Attempt.Success(
+   this)
 
 fun <T> Attempt<Attempt<T>>.flatten(): Attempt<T> {
    return when (this) {

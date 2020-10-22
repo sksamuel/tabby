@@ -217,6 +217,7 @@ abstract class IO<out E, out T> {
        * effects fails, this effect will fail and any successes will be dropped.
        */
       fun <E, T> traverse(vararg effects: IO<E, T>): IO<E, List<T>> = traverse(effects.asList())
+
       fun <E, T> traverse(effects: List<IO<E, T>>): IO<E, List<T>> = object : IO<E, List<T>>() {
          override suspend fun apply(): Either<E, List<T>> {
             return effects.fold(emptyList<T>()) { acc, effect ->
@@ -396,6 +397,8 @@ fun <E, T> IO<E, T>.filterOrFail(p: (T) -> Boolean, elseIf: (T) -> E): IO<E, T> 
    override suspend fun apply(): Either<E, T> = this@filterOrFail.apply().filter(p, elseIf)
 }
 
+fun <E, T> List<IO<E, T>>.traverse(): IO<E, List<T>> = IO.traverse(this)
+
 /**
  * Recovers from an error by using the given function.
  */
@@ -410,6 +413,12 @@ fun <E, T> IO<E, T>.recoverWith(f: (E) -> IO<E, T>): IO<E, T> = object : IO<E, T
 fun <E, T> IO<E, Either<E, T>>.flatten(): IO<E, T> = object : IO<E, T>() {
    override suspend fun apply(): Either<E, T> {
       return this@flatten.apply().flatten()
+   }
+}
+
+fun <E, T> IO<E, IO<E, T>>.flatten(): IO<E, T> = object : IO<E, T>() {
+   override suspend fun apply(): Either<E, T> {
+      return this@flatten.apply().flatMap { it.apply() }
    }
 }
 
