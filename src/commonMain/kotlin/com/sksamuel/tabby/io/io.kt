@@ -18,6 +18,7 @@ import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.CoroutineContext
+import kotlin.jvm.JvmName
 
 /**
  * A value of type IO[E, T] describes an effect that may fail with an E, run forever, or produce a single T.
@@ -410,9 +411,10 @@ fun <E, T> IO<E, T>.recoverWith(f: (E) -> IO<E, T>): IO<E, T> = object : IO<E, T
    override suspend fun apply(): Either<E, T> = this@recoverWith.apply().fold({ f(it).apply() }, { it.right() })
 }
 
-fun <E, T> IO<E, Either<E, T>>.flatten(): IO<E, T> = object : IO<E, T>() {
+@Deprecated("This will be renamed when I think of a better name")
+fun <E, T> IO<E, Either<E, T>>.pull(): IO<E, T> = object : IO<E, T>() {
    override suspend fun apply(): Either<E, T> {
-      return this@flatten.apply().flatten()
+      return this@pull.apply().flatten()
    }
 }
 
