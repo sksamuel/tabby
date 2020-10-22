@@ -213,6 +213,22 @@ abstract class IO<out E, out T> {
          if (predicate()) IO.success(success()) else IO.failure(error())
 
       /**
+       * Returns an effect that contains the results of the given effects. If any of the given
+       * effects fails, this effect will fail and any successes will be dropped.
+       */
+      fun <E, T> traverse(vararg effects: IO<E, T>): IO<E, List<T>> = traverse(effects.asList())
+      fun <E, T> traverse(effects: List<IO<E, T>>): IO<E, List<T>> = object : IO<E, List<T>>() {
+         override suspend fun apply(): Either<E, List<T>> {
+            return effects.fold(emptyList<T>()) { acc, effect ->
+               when (val result = effect.apply()) {
+                  is Either.Left -> return result
+                  is Either.Right -> acc + result.b
+               }
+            }.right()
+         }
+      }
+
+      /**
        * Evaluate and run each effect in the structure, in sequence,
        * and collect discarding failed ones.
        */
