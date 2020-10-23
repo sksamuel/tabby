@@ -19,6 +19,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmName
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
 /**
  * A value of type IO[E, T] describes an effect that may fail with an E, run forever, or produce a single T.
@@ -380,13 +383,29 @@ abstract class IO<out E, out T> {
    }
 
    /**
-    * Returns a memoized version of the specified effectual function.
+    * Returns a memoized version of this effect.
     */
    fun memoize(): IO<E, T> = object : IO<E, T>() {
       var memoized: Any? = null
       override suspend fun apply(): Either<E, T> {
          if (memoized == null) {
             memoized = this@IO.apply()
+         }
+         return memoized as Either<E, T>
+      }
+   }
+
+   /**
+    * Returns a memoized version of this effect that will hold the memoized value for the specified duration.
+    */
+   @OptIn(ExperimentalTime::class)
+   fun memoizeFor(duration: Duration): IO<E, T> = object : IO<E, T>() {
+      var memoized: Any? = null
+      var mark = TimeSource.Monotonic.markNow().plus(duration)
+      override suspend fun apply(): Either<E, T> {
+         if (memoized == null || mark.hasPassedNow()) {
+            memoized = this@IO.apply()
+            mark = TimeSource.Monotonic.markNow().plus(duration)
          }
          return memoized as Either<E, T>
       }
