@@ -378,6 +378,19 @@ abstract class IO<out E, out T> {
    fun unit(): IO<E, Unit> = object : IO<E, Unit>() {
       override suspend fun apply(): Either<E, Unit> = this@IO.apply().map { Unit }
    }
+
+   /**
+    * Returns a memoized version of the specified effectual function.
+    */
+   fun memoize(): IO<E, T> = object : IO<E, T>() {
+      var memoized: Any? = null
+      override suspend fun apply(): Either<E, T> {
+         if (memoized == null) {
+            memoized = this@IO.apply()
+         }
+         return memoized as Either<E, T>
+      }
+   }
 }
 
 fun <A> IO<A, A>.merge(): UIO<A> = object : UIO<A>() {
