@@ -380,6 +380,10 @@ abstract class IO<out E, out T> {
    }
 }
 
+fun <A> IO<A, A>.merge(): UIO<A> = object : UIO<A>() {
+   override suspend fun apply(): Either<Nothing, A> = this@merge.apply().fold({ it.right() }, { it.right() })
+}
+
 fun <E, A, B, R> IO<E, A>.mapN(other: IO<E, B>, f: (A, B) -> R): IO<E, R> = IO.mapN(this, other, f)
 
 fun <E, A, B, C, R> IO<E, A>.mapN(second: IO<E, B>, third: IO<E, C>, f: (A, B, C) -> R): IO<E, R> =
