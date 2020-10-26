@@ -1,3 +1,4 @@
+@file:JvmName("iojvm.kt")
 package com.sksamuel.tabby.io
 
 /**
