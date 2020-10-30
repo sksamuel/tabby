@@ -11,8 +11,8 @@ package com.sksamuel.tabby.io
  * Any error in acquisition is ignored.
  */
 @JvmName("useIO")
-fun <A : AutoCloseable, B> IO.Companion.use(acquire: suspend () -> A,
-                                            f: (A) -> Task<B>): Task<B> {
+fun <A : AutoCloseable, B> IO.Companion.useWith(acquire: suspend () -> A,
+                                                f: (A) -> Task<B>): Task<B> {
    return effect(acquire).flatMap { a ->
       val close = effect { a.close() }
       f(a).tap { close }.tapError { close }
