@@ -1,5 +1,9 @@
 package com.sksamuel.tabby
 
+import com.sksamuel.tabby.io.IO
+import com.sksamuel.tabby.io.failure
+import com.sksamuel.tabby.io.success
+
 sealed class Option<out A> : Optional<A> {
 
    data class Some<A>(val value: A) : Option<A>()
@@ -145,6 +149,8 @@ sealed class Option<out A> : Optional<A> {
     * function [isEmpty], otherwise returns a [Validated.Valid] with the value of the [Some].
     */
    fun <E> toValidated(isEmpty: () -> E): Validated<E, A> = fold({ isEmpty().invalid() }, { it.valid() })
+
+   fun <E> fail(f: () -> E): IO<E, A> = fold({ f().failure() }, { it.success() })
 }
 
 fun <A> Option<A>.orElse(other: Option<A>): Option<A> = fold({ other }, { it.some() })
