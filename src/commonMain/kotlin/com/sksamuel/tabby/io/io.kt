@@ -18,7 +18,6 @@ import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.CoroutineContext
-import kotlin.jvm.JvmName
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
@@ -335,6 +334,22 @@ abstract class IO<out E, out T> {
     * Returns this
     */
    fun onError(f: (E) -> Unit): IO<E, T> = OnError(this, f)
+
+   fun <K> trace(before: suspend () -> K, after: suspend (K) -> Unit): IO<E, T> = object : IO<E, T>() {
+      override suspend fun apply(): Either<E, T> {
+         val k = try {
+            before()
+         } catch (t: Throwable) {
+            null
+         }
+         val result = this@IO.apply()
+         try {
+            if (k != null) after(k)
+         } catch (t: Throwable) {
+         }
+         return result
+      }
+   }
 
    /**
     * Wraps this IO in a synchronization operation that will ensure the effect

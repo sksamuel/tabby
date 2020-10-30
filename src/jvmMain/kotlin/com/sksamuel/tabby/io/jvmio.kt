@@ -10,7 +10,6 @@ package com.sksamuel.tabby.io
  * The resource is guaranteed to be closed before the effect completes.
  * Any error in acquisition is ignored.
  */
-@JvmName("useIO")
 fun <A : AutoCloseable, B> IO.Companion.useWith(acquire: suspend () -> A,
                                                 f: (A) -> Task<B>): Task<B> {
    return effect(acquire).flatMap { a ->
