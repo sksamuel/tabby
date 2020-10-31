@@ -527,6 +527,21 @@ fun <E, A, B> IO<E, A>.zip(other: IO<E, B>): IO<E, Pair<A, B>> = object : IO<E, 
    }
 }
 
+fun <E, T> IO<E, Either<E, T>>.absolve(): IO<E, T> = object : IO<E, T>() {
+   override suspend fun apply(): Either<E, T> {
+      return this@absolve.apply().fold(
+         { it.left() },
+         { right ->
+            right.fold(
+               { it.left() },
+               { it.right() }
+            )
+         }
+      )
+   }
+}
+
+
 fun <E, T> IO<E, T>.timeout(millis: Long, error: E): IO<E, T> =
    IO.WithTimeout(millis, { error }, this)
 
