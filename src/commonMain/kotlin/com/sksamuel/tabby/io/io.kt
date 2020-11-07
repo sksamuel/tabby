@@ -21,6 +21,7 @@ import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.CoroutineContext
+import kotlin.jvm.JvmName
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
@@ -567,6 +568,7 @@ fun <E, A, B> IO<E, A>.zip(other: IO<E, B>): IO<E, Pair<A, B>> = object : IO<E, 
    }
 }
 
+@JvmName("absolveEither")
 fun <E, T> IO<E, Either<E, T>>.absolve(): IO<E, T> = object : IO<E, T>() {
    override suspend fun apply(): Either<E, T> {
       return this@absolve.apply().fold(
@@ -581,6 +583,7 @@ fun <E, T> IO<E, Either<E, T>>.absolve(): IO<E, T> = object : IO<E, T>() {
    }
 }
 
+@JvmName("absolveOption")
 fun <T> Task<Option<T>>.absolve(): Task<T> = object : Task<T>() {
    override suspend fun apply(): Either<Throwable, T> {
       return this@absolve.apply().fold(
