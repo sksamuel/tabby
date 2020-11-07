@@ -184,6 +184,8 @@ abstract class IO<out E, out T> {
 
    companion object {
 
+      val unit = IO.success(Unit)
+
       /**
        * Wraps a strict value as a successfully completed IO.
        */
