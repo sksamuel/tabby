@@ -581,6 +581,19 @@ fun <E, T> IO<E, Either<E, T>>.absolve(): IO<E, T> = object : IO<E, T>() {
    }
 }
 
+fun <T> Task<Option<T>>.absolve(): Task<T> = object : Task<T>() {
+   override suspend fun apply(): Either<Throwable, T> {
+      return this@absolve.apply().fold(
+         { it.left() },
+         { right ->
+            right.fold(
+               { NoSuchElementException().left() },
+               { it.right() }
+            )
+         }
+      )
+   }
+}
 
 fun <E, T> IO<E, T>.timeout(millis: Long, error: E): IO<E, T> =
    IO.WithTimeout(millis, { error }, this)
