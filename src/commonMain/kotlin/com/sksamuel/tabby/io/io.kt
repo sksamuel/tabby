@@ -1,13 +1,16 @@
 package com.sksamuel.tabby.io
 
 import com.sksamuel.tabby.Either
+import com.sksamuel.tabby.Option
 import com.sksamuel.tabby.either
 import com.sksamuel.tabby.filter
 import com.sksamuel.tabby.flatMap
 import com.sksamuel.tabby.flatMapLeft
 import com.sksamuel.tabby.flatten
 import com.sksamuel.tabby.left
+import com.sksamuel.tabby.orElse
 import com.sksamuel.tabby.right
+import com.sksamuel.tabby.some
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
@@ -470,6 +473,30 @@ fun <E, A, B, C, D, R> IO<E, A>.mapN(
    f: (A, B, C, D) -> R,
 ): IO<E, R> =
    IO.mapN(this, second, third, fourth, f)
+
+/**
+ * Applies the given function [f] to the successful result of this IO<E, Option<T>>.
+ */
+fun <E, T, U> IO<E, Option<T>>.mapOption(f: (Option<T>) -> U): IO<E, U> = object : IO<E, U>() {
+   override suspend fun apply(): Either<E, U> {
+      return this@mapOption.run().map { f(it) }
+   }
+}
+
+/**
+ * Applies the given effectful function [f] to the successful result of this IO if that
+ * result is a None. This is the IO equivalent of Option.orElse.
+ */
+fun <E, T> IO<E, Option<T>>.orElse(f: () -> IO<E, Option<T>>): IO<E, Option<T>> = object : IO<E, Option<T>>() {
+   override suspend fun apply(): Either<E, Option<T>> {
+      return this@orElse.run().flatMap { result ->
+         result.fold(
+            { f().run() },
+            { it.some().right() }
+         )
+      }
+   }
+}
 
 /**
  * Fails with [elseIf] if the predicate fails.
