@@ -13,11 +13,11 @@ class OrElseTest : FunSpec() {
       test("IO<E, Option<T>>.orElse should not be invoked if the result is a some") {
          IO.effect { "foo".some() }.orElse {
             exitProcess(1)
-         }.run().getRightUnsafe() shouldBe "foo".some()
+         }.run().getRightUnsafe() shouldBe "foo"
       }
 
       test("IO<E, Option<T>>.orElse should be invoked if the result is a none") {
-         IO.effect { none }.orElse { IO.success("boo".some()) }.run().getRightUnsafe() shouldBe "boo".some()
+         IO.effect { none }.orElse { IO.success("boo") }.run().getRightUnsafe() shouldBe "boo"
       }
 
       test("IO<E, Option<T>>.orElse should use error on rhs if that fails") {
