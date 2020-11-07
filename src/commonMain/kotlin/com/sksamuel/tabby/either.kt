@@ -88,6 +88,8 @@ sealed class Either<out A, out B> {
 
    fun toValidated(): Validated<A, B> = fold({ it.invalid() }, { it.valid() })
 
+   fun toOption(): Option<B> = fold({ none }, { it.some() })
+
    inline fun <reified C> filterRightIsInstance(otherwise: (B) -> Any): Either<A, C> = when (this) {
       is Left -> this
       is Right -> when (val b = this.b) {
@@ -198,7 +200,7 @@ fun <A, B, C> Either<A, List<B>>.mapK(f: (B) -> C): Either<A, List<C>> = fold({ 
 inline fun <A, B, E, R> applicative(
    a: Either<E, A>,
    b: Either<E, B>,
-   fn: (A, B) -> R
+   fn: (A, B) -> R,
 ): Either<E, R> {
    if (a.isLeft) return a as Either<E, R>
    if (b.isLeft) return b as Either<E, R>
@@ -209,7 +211,7 @@ inline fun <A, B, C, E, R> applicative(
    a: Either<E, A>,
    b: Either<E, B>,
    c: Either<E, C>,
-   fn: (A, B, C) -> R
+   fn: (A, B, C) -> R,
 ): Either<E, R> {
    if (a.isLeft) return a as Either<E, R>
    if (b.isLeft) return b as Either<E, R>
@@ -222,7 +224,7 @@ inline fun <A, B, C, D, E, R> applicative(
    b: Either<E, B>,
    c: Either<E, C>,
    d: Either<E, D>,
-   fn: (A, B, C, D) -> R
+   fn: (A, B, C, D) -> R,
 ): Either<E, R> {
    if (a.isLeft) return a as Either<E, R>
    if (b.isLeft) return b as Either<E, R>
@@ -234,7 +236,7 @@ inline fun <A, B, C, D, E, R> applicative(
 fun <A, B, E, R> app(
    a: Either<E, A>,
    b: Either<E, B>,
-   fn: (A, B) -> R
+   fn: (A, B) -> R,
 ): Either<E, R> {
    return a.flatMap { _a ->
       b.map { _b ->
@@ -247,7 +249,7 @@ fun <A, B, C, E, R> app(
    a: Either<E, A>,
    b: Either<E, B>,
    c: Either<E, C>,
-   fn: (A, B, C) -> R
+   fn: (A, B, C) -> R,
 ): Either<E, R> {
    return a.flatMap { _a ->
       b.flatMap { _b ->
@@ -263,7 +265,7 @@ fun <A, B, C, D, E, R> app(
    b: Either<E, B>,
    c: Either<E, C>,
    d: Either<E, D>,
-   fn: (A, B, C, D) -> R
+   fn: (A, B, C, D) -> R,
 ): Either<E, R> {
    return a.flatMap { _a ->
       b.flatMap { _b ->
@@ -282,7 +284,7 @@ fun <A, B, C, D, E, ERROR, RETURN> app(
    c: Either<ERROR, C>,
    d: Either<ERROR, D>,
    e: Either<ERROR, E>,
-   fn: (A, B, C, D, E) -> RETURN
+   fn: (A, B, C, D, E) -> RETURN,
 ): Either<ERROR, RETURN> {
    return a.flatMap { _a ->
       b.flatMap { _b ->
@@ -303,7 +305,7 @@ inline fun <A, B, C, D, E, L, R> applicative(
    c: Either<L, C>,
    d: Either<L, D>,
    e: Either<L, E>,
-   fn: (A, B, C, D, E) -> R
+   fn: (A, B, C, D, E) -> R,
 ): Either<L, R> {
    if (a.isLeft) return a as Either<L, R>
    if (b.isLeft) return b as Either<L, R>
@@ -320,7 +322,7 @@ inline fun <A, B, C, D, E, F, L, R> applicative(
    d: Either<L, D>,
    e: Either<L, E>,
    f: Either<L, F>,
-   fn: (A, B, C, D, E, F) -> R
+   fn: (A, B, C, D, E, F) -> R,
 ): Either<L, R> {
    if (a.isLeft) return a as Either<L, R>
    if (b.isLeft) return b as Either<L, R>
