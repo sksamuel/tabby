@@ -480,6 +480,8 @@ fun <E, T> IO<E, T>.filterOrFail(p: (T) -> Boolean, elseIf: (T) -> E): IO<E, T> 
 
 fun <E, T> List<IO<E, T>>.traverse(): IO<E, List<T>> = IO.traverse(this)
 
+suspend fun <T> Task<T>.runOrThrow() = run().fold({ throw it }, { it })
+
 /**
  * Recovers from an error by using the given function.
  */
