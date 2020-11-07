@@ -61,14 +61,18 @@ abstract class IO<out E, out T> {
       override suspend fun apply() = f().right()
    }
 
-   class OnError<E, T>(private val effect: IO<E, T>,
-                       private val onError: (E) -> Unit) : IO<E, T>() {
+   class OnError<E, T>(
+      private val effect: IO<E, T>,
+      private val onError: (E) -> Unit,
+   ) : IO<E, T>() {
       override suspend fun apply(): Either<E, T> = effect.apply().onLeft(onError)
    }
 
-   class WithTimeout<E, T>(private val duration: Long,
-                           private val ifError: (TimeoutCancellationException) -> E,
-                           private val underlying: IO<E, T>) : IO<E, T>() {
+   class WithTimeout<E, T>(
+      private val duration: Long,
+      private val ifError: (TimeoutCancellationException) -> E,
+      private val underlying: IO<E, T>,
+   ) : IO<E, T>() {
       override suspend fun apply(): Either<E, T> {
          return try {
             withTimeout(duration) { underlying.apply() }
@@ -108,9 +112,11 @@ abstract class IO<out E, out T> {
 
    class FailedIO(val error: Any?) : RuntimeException()
 
-   class Zip<E, T, U, V>(private val left: IO<E, T>,
-                         private val right: IO<E, U>,
-                         private val f: (T, U) -> V) : IO<E, V>() {
+   class Zip<E, T, U, V>(
+      private val left: IO<E, T>,
+      private val right: IO<E, U>,
+      private val f: (T, U) -> V,
+   ) : IO<E, V>() {
       override suspend fun apply(): Either<E, V> {
          return left.apply().flatMap { t ->
             right.apply().map { u ->
@@ -120,9 +126,11 @@ abstract class IO<out E, out T> {
       }
    }
 
-   class Bracket<T, U>(private val acquire: () -> T,
-                       private val use: (T) -> U,
-                       private val release: (T) -> Unit) : Task<U>() {
+   class Bracket<T, U>(
+      private val acquire: () -> T,
+      private val use: (T) -> U,
+      private val release: (T) -> Unit,
+   ) : Task<U>() {
       override suspend fun apply(): Either<Throwable, U> {
          return try {
             val t = acquire()
@@ -281,10 +289,12 @@ abstract class IO<out E, out T> {
          }
       }
 
-      fun <E, A, B, C, R> mapN(first: IO<E, A>,
-                               second: IO<E, B>,
-                               third: IO<E, C>,
-                               f: (A, B, C) -> R): IO<E, R> = object : IO<E, R>() {
+      fun <E, A, B, C, R> mapN(
+         first: IO<E, A>,
+         second: IO<E, B>,
+         third: IO<E, C>,
+         f: (A, B, C) -> R,
+      ): IO<E, R> = object : IO<E, R>() {
          override suspend fun apply(): Either<E, R> {
             return first.apply().flatMap { a ->
                second.apply().flatMap { b ->
@@ -296,11 +306,13 @@ abstract class IO<out E, out T> {
          }
       }
 
-      fun <E, A, B, C, D, R> mapN(first: IO<E, A>,
-                                  second: IO<E, B>,
-                                  third: IO<E, C>,
-                                  fourth: IO<E, D>,
-                                  f: (A, B, C, D) -> R): IO<E, R> = object : IO<E, R>() {
+      fun <E, A, B, C, D, R> mapN(
+         first: IO<E, A>,
+         second: IO<E, B>,
+         third: IO<E, C>,
+         fourth: IO<E, D>,
+         f: (A, B, C, D) -> R,
+      ): IO<E, R> = object : IO<E, R>() {
          override suspend fun apply(): Either<E, R> {
             return first.apply().flatMap { a ->
                second.apply().flatMap { b ->
@@ -385,9 +397,15 @@ abstract class IO<out E, out T> {
    fun onContext(context: CoroutineContext): IO<E, T> = WithContext(this, context)
 
    /**
-    * Executes this IO.
+    * Executes this IO, returning the result as an [Either].
     */
    suspend fun run(): Either<E, T> = this@IO.apply()
+
+   /**
+    * Executes this IO, with the calling coroutine as the context.
+    * Returns the successful result or null.
+    */
+   suspend fun runOrNull(): T? = run().getRightOrNull()
 
    /**
     * Executes this IO, using the supplied dispatcher as the context.
@@ -445,10 +463,12 @@ fun <E, A, B, R> IO<E, A>.mapN(other: IO<E, B>, f: (A, B) -> R): IO<E, R> = IO.m
 fun <E, A, B, C, R> IO<E, A>.mapN(second: IO<E, B>, third: IO<E, C>, f: (A, B, C) -> R): IO<E, R> =
    IO.mapN(this, second, third, f)
 
-fun <E, A, B, C, D, R> IO<E, A>.mapN(second: IO<E, B>,
-                                     third: IO<E, C>,
-                                     fourth: IO<E, D>,
-                                     f: (A, B, C, D) -> R): IO<E, R> =
+fun <E, A, B, C, D, R> IO<E, A>.mapN(
+   second: IO<E, B>,
+   third: IO<E, C>,
+   fourth: IO<E, D>,
+   f: (A, B, C, D) -> R,
+): IO<E, R> =
    IO.mapN(this, second, third, fourth, f)
 
 /**
