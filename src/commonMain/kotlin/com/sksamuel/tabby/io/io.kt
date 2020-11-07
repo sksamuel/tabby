@@ -563,6 +563,16 @@ fun <E, T> IO<E, T>.tapError(f: (E) -> IO<*, *>): IO<E, T> = object : IO<E, T>()
 }
 
 /**
+ * Returns an effect which runs the given effect if this effect evaluates to true.
+ * Returns the this effect.
+ */
+fun <E, T> IO<E, T>.then(f: () -> IO<*, *>): IO<E, T> = object : IO<E, T>() {
+   override suspend fun apply(): Either<E, T> {
+      return this@then.apply().onRight { f().run() }
+   }
+}
+
+/**
  * Coalesces an IO<E,T> to an FIO<E> using the supplied function to convert a success to a failure.
  */
 fun <E, T> IO<E, T>.fail(ifSuccess: (T) -> E): FIO<E> = object : IO<E, Nothing>() {
