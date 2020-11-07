@@ -475,15 +475,6 @@ fun <E, A, B, C, D, R> IO<E, A>.mapN(
    IO.mapN(this, second, third, fourth, f)
 
 /**
- * Applies the given function [f] to the successful result of this IO<E, Option<T>>.
- */
-fun <E, T, U> IO<E, Option<T>>.mapOption(f: (Option<T>) -> U): IO<E, U> = object : IO<E, U>() {
-   override suspend fun apply(): Either<E, U> {
-      return this@mapOption.run().map { f(it) }
-   }
-}
-
-/**
  * Applies the given effectful function [f] to the successful result of this IO if that
  * result is a None. This is the IO equivalent of Option.orElse.
  */
