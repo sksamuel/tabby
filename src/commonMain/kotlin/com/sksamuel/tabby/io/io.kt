@@ -595,6 +595,20 @@ fun <T> Task<Option<T>>.absolve(): Task<T> = object : Task<T>() {
    }
 }
 
+fun <E, T> IO<E, Option<T>>.absolve(ifNone: () -> E): IO<E, T> = object : IO<E, T>() {
+   override suspend fun apply(): Either<E, T> {
+      return this@absolve.apply().fold(
+         { it.left() },
+         { right ->
+            right.fold(
+               { ifNone().left() },
+               { it.right() }
+            )
+         }
+      )
+   }
+}
+
 fun <E, T> IO<E, T>.timeout(millis: Long, error: E): IO<E, T> =
    IO.WithTimeout(millis, { error }, this)
 
