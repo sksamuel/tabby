@@ -479,12 +479,27 @@ fun <E, A, B, C, D, R> IO<E, A>.mapN(
  * Applies the given effectful function [f] to the successful result of this IO if that
  * result is a None. This is the IO equivalent of Option.orElse.
  */
-fun <E, T> IO<E, Option<T>>.orElse(f: () -> IO<E, Option<T>>): IO<E, Option<T>> = object : IO<E, Option<T>>() {
+fun <E, T> IO<E, Option<T>>.orElseOption(f: () -> IO<E, Option<T>>): IO<E, Option<T>> = object : IO<E, Option<T>>() {
    override suspend fun apply(): Either<E, Option<T>> {
-      return this@orElse.run().flatMap { result ->
+      return this@orElseOption.run().flatMap { result ->
          result.fold(
             { f().run() },
             { it.some().right() }
+         )
+      }
+   }
+}
+
+/**
+ * Applies the given effectful function [f] to the successful result of this IO if that
+ * result is a None. This is the IO equivalent of Option.getOrElse.
+ */
+fun <E, T> IO<E, Option<T>>.orElse(f: () -> IO<E, T>): IO<E, T> = object : IO<E, T>() {
+   override suspend fun apply(): Either<E, T> {
+      return this@orElse.run().flatMap { result ->
+         result.fold(
+            { f().run() },
+            { it.right() }
          )
       }
    }
