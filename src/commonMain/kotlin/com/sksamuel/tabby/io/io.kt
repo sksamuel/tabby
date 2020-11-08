@@ -8,7 +8,6 @@ import com.sksamuel.tabby.flatMap
 import com.sksamuel.tabby.flatMapLeft
 import com.sksamuel.tabby.flatten
 import com.sksamuel.tabby.left
-import com.sksamuel.tabby.orElse
 import com.sksamuel.tabby.right
 import com.sksamuel.tabby.some
 import kotlinx.coroutines.CoroutineDispatcher
@@ -332,12 +331,11 @@ abstract class IO<out E, out T> {
          }
       }
 
-
-      fun <E, T> par(vararg ios: IO<E, T>): IO<E, List<T>> = object : IO<E, List<T>>() {
+      fun <E, T> par(effects: List<IO<E, T>>): IO<E, List<T>> = object : IO<E, List<T>>() {
          override suspend fun apply(): Either<E, List<T>> {
             return try {
                coroutineScope {
-                  val ds = ios.map {
+                  val ds = effects.map {
                      async {
                         it.run().fold(
                            { throw FailedIO(it) },
@@ -353,6 +351,8 @@ abstract class IO<out E, out T> {
          }
       }
    }
+
+   fun <E, T> par(vararg effects: IO<E, T>): IO<E, List<T>> = par(effects.asList())
 
    fun <U> map(f: (T) -> U): IO<E, U> = FlatMap({ f(it).success() }, this)
 
