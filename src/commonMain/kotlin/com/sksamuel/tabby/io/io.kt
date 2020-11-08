@@ -411,6 +411,14 @@ abstract class IO<out E, out T> {
    suspend fun runUnsafe(): T = run().getRightUnsafe()
 
    /**
+    * Returns a new IO which is just this IO but with the result of a successful execution
+    * replaced with the given strict value.
+    */
+   fun <B> with(b: B): IO<E, B> = object : IO<E, B>() {
+      override suspend fun apply(): Either<E, B> = this@IO.run().map { b }
+   }
+
+   /**
     * Executes this IO, with the calling coroutine as the context.
     * Returns the successful result or null.
     */
