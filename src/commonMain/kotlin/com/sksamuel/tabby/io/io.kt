@@ -350,9 +350,10 @@ abstract class IO<out E, out T> {
             }
          }
       }
+
+      fun <E, T> par(vararg effects: IO<E, T>): IO<E, List<T>> = par(effects.asList())
    }
 
-   fun <E, T> par(vararg effects: IO<E, T>): IO<E, List<T>> = par(effects.asList())
 
    fun <U> map(f: (T) -> U): IO<E, U> = FlatMap({ f(it).success() }, this)
 
