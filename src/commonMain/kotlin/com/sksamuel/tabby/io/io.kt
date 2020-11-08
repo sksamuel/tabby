@@ -408,6 +408,8 @@ abstract class IO<out E, out T> {
     */
    suspend fun run(): Either<E, T> = this@IO.apply()
 
+   suspend fun runUnsafe(): T = run().getRightUnsafe()
+
    /**
     * Executes this IO, with the calling coroutine as the context.
     * Returns the successful result or null.
