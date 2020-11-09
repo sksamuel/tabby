@@ -3,6 +3,7 @@ package com.sksamuel.tabby
 import com.sksamuel.tabby.io.IO
 import com.sksamuel.tabby.io.failure
 import com.sksamuel.tabby.io.success
+import kotlin.jvm.JvmName
 
 sealed class Option<out A> : Optional<A> {
 
@@ -155,6 +156,9 @@ sealed class Option<out A> : Optional<A> {
 
 fun <A> Option<A>.orElse(other: Option<A>): Option<A> = fold({ other }, { it.some() })
 
+@JvmName("orElseFn")
+fun <A> Option<A>.orElse(f: () -> Option<A>): Option<A> = fold({ f() }, { it.some() })
+
 fun <A> Option<A>.getOrElse(a: A): A = when (this) {
    is Option.None -> a
    is Option.Some -> this.value
@@ -175,11 +179,13 @@ fun <A, B, R> applicative(a: Option<A>, b: Option<B>, f: (A, B) -> R): Option<R>
    }
 }
 
-fun <A, B, C, D, R> applicative(a: Option<A>,
-                                b: Option<B>,
-                                c: Option<C>,
-                                d: Option<D>,
-                                f: (A, B, C, D) -> R): Option<R> {
+fun <A, B, C, D, R> applicative(
+   a: Option<A>,
+   b: Option<B>,
+   c: Option<C>,
+   d: Option<D>,
+   f: (A, B, C, D) -> R,
+): Option<R> {
    if (a.isEmpty() || b.isEmpty() || c.isEmpty() || d.isEmpty()) return Option.None
    return f(a.getUnsafe(), b.getUnsafe(), c.getUnsafe(), d.getUnsafe()).some()
 }
