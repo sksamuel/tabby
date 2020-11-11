@@ -209,6 +209,11 @@ abstract class IO<out E, out T> {
       fun <E> failure(f: () -> E): FIO<E> = Failure(f)
 
       /**
+       * Returns a failed IO with the given message converted to a runtime exception.
+       */
+      fun fail(msg: String): FIO<Throwable> = Failure { RuntimeException(msg) }
+
+      /**
        * Wraps a potentially throwing effectful function as an IO.
        */
       fun <T> effect(f: suspend () -> T): Task<T> = Effect(f)
