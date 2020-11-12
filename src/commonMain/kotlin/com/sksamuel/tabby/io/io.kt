@@ -552,6 +552,17 @@ fun <E, T> IO<E, Either<E, T>>.pull(): IO<E, T> = object : IO<E, T>() {
    }
 }
 
+/**
+ * Returns an effect which flattens this effect, mapping a successful result of none
+ * to a failed IO of [NoSuchElementException], or mapping a successful result of some to an IO<A>.
+ */
+fun <A> Task<Option<A>>.flatten(): Task<A> = object : Task<A>() {
+   override suspend fun apply(): Either<Throwable, A> {
+      return this@flatten.run()
+         .flatMap { result -> result.fold({ NoSuchElementException().left() }, { it.right() }) }
+   }
+}
+
 fun <E, T> IO<E, IO<E, T>>.flatten(): IO<E, T> = object : IO<E, T>() {
    override suspend fun apply(): Either<E, T> {
       return this@flatten.apply().flatMap { it.apply() }
