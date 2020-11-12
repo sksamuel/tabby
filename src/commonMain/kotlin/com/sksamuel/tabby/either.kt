@@ -1,5 +1,7 @@
 package com.sksamuel.tabby
 
+import kotlin.jvm.JvmName
+
 /**
  * An internal, non biased implementation of Either.
  *
@@ -119,6 +121,11 @@ inline fun <A, B> Either<A, B>.recoverWith(ifLeft: (A) -> Either<A, B>): Either<
 fun <A, B> Either<A, Either<A, B>>.flatten(): Either<A, B> = when (this) {
    is Either.Left -> this
    is Either.Right -> b
+}
+
+fun <A, B> Either<A, Option<B>>.flatten(f: () -> A): Either<A, B> = when (this) {
+   is Either.Left -> this
+   is Either.Right -> b.fold({ f().left() }, { it.right() })
 }
 
 inline fun <A, B, D> Either<A, B>.flatMap(f: (B) -> Either<A, D>): Either<A, D> = when (this) {
