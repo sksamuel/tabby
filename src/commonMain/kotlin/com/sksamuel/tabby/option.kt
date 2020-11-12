@@ -202,6 +202,11 @@ fun <T> T?.toOption(): Option<T> = this?.some() ?: Option.None
  */
 fun <A> List<A>.firstOrNone(): Option<A> = this.firstOrNull().toOption()
 
+fun <A> List<Option<A>>.filterNotEmpty(): List<A> = this.mapNotNull { it.orNull() }
+
+fun <A, B> List<Option<A>>.mapNotEmpty(f: (A) -> Option<B>): List<B> =
+   this.filterNotEmpty().mapNotNull { f(it).orNull() }
+
 @Deprecated("Use flatMap with Optional")
 inline fun <T, U : Any> List<T>.flatMapOption(f: (T) -> Option<U>): List<U> = mapNotNull { f(it).orNull() }
 
