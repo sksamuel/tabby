@@ -1,7 +1,5 @@
 package com.sksamuel.tabby
 
-import kotlin.jvm.JvmName
-
 /**
  * An internal, non biased implementation of Either.
  *
@@ -107,7 +105,11 @@ sealed class Either<out A, out B> {
  *
  * @return Either.Right<B> or an Either.Left<Throwable>.
  */
-inline fun <B> either(f: () -> B): Either<Throwable, B> = Try(f).toEither { it }
+inline fun <B> either(f: () -> B): Either<Throwable, B> = try {
+   f().right()
+} catch (t: Throwable) {
+   t.left()
+}
 
 // if this is a left, invokes the given function to return the error into a right, otherwise returns the right
 inline fun <A, B> Either<A, B>.recover(ifLeft: (A) -> B): Either<A, B> =
@@ -199,6 +201,8 @@ inline fun <A, B> catching(handle: (Throwable) -> A, thunk: () -> B): Either<A, 
 } catch (t: Throwable) {
    handle(t).left()
 }
+
+typealias Try<B> = Either<Throwable, B>
 
 fun <A, B> Option<B>.either(ifEmpty: () -> A): Either<A, B> = fold({ ifEmpty().left() }, { it.right() })
 
