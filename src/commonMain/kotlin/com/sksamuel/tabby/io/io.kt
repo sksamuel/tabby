@@ -4,6 +4,7 @@ import com.sksamuel.tabby.Either
 import com.sksamuel.tabby.Option
 import com.sksamuel.tabby.Tuple2
 import com.sksamuel.tabby.Tuple3
+import com.sksamuel.tabby.Tuple4
 import com.sksamuel.tabby.either
 import com.sksamuel.tabby.filter
 import com.sksamuel.tabby.flatMap
@@ -385,6 +386,47 @@ abstract class IO<out E, out T> {
                      )
                   }
                   Tuple3(a.await(), b.await(), c.await()).right()
+               }
+            } catch (e: FailedIO) {
+               (e.error as E).left()
+            }
+         }
+      }
+
+      fun <E, A, B, C, D> parN(
+         ioa: IO<E, A>,
+         iob: IO<E, B>,
+         ioc: IO<E, C>,
+         iod: IO<E, D>,
+      ) = object : IO<E, Tuple4<A, B, C, D>>() {
+         override suspend fun apply(): Either<E, Tuple4<A, B, C, D>> {
+            return try {
+               coroutineScope {
+                  val a = async {
+                     ioa.run().fold(
+                        { throw FailedIO(it) },
+                        { it }
+                     )
+                  }
+                  val b = async {
+                     iob.run().fold(
+                        { throw FailedIO(it) },
+                        { it }
+                     )
+                  }
+                  val c = async {
+                     ioc.run().fold(
+                        { throw FailedIO(it) },
+                        { it }
+                     )
+                  }
+                  val d = async {
+                     iod.run().fold(
+                        { throw FailedIO(it) },
+                        { it }
+                     )
+                  }
+                  Tuple4(a.await(), b.await(), c.await(), d.await()).right()
                }
             } catch (e: FailedIO) {
                (e.error as E).left()
