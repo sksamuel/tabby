@@ -2,6 +2,8 @@ package com.sksamuel.tabby.io
 
 import com.sksamuel.tabby.Either
 import com.sksamuel.tabby.Option
+import com.sksamuel.tabby.Tuple2
+import com.sksamuel.tabby.Tuple3
 import com.sksamuel.tabby.either
 import com.sksamuel.tabby.filter
 import com.sksamuel.tabby.flatMap
@@ -332,6 +334,60 @@ abstract class IO<out E, out T> {
                      }
                   }
                }
+            }
+         }
+      }
+
+      fun <E, A, B> parN(ioa: IO<E, A>, iob: IO<E, B>) = object : IO<E, Tuple2<A, B>>() {
+         override suspend fun apply(): Either<E, Tuple2<A, B>> {
+            return try {
+               coroutineScope {
+                  val a = async {
+                     ioa.run().fold(
+                        { throw FailedIO(it) },
+                        { it }
+                     )
+                  }
+                  val b = async {
+                     iob.run().fold(
+                        { throw FailedIO(it) },
+                        { it }
+                     )
+                  }
+                  Tuple2(a.await(), b.await()).right()
+               }
+            } catch (e: FailedIO) {
+               (e.error as E).left()
+            }
+         }
+      }
+
+      fun <E, A, B, C> parN(ioa: IO<E, A>, iob: IO<E, B>, ioc: IO<E, C>) = object : IO<E, Tuple3<A, B, C>>() {
+         override suspend fun apply(): Either<E, Tuple3<A, B, C>> {
+            return try {
+               coroutineScope {
+                  val a = async {
+                     ioa.run().fold(
+                        { throw FailedIO(it) },
+                        { it }
+                     )
+                  }
+                  val b = async {
+                     iob.run().fold(
+                        { throw FailedIO(it) },
+                        { it }
+                     )
+                  }
+                  val c = async {
+                     ioc.run().fold(
+                        { throw FailedIO(it) },
+                        { it }
+                     )
+                  }
+                  Tuple3(a.await(), b.await(), c.await()).right()
+               }
+            } catch (e: FailedIO) {
+               (e.error as E).left()
             }
          }
       }
