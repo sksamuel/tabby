@@ -504,6 +504,12 @@ abstract class IO<out E, out T> {
       override suspend fun apply(): Either<T, E> = this@IO.apply().swap()
    }
 
+   fun onEach(ifError: (E) -> Unit, ifSuccess: (T) -> Unit): IO<E, T> = object : IO<E, T>() {
+      override suspend fun apply(): Either<E, T> {
+         return this@IO.run().onLeft { ifError(it) }.onRight { ifSuccess(it) }
+      }
+   }
+
    /**
     * Provides a context switch for this IO.
     */

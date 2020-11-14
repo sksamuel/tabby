@@ -1,5 +1,7 @@
 package com.sksamuel.tabby
 
+import com.sksamuel.tabby.io.IO
+
 /**
  * An internal, non biased implementation of Either.
  *
@@ -96,6 +98,14 @@ sealed class Either<out A, out B> {
          is C -> b.right() as Either<A, C>
          else -> (otherwise(this.b) as A).left()
       }
+   }
+
+   fun onEach(ifLeft: (A) -> Unit, ifRight: (B) -> Unit): Either<A, B> {
+      when (this) {
+         is Left -> ifLeft(this.a)
+         is Right -> ifRight(this.b)
+      }
+      return this
    }
 }
 
