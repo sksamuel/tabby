@@ -537,6 +537,12 @@ abstract class IO<out E, out T> {
    suspend fun runOrNull(): T? = run().getRightOrNull()
 
    /**
+    * Executes this IO, with the calling coroutine as the context.
+    * Returns the successful result wrapped in an option, or none.
+    */
+   suspend fun runOrNone(): Option<T> = run().toOption()
+
+   /**
     * Executes this IO, using the supplied dispatcher as the context.
     * Shorthand for `context(dispatcher).run()`
     */
