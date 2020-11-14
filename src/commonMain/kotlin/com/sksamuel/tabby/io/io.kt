@@ -11,6 +11,7 @@ import com.sksamuel.tabby.flatMap
 import com.sksamuel.tabby.flatMapLeft
 import com.sksamuel.tabby.flatten
 import com.sksamuel.tabby.left
+import com.sksamuel.tabby.none
 import com.sksamuel.tabby.right
 import com.sksamuel.tabby.some
 import kotlinx.coroutines.CoroutineDispatcher
@@ -186,7 +187,9 @@ abstract class IO<out E, out T> {
 
    companion object {
 
-      val unit = IO.success(Unit)
+      val unit = IO.pure(Unit)
+
+      val empty = IO.pure(none)
 
       /**
        * Wraps a strict value as a successfully completed IO.
