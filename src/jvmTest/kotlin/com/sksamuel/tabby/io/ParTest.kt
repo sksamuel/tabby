@@ -36,6 +36,14 @@ class ParTest : FunSpec() {
          IO.par(a, a).runOn(Dispatchers.IO) shouldBe listOf("foo", "foo").right()
       }
 
+      test("IO.par should run in parallel with blocking").config(timeout = 1400.milliseconds) {
+         val a = IO.effect {
+            Thread.sleep(1000)
+            "foo"
+         }
+         IO.par(a, a).runOn(Dispatchers.IO) shouldBe listOf("foo", "foo").right()
+      }
+
       test("a failure should short circuit IO.par").config(timeout = 1000.milliseconds) {
          val a = IO.effect {
             delay(100)
