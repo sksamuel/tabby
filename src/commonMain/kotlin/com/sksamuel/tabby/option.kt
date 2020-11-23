@@ -119,9 +119,28 @@ sealed class Option<out A> : Optional<A> {
     */
    fun toList(): List<A> = fold(emptyList(), { listOf(it) })
 
-   fun <B, C> zip(other: Option<B>, f: (A, B) -> C): Option<C> = when (this) {
+   fun <B, C> zip(other: Option<B>): Option<Pair<A, B>> = when (this) {
+      is Some -> when (other) {
+         is Some -> Pair(this.value, other.value).some()
+         else -> None
+      }
+      else -> None
+   }
+
+   fun <B, C> mapN(other: Option<B>, f: (A, B) -> C): Option<C> = when (this) {
       is Some -> when (other) {
          is Some -> f(this.value, other.value).some()
+         else -> None
+      }
+      else -> None
+   }
+
+   fun <B, C, R> mapN(b: Option<B>, c: Option<C>, f: (A, B, C) -> R): Option<R> = when (this) {
+      is Some -> when (b) {
+         is Some -> when (c) {
+            is Some -> f(this.value, b.value, c.value).some()
+            else -> None
+         }
          else -> None
       }
       else -> None
