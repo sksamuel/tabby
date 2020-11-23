@@ -143,6 +143,8 @@ sealed class Option<out A> : Optional<A> {
     */
    fun <B> toEither(ifEmpty: () -> B): Either<B, A> = fold({ ifEmpty().left() }, { it.right() })
 
+   fun toTry(message: String): Try<A> = fold({ RuntimeException(message).left() }, { it.right() })
+
    /**
     * Transforms this option into a [Validated].
     *
