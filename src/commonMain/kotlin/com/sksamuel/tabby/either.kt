@@ -140,6 +140,8 @@ fun <A, B> Either<A, Option<B>>.flatten(f: () -> A): Either<A, B> = when (this) 
    is Either.Right -> b.fold({ f().left() }, { it.right() })
 }
 
+fun <A, B> Either<A, B>.toIO(): IO<A, B> = IO.either(this)
+
 inline fun <A, B, D> Either<A, B>.flatMap(f: (B) -> Either<A, D>): Either<A, D> = when (this) {
    is Either.Left -> this
    is Either.Right -> f(b)
