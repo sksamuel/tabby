@@ -119,8 +119,7 @@ sealed class Option<out A> : Optional<A> {
     */
    fun toList(): List<A> = fold(emptyList(), { listOf(it) })
 
-
-   fun <B, C> combine(other: Option<B>, f: (A, B) -> C): Option<C> = when (this) {
+   fun <B, C> zip(other: Option<B>, f: (A, B) -> C): Option<C> = when (this) {
       is Some -> when (other) {
          is Some -> f(this.value, other.value).some()
          else -> None
