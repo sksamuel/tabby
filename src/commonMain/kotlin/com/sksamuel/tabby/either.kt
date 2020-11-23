@@ -191,25 +191,31 @@ fun <A, B> B?.rightIfNotNull(ifNull: () -> A): Either<A, B> =
 fun <A> A.left() = Either.Left(this)
 fun <B> B.right() = Either.Right(this)
 
-@Deprecated("use either {} ")
+@Deprecated("use catch {} ")
 inline fun <B> catching(thunk: () -> B): Either<Throwable, B> = try {
    thunk().right()
 } catch (t: Throwable) {
    t.left()
 }
 
-@Deprecated("use either {} ")
+@Deprecated("use catch {} ")
 inline fun <A, B> catching(fn: () -> B, handle: (Throwable) -> A): Either<A, B> = try {
    fn().right()
 } catch (t: Throwable) {
    handle(t).left()
 }
 
-@Deprecated("use either {} ")
+@Deprecated("use catch {} ")
 inline fun <A, B> catching(handle: (Throwable) -> A, thunk: () -> B): Either<A, B> = try {
    thunk().right()
 } catch (t: Throwable) {
    handle(t).left()
+}
+
+inline fun <A> catch(thunk: () -> A): Try<A> = try {
+   thunk().right()
+} catch (t: Throwable) {
+   t.left()
 }
 
 typealias Try<B> = Either<Throwable, B>
@@ -365,4 +371,9 @@ inline fun <reified A, reified B> List<Either<A, B>>.sequence(): Either<List<A>,
    val `as` = filterIsInstance<A>()
    val bs = filterIsInstance<B>()
    return if (`as`.isEmpty()) bs.right() else `as`.left()
+}
+
+fun <A> Try<A>.onFailure(f: (Throwable) -> Unit): Try<A> {
+   if (this is Either.Left) f(this.a)
+   return this
 }
