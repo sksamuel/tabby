@@ -1,6 +1,7 @@
 package com.sksamuel.tabby
 
 import com.sksamuel.tabby.io.IO
+import kotlin.jvm.JvmName
 
 /**
  * An internal, non biased implementation of Either.
@@ -218,6 +219,24 @@ inline fun <A> catch(thunk: () -> A): Try<A> = try {
    thunk().right()
 } catch (t: Throwable) {
    t.left()
+}
+
+fun <A, B, C> Either<A, B>.zip(other: Either<A, C>): Either<A, Pair<B, C>> {
+   return this.flatMap { b ->
+      other.map { c -> Pair(b, c) }
+   }
+}
+
+fun <A, B, C, D> Either<A, B>.mapN(other: Either<A, C>, f: (B, C) -> D): Either<A, D> {
+   return this.flatMap { b ->
+      other.map { c -> f(b, c) }
+   }
+}
+
+fun <A, B, C, D> Either<A, B>.mapNWith(other: Either<A, C>, f: (B, C) -> Either<A, D>): Either<A, D> {
+   return this.flatMap { b ->
+      other.flatMap { c -> f(b, c) }
+   }
 }
 
 typealias Try<B> = Either<Throwable, B>
