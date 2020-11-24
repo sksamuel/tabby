@@ -21,22 +21,21 @@ fun <A : AutoCloseable, B> IO.Companion.useWith(
 
 
 /**
- * Returns an effect that acquires an [AutoCloseable] resource using the given,
- * possibly, effectful [acquire] function, and then applies that resource to the
- * given effect [f].
+ * Returns an effect that acquires an [AutoCloseable] resource using the given
+ * [acquire] function, and then applies that resource to the given [apply] function.
  *
- * The acquire function can be effectful and will be handed correctly if an error is thrown.
+ * Both acquire and use functions can be effectful and will be handed correctly if an error is thrown.
  *
  * The resource is guaranteed to be closed before the effect completes.
  * Any error in closing the resource is ignored.
  */
 fun <A : AutoCloseable, B> IO.Companion.use(
    acquire: suspend () -> A,
-   f: (A) -> Task<B>,
+   apply: suspend (A) -> B,
 ): Task<B> {
    return effect(acquire).flatMap { a ->
       val close = effect { a.close() }
-      f(a).tap { close }.tapError { close }
+      effect { apply(a) }.tap { close }.tapError { close }
    }
 }
 
