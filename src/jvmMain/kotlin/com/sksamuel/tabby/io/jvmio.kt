@@ -3,14 +3,34 @@
 package com.sksamuel.tabby.io
 
 /**
+ * Returns an effect that acquires an [AutoCloseable] resource using the given
+ * [acquire] effect, and then applies that resource to the given [apply] effect.
+ *
+ * The resource is guaranteed to be closed before the effect completes.
+ * Any error in closing the resource is ignored.
+ */
+fun <A : AutoCloseable, B> IO.Companion.useWith(
+   acquire: Task<A>,
+   apply: (A) -> Task<B>,
+): Task<B> {
+   return acquire.flatMap { a ->
+      val close = effect { a.close() }
+      apply(a).tap { close }.tapError { close }
+   }
+}
+
+
+/**
  * Returns an effect that acquires an [AutoCloseable] resource using the given,
  * possibly, effectful [acquire] function, and then applies that resource to the
  * given effect [f].
  *
+ * The acquire function can be effectful and will be handed correctly if an error is thrown.
+ *
  * The resource is guaranteed to be closed before the effect completes.
- * Any error in acquisition is ignored.
+ * Any error in closing the resource is ignored.
  */
-fun <A : AutoCloseable, B> IO.Companion.useWith(
+fun <A : AutoCloseable, B> IO.Companion.use(
    acquire: suspend () -> A,
    f: (A) -> Task<B>,
 ): Task<B> {
@@ -20,21 +40,3 @@ fun <A : AutoCloseable, B> IO.Companion.useWith(
    }
 }
 
-/**
- * Returns an effect that acquires an [AutoCloseable] resource using the given
- * [acquire] effect, and then applies that resource to the given [apply] effect.
- *
- * Both the acquire and action functions can be effectful, and will be handled as such.
- *
- * The resource is guaranteed to be closed before the effect completes.
- * Any error in acquisition is ignored.
- */
-fun <A : AutoCloseable, B> IO.Companion.use(
-   acquire: Task<A>,
-   apply: (A) -> Task<B>,
-): Task<B> {
-   return acquire.flatMap { a ->
-      val close = effect { a.close() }
-      apply(a).tap { close }.tapError { close }
-   }
-}
