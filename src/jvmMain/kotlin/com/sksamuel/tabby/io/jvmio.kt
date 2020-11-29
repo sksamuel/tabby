@@ -19,7 +19,6 @@ fun <A : AutoCloseable, B> IO.Companion.useWith(
    }
 }
 
-
 /**
  * Returns an effect that acquires an [AutoCloseable] resource using the given
  * [acquire] function, and then applies that resource to the given [apply] function.
@@ -39,3 +38,26 @@ fun <A : AutoCloseable, B> IO.Companion.use(
    }
 }
 
+/**
+ * For a Task that contains an autocloseable, will execute the given side effecting
+ * function, closing this resource safely after the function has completed (either
+ * successfully, or with an error).
+ */
+fun <A : AutoCloseable, B> Task<A>.use(f: suspend (A) -> B): Task<B> {
+   return this.flatMap { a ->
+      val close = IO.effect { a.close() }
+      IO.effect { f(a) }.tap { close }.tapError { close }
+   }
+}
+
+/**
+ * For a Task that contains an autocloseable, will execute the given effect,
+ * closing this resource safely after the effect has completed (either
+ * successfully, or with an error).
+ */
+fun <A : AutoCloseable, B> Task<A>.useWith(f: (A) -> Task<B>): Task<B> {
+   return this.flatMap { a ->
+      val close = IO.effect { a.close() }
+      f(a).tap { close }.tapError { close }
+   }
+}
