@@ -175,6 +175,8 @@ sealed class Option<out A> : Optional<A> {
    fun <E> fail(f: () -> E): IO<E, A> = fold({ f().failure() }, { it.success() })
 }
 
+fun <A> Option<A>.contains(a: A) = fold(false, { it == a })
+
 fun <A> Option<A>.orElse(other: Option<A>): Option<A> = fold({ other }, { it.some() })
 
 @JvmName("orElseFn")
