@@ -659,21 +659,6 @@ fun <E, T> IO<E, Option<T>>.orElseOption(f: () -> IO<E, Option<T>>): IO<E, Optio
 }
 
 /**
- * Applies the given effectful function [f] to the successful result of this IO if that
- * result is a None. This is the IO equivalent of Option.getOrElse.
- */
-fun <E, T> IO<E, Option<T>>.orElse(f: () -> IO<E, T>): IO<E, T> = object : IO<E, T>() {
-   override suspend fun apply(): Either<E, T> {
-      return this@orElse.run().flatMap { result ->
-         result.fold(
-            { f().run() },
-            { it.right() }
-         )
-      }
-   }
-}
-
-/**
  * Fails with [elseIf] if the predicate fails.
  */
 fun <E, T> IO<E, T>.filterOrFail(p: (T) -> Boolean, elseIf: (T) -> E): IO<E, T> = object : IO<E, T>() {
@@ -699,18 +684,6 @@ fun <E, T> IO<E, T>.recoverWith(f: (E) -> IO<E, T>): IO<E, T> = object : IO<E, T
 fun <E, T> IO<E, Either<E, T>>.pull(): IO<E, T> = object : IO<E, T>() {
    override suspend fun apply(): Either<E, T> {
       return this@pull.apply().flatten()
-   }
-}
-
-/**
- * Returns an effect which flattens this effect, mapping a successful result of none
- * to a failed IO of [NoSuchElementException], or mapping a successful result of some to an IO<A>.
- */
-@JvmName("flattenOption")
-fun <A> Task<Option<A>>.flatten(): Task<A> = object : Task<A>() {
-   override suspend fun apply(): Either<Throwable, A> {
-      return this@flatten.run()
-         .flatMap { result -> result.fold({ NoSuchElementException().left() }, { it.right() }) }
    }
 }
 
@@ -789,35 +762,6 @@ fun <E, T> IO<E, Either<E, T>>.absolve(): IO<E, T> = object : IO<E, T>() {
          { right ->
             right.fold(
                { it.left() },
-               { it.right() }
-            )
-         }
-      )
-   }
-}
-
-@JvmName("absolveOption")
-fun <T> Task<Option<T>>.absolve(): Task<T> = object : Task<T>() {
-   override suspend fun apply(): Either<Throwable, T> {
-      return this@absolve.apply().fold(
-         { it.left() },
-         { right ->
-            right.fold(
-               { NoSuchElementException().left() },
-               { it.right() }
-            )
-         }
-      )
-   }
-}
-
-fun <E, T> IO<E, Option<T>>.absolve(ifNone: () -> E): IO<E, T> = object : IO<E, T>() {
-   override suspend fun apply(): Either<E, T> {
-      return this@absolve.apply().fold(
-         { it.left() },
-         { right ->
-            right.fold(
-               { ifNone().left() },
                { it.right() }
             )
          }
