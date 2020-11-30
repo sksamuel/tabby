@@ -74,3 +74,11 @@ fun <E, T> IO<E, Option<T>>.absolve(ifNone: () -> E): IO<E, T> = object : IO<E, 
 fun <E, T, U> IO<E, Option<T>>.mapSome(f: (T) -> U): IO<E, Option<U>> {
    return this.map { it.map(f) }
 }
+
+/**
+ * If this IO is successful, will apply the given function [f] to the result of this IO, if it is a [Option.Some].
+ * If the successful result is a none, then it will returned as is.
+ */
+fun <E, T, U> IO<E, Option<T>>.flatMapSome(f: (T) -> Option<U>): IO<E, Option<U>> {
+   return this.map { it.flatMap(f) }
+}
