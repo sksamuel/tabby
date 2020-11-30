@@ -1,8 +1,8 @@
 package com.sksamuel.tabby.io
 
-import com.sksamuel.tabby.Option
-import com.sksamuel.tabby.none
-import com.sksamuel.tabby.some
+import com.sksamuel.tabby.option.Option
+import com.sksamuel.tabby.option.none
+import com.sksamuel.tabby.option.some
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlin.system.exitProcess

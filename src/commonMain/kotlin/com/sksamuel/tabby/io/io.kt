@@ -1,19 +1,21 @@
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package com.sksamuel.tabby.io
 
-import com.sksamuel.tabby.Either
-import com.sksamuel.tabby.Option
+import com.sksamuel.tabby.either.Either
+import com.sksamuel.tabby.option.Option
 import com.sksamuel.tabby.Tuple2
 import com.sksamuel.tabby.Tuple3
 import com.sksamuel.tabby.Tuple4
-import com.sksamuel.tabby.either
-import com.sksamuel.tabby.filter
-import com.sksamuel.tabby.flatMap
-import com.sksamuel.tabby.flatMapLeft
-import com.sksamuel.tabby.flatten
-import com.sksamuel.tabby.left
-import com.sksamuel.tabby.none
-import com.sksamuel.tabby.right
-import com.sksamuel.tabby.some
+import com.sksamuel.tabby.either.either
+import com.sksamuel.tabby.either.filter
+import com.sksamuel.tabby.either.flatMap
+import com.sksamuel.tabby.either.flatMapLeft
+import com.sksamuel.tabby.either.flatten
+import com.sksamuel.tabby.either.left
+import com.sksamuel.tabby.option.none
+import com.sksamuel.tabby.either.right
+import com.sksamuel.tabby.option.some
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
@@ -187,9 +189,9 @@ abstract class IO<out E, out T> {
 
    companion object {
 
-      val unit = IO.pure(Unit)
+      val unit = pure(Unit)
 
-      val empty = IO.pure(none)
+      val empty = pure(none)
 
       /**
        * Wraps a strict value as a successfully completed IO.
@@ -239,14 +241,14 @@ abstract class IO<out E, out T> {
        * returning E as other otherwise.
        */
       fun <E, T> cond(predicate: Boolean, success: () -> T, error: () -> E): IO<E, T> =
-         if (predicate) IO.success(success()) else IO.failure(error())
+         if (predicate) IO.success(success()) else failure(error())
 
       /**
        * Evaluate the predicate fn, returning T as success if the predicate is true,
        * returning E as other otherwise.
        */
       fun <E, T> cond(predicate: () -> Boolean, success: () -> T, error: () -> E): IO<E, T> =
-         if (predicate()) IO.success(success()) else IO.failure(error())
+         if (predicate()) IO.success(success()) else failure(error())
 
       /**
        * Returns an effect that contains the results of the given effects. If any of the given

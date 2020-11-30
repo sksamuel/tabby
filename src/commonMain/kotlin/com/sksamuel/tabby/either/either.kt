@@ -1,7 +1,12 @@
-package com.sksamuel.tabby
+package com.sksamuel.tabby.either
 
+import com.sksamuel.tabby.validated.Validated
+import com.sksamuel.tabby.validated.invalid
 import com.sksamuel.tabby.io.IO
-import kotlin.jvm.JvmName
+import com.sksamuel.tabby.option.Option
+import com.sksamuel.tabby.option.none
+import com.sksamuel.tabby.option.some
+import com.sksamuel.tabby.validated.valid
 
 /**
  * An internal, non biased implementation of Either.
@@ -236,7 +241,6 @@ fun <E, A, B, C> Either<E, A>.zip(b: Either<E, B>, c: Either<E, C>): Either<E, T
       }
    }
 }
-
 
 fun <A, B, C, D> Either<A, B>.mapN(other: Either<A, C>, f: (B, C) -> D): Either<A, D> {
    return this.flatMap { b ->

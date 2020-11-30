@@ -1,6 +1,6 @@
 package com.sksamuel.tabby.io
 
-import com.sksamuel.tabby.Either
+import com.sksamuel.tabby.either.Either
 import kotlinx.coroutines.delay
 import kotlin.time.ExperimentalTime
 

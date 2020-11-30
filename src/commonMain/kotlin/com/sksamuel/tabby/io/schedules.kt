@@ -1,9 +1,9 @@
 package com.sksamuel.tabby.io
 
-import com.sksamuel.tabby.Option
-import com.sksamuel.tabby.getOrElse
-import com.sksamuel.tabby.none
-import com.sksamuel.tabby.some
+import com.sksamuel.tabby.option.Option
+import com.sksamuel.tabby.option.getOrElse
+import com.sksamuel.tabby.option.none
+import com.sksamuel.tabby.option.some
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime

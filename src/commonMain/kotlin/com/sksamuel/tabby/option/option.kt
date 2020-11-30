@@ -1,8 +1,16 @@
-package com.sksamuel.tabby
+package com.sksamuel.tabby.option
 
+import com.sksamuel.tabby.either.Either
+import com.sksamuel.tabby.Optional
+import com.sksamuel.tabby.either.Try
+import com.sksamuel.tabby.validated.Validated
+import com.sksamuel.tabby.validated.invalid
 import com.sksamuel.tabby.io.IO
 import com.sksamuel.tabby.io.failure
 import com.sksamuel.tabby.io.success
+import com.sksamuel.tabby.either.left
+import com.sksamuel.tabby.either.right
+import com.sksamuel.tabby.validated.valid
 import kotlin.jvm.JvmName
 
 sealed class Option<out A> : Optional<A> {

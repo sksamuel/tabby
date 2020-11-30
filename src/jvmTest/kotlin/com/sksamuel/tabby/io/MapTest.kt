@@ -1,6 +1,6 @@
 package com.sksamuel.tabby.io
 
-import com.sksamuel.tabby.right
+import com.sksamuel.tabby.either.right
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
