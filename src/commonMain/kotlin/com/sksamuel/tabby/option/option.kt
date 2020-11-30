@@ -1,7 +1,6 @@
 package com.sksamuel.tabby.option
 
 import com.sksamuel.tabby.either.Either
-import com.sksamuel.tabby.Optional
 import com.sksamuel.tabby.either.Try
 import com.sksamuel.tabby.validated.Validated
 import com.sksamuel.tabby.validated.invalid
@@ -11,9 +10,10 @@ import com.sksamuel.tabby.io.success
 import com.sksamuel.tabby.either.left
 import com.sksamuel.tabby.either.right
 import com.sksamuel.tabby.validated.valid
+import kotlin.experimental.ExperimentalTypeInference
 import kotlin.jvm.JvmName
 
-sealed class Option<out A> : Optional<A> {
+sealed class Option<out A> {
 
    data class Some<A>(val value: A) : Option<A>()
    object None : Option<Nothing>()
@@ -25,8 +25,6 @@ sealed class Option<out A> : Optional<A> {
        */
       operator fun <T> invoke(t: T?): Option<T> = t?.some() ?: None
    }
-
-   override fun toOption(): Option<A> = this
 
    /**
     * If a [Some], executes the given side effecting function [f] with the value of this option.
@@ -57,8 +55,8 @@ sealed class Option<out A> : Optional<A> {
     */
    inline fun <B> map(f: (A) -> B): Option<B> = if (isEmpty()) none else Some(f(this.getUnsafe()))
 
-   inline fun <B> flatMap(f: (A) -> Optional<B>): Option<B> = when (this) {
-      is Some -> f(this.value).toOption()
+   inline fun <B> flatMap(f: (A) -> Option<B>): Option<B> = when (this) {
+      is Some -> f(this.value)
       else -> None
    }
 
@@ -226,31 +224,6 @@ val none = Option.None
 fun <T> T.some(): Option<T> = Option.Some(this)
 
 fun <T> T?.toOption(): Option<T> = this?.some() ?: Option.None
-
-/**
- * Returns the first element of this List wrapped in a Some if the list is non empty,
- * otherwise returns None.
- */
-fun <A> List<A>.firstOrNone(): Option<A> = this.firstOrNull().toOption()
-
-fun <A> List<A>.firstOrNone(p: (A) -> Boolean) = this.firstOrNull(p).toOption()
-
-fun <A> List<Option<A>>.filterNotEmpty(): List<A> = this.mapNotNull { it.orNull() }
-
-inline fun <A, B> List<A>.mapNotEmpty(f: (A) -> Option<B>): List<B> =
-   this.mapNotNull { f(it).orNull() }
-
-@Deprecated("Use flatMap with Optional")
-inline fun <T, U : Any> List<T>.flatMapOption(f: (T) -> Option<U>): List<U> = mapNotNull { f(it).orNull() }
-
-inline fun <T, U : Any> List<T>.flatMap(f: (T) -> Optional<U>): List<U> = mapNotNull { f(it).toOption().orNull() }
-
-/**
- * Returns a new list that contains just the values of any [Some] instances in this list.
- *
- * In other words, listOf(Some(1), None, Some(2)) becomes listOf(1,2).
- */
-fun <A : Any> List<Option<A>>.flatten() = mapNotNull { it.orNull() }
 
 /**
  * For an Option of an Option, removees the inner option. If the receiver is a Some(Some(a)), returns Some(a),
