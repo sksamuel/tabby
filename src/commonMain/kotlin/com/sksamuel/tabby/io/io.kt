@@ -665,8 +665,6 @@ fun <E, T> IO<E, T>.filterOrFail(p: (T) -> Boolean, elseIf: (T) -> E): IO<E, T> 
    override suspend fun apply(): Either<E, T> = this@filterOrFail.apply().filter(p, elseIf)
 }
 
-fun <E, T> List<IO<E, T>>.traverse(): IO<E, List<T>> = IO.traverse(this)
-
 suspend fun <T> Task<T>.runOrThrow() = run().fold({ throw it }, { it })
 
 /**
@@ -784,7 +782,6 @@ inline fun <reified E> IO<*, *>.refineOrDie(): FIO<E> = object : FIO<E>() {
    }
 }
 
-
 /**
  * Returns an effect which applies the given side effecting function to it's success,
  * wrapping the supplied function in an effect before execution.
@@ -796,8 +793,6 @@ inline fun <reified E> IO<*, *>.refineOrDie(): FIO<E> = object : FIO<E>() {
 fun <T, U> Task<T>.mapEffect(f: suspend (T) -> U): Task<U> = flatMap { t -> IO.effect { f(t) } }
 
 internal val Nil = emptyList<Nothing>()
-
-fun <E, T> List<IO<E, T>>.collectSuccess(): Task<List<T>> = IO.collectSuccess(this)
 
 /**
  * Wraps an Either in an IO.

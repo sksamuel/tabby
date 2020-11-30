@@ -1,6 +1,6 @@
 package com.sksamuel.tabby.option
 
-fun <A, B, R> Option.Companion.mapN(
+inline fun <A, B, R> Option.Companion.mapN(
    a: Option<A>,
    b: Option<B>,
    f: (A, B) -> R,
@@ -11,7 +11,7 @@ fun <A, B, R> Option.Companion.mapN(
    }
 }
 
-fun <A, B, C, R> Option.Companion.mapN(
+inline fun <A, B, C, R> Option.Companion.mapN(
    a: Option<A>,
    b: Option<B>,
    c: Option<C>,
@@ -23,7 +23,7 @@ fun <A, B, C, R> Option.Companion.mapN(
    }
 }
 
-fun <A, B, C, D, R> Option.Companion.mapN(
+inline fun <A, B, C, D, R> Option.Companion.mapN(
    a: Option<A>,
    b: Option<B>,
    c: Option<C>,
@@ -36,7 +36,7 @@ fun <A, B, C, D, R> Option.Companion.mapN(
    }
 }
 
-fun <A, B, C, D, E, R> Option.Companion.mapN(
+inline fun <A, B, C, D, E, R> Option.Companion.mapN(
    a: Option<A>,
    b: Option<B>,
    c: Option<C>,
@@ -50,7 +50,7 @@ fun <A, B, C, D, E, R> Option.Companion.mapN(
    }
 }
 
-fun <A, B, C, D, E, F, R> Option.Companion.mapN(
+inline fun <A, B, C, D, E, F, R> Option.Companion.mapN(
    a: Option<A>,
    b: Option<B>,
    c: Option<C>,
