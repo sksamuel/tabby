@@ -771,6 +771,14 @@ fun <E, A, B> IO<E, A>.zip(other: IO<E, B>): IO<E, Pair<A, B>> = object : IO<E, 
    }
 }
 
+/**
+ * For an IO<E, List<T>>, applies the given function to each element of the list,
+ * returning a new IO with the mapped list.
+ */
+fun <E, T, U> IO<E, List<T>>.mapList(f: (T) -> U): IO<E, List<U>> {
+   return this.map { it.map(f) }
+}
+
 @JvmName("absolveEither")
 fun <E, T> IO<E, Either<E, T>>.absolve(): IO<E, T> = object : IO<E, T>() {
    override suspend fun apply(): Either<E, T> {
