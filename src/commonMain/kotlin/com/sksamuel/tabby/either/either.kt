@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.sksamuel.tabby.either
 
 import com.sksamuel.tabby.validated.Validated
@@ -171,13 +173,10 @@ fun <A, B> List<Either<A, B>>.split(): Pair<List<A>, List<B>> {
    return lefts.map { it.getLeftUnsafe() } to rights.map { it.getRightUnsafe() }
 }
 
-inline fun <A> Either<A, *>.getLeftOrElse(default: () -> A): A =
-   fold({ it }, { default() })
+inline fun <A, B> Either<A, B>.getLeftOrElse(default: (B) -> A): A =
+   fold({ it }, { default(it) })
 
-inline fun <B> Either<*, B>.getRightOrElse(default: () -> B): B =
-   fold({ default() }, { it })
-
-inline fun <A, B> Either<A, B>.getRightOrHandle(default: (A) -> B): B =
+inline fun <A, B> Either<A, B>.getRightOrElse(default: (A) -> B): B =
    fold({ default(it) }, { it })
 
 inline fun <A, B> Either<A, B>.filter(predicate: (B) -> Boolean, elseIf: (B) -> A): Either<A, B> =
@@ -296,6 +295,7 @@ inline fun <A, B, C, D, E, R> applicative(
    return fn(a.getRightUnsafe(), b.getRightUnsafe(), c.getRightUnsafe(), d.getRightUnsafe()).right()
 }
 
+@Deprecated("use mapN")
 fun <A, B, E, R> app(
    a: Either<E, A>,
    b: Either<E, B>,
@@ -308,6 +308,7 @@ fun <A, B, E, R> app(
    }
 }
 
+@Deprecated("use mapN")
 fun <A, B, C, E, R> app(
    a: Either<E, A>,
    b: Either<E, B>,
@@ -323,6 +324,7 @@ fun <A, B, C, E, R> app(
    }
 }
 
+@Deprecated("use mapN")
 fun <A, B, C, D, E, R> app(
    a: Either<E, A>,
    b: Either<E, B>,
@@ -341,6 +343,7 @@ fun <A, B, C, D, E, R> app(
    }
 }
 
+@Deprecated("use mapN")
 fun <A, B, C, D, E, ERROR, RETURN> app(
    a: Either<ERROR, A>,
    b: Either<ERROR, B>,
@@ -362,6 +365,7 @@ fun <A, B, C, D, E, ERROR, RETURN> app(
    }
 }
 
+@Deprecated("use mapN")
 inline fun <A, B, C, D, E, L, R> applicative(
    a: Either<L, A>,
    b: Either<L, B>,
@@ -378,6 +382,7 @@ inline fun <A, B, C, D, E, L, R> applicative(
    return fn(a.getRightUnsafe(), b.getRightUnsafe(), c.getRightUnsafe(), d.getRightUnsafe(), e.getRightUnsafe()).right()
 }
 
+@Deprecated("use mapN")
 inline fun <A, B, C, D, E, F, L, R> applicative(
    a: Either<L, A>,
    b: Either<L, B>,
