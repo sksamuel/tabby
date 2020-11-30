@@ -94,7 +94,8 @@ sealed class Option<out A> : Optional<A> {
     * Returns an [Either.Left] containing this option's value if it is non empty, otherwise returns
     * a [Either.Right] containing the result of the function [right].
     */
-   fun <X> toLeft(right: () -> X): Either<A, X> = if (isEmpty()) Either.Right(right()) else Either.Left(this.getUnsafe())
+   fun <X> toLeft(right: () -> X): Either<A, X> =
+      if (isEmpty()) Either.Right(right()) else Either.Left(this.getUnsafe())
 
    /**
     * @return true if this is a [Some] and false if a [None].
@@ -221,6 +222,8 @@ fun <T> T?.toOption(): Option<T> = this?.some() ?: Option.None
  * otherwise returns None.
  */
 fun <A> List<A>.firstOrNone(): Option<A> = this.firstOrNull().toOption()
+
+fun <A> List<A>.firstOrNone(p: (A) -> Boolean) = this.firstOrNull(p).toOption()
 
 fun <A> List<Option<A>>.filterNotEmpty(): List<A> = this.mapNotNull { it.orNull() }
 
