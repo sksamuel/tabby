@@ -98,8 +98,6 @@ sealed class Either<out A, out B> {
 
    fun toValidated(): Validated<A, B> = fold({ it.invalid() }, { it.valid() })
 
-   fun toOption(): Option<B> = fold({ none }, { it.some() })
-
    inline fun <reified C> filterRightIsInstance(otherwise: (B) -> Any): Either<A, C> = when (this) {
       is Left -> this
       is Right -> when (val b = this.b) {
@@ -115,6 +113,8 @@ sealed class Either<out A, out B> {
       }
       return this
    }
+
+   fun toOption(): Option<B> = fold({ none }, { it.some() })
 }
 
 /**
@@ -141,11 +141,6 @@ inline fun <A, B> Either<A, B>.recoverWith(ifLeft: (A) -> Either<A, B>): Either<
 fun <A, B> Either<A, Either<A, B>>.flatten(): Either<A, B> = when (this) {
    is Either.Left -> this
    is Either.Right -> b
-}
-
-fun <A, B> Either<A, Option<B>>.flatten(f: () -> A): Either<A, B> = when (this) {
-   is Either.Left -> this
-   is Either.Right -> b.fold({ f().left() }, { it.right() })
 }
 
 fun <A, B> Either<A, B>.toIO(): IO<A, B> = IO.either(this)
