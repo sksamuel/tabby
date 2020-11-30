@@ -10,6 +10,8 @@ fun <A> List<A>.firstOrNone(): Option<A> = this.firstOrNull().toOption()
 
 fun <A> List<A>.firstOrNone(p: (A) -> Boolean) = this.firstOrNull(p).toOption()
 
+fun <A> listOfNotEmpty(vararg a: Option<A>): List<A> = a.toList().mapNotNull { it.orNull() }
+
 fun <A> List<Option<A>>.filterNotEmpty(): List<A> = this.mapNotNull { it.orNull() }
 
 inline fun <A, B> List<A>.mapNotEmpty(f: (A) -> Option<B>): List<B> =
