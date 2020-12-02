@@ -194,7 +194,7 @@ sealed class Validated<out E, out A> {
       }
    }
 
-   inline fun <A, E, T> Validated<E, A>.fold(ifInvalid: (E) -> T, ifValid: (A) -> T): T = when (this) {
+   inline fun <T> fold(ifInvalid: (E) -> T, ifValid: (A) -> T): T = when (this) {
       is Invalid -> ifInvalid(error)
       is Valid -> ifValid(value)
    }
