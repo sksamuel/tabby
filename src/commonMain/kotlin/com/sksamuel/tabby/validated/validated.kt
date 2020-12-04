@@ -218,6 +218,11 @@ fun <A> validate(f: () -> A): Validated<Throwable, A> {
    }
 }
 
+fun <A, E> Validated<E, A>.filter(isValid: (A) -> Boolean, errorFn: (A) -> E) = fold(
+   { this },
+   { if (isValid(it)) it.valid() else errorFn(it).invalid() }
+)
+
 fun <A, E> Validated<E, A>.filter(error: E, isValid: (A) -> Boolean) = fold(
    { this },
    { if (isValid(it)) it.valid() else error.invalid() }
