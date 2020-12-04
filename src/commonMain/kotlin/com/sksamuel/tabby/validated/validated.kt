@@ -171,11 +171,6 @@ sealed class Validated<out E, out A> {
     */
    fun toEither(): Either<E, A> = fold({ it.left() }, { it.right() })
 
-   fun <E, A> Validated<E, A>.filter(error: E, isValid: (A) -> Boolean) = fold(
-      { this },
-      { if (isValid(it)) it.valid() else error.invalid() }
-   )
-
    inline fun <F> mapInvalid(f: (E) -> F): Validated<F, A> = when (this) {
       is Invalid -> f(this.error).invalid()
       is Valid -> this
@@ -194,7 +189,7 @@ sealed class Validated<out E, out A> {
       }
    }
 
-   inline fun <T> fold(ifInvalid: (E) -> T, ifValid: (A) -> T): T = when (this) {
+   inline fun <B> fold(ifInvalid: (E) -> B, ifValid: (A) -> B): B = when (this) {
       is Invalid -> ifInvalid(error)
       is Valid -> ifValid(value)
    }
@@ -222,6 +217,11 @@ fun <A> validate(f: () -> A): Validated<Throwable, A> {
       e.invalid()
    }
 }
+
+fun <A, E> Validated<E, A>.filter(error: E, isValid: (A) -> Boolean) = fold(
+   { this },
+   { if (isValid(it)) it.valid() else error.invalid() }
+)
 
 /**
  * Executes the given test on the receiver. If the test returns true, then the value
