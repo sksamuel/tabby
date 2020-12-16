@@ -197,6 +197,7 @@ inline fun <A> Option<A>.getOrElse(f: () -> A): A = when (this) {
    is Option.Some -> this.value
 }
 
+@Deprecated("use mapN")
 fun <A, B, R> applicative(a: Option<A>, b: Option<B>, f: (A, B) -> R): Option<R> {
    return when (a) {
       is Option.Some -> when (b) {
@@ -207,6 +208,7 @@ fun <A, B, R> applicative(a: Option<A>, b: Option<B>, f: (A, B) -> R): Option<R>
    }
 }
 
+@Deprecated("use mapN")
 fun <A, B, C, D, R> applicative(
    a: Option<A>,
    b: Option<B>,
