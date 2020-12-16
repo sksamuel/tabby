@@ -440,41 +440,6 @@ abstract class IO<out E, out T> {
          }
       }
 
-      fun <E, A, B, C> zip(
-         a: IO<E, A>,
-         b: IO<E, B>,
-         c: IO<E, C>,
-      ): IO<E, Triple<A, B, C>> = object : IO<E, Triple<A, B, C>>() {
-         override suspend fun apply(): Either<E, Triple<A, B, C>> {
-            return a.apply().flatMap { a ->
-               b.apply().flatMap { b ->
-                  c.apply().map { c ->
-                     Triple(a, b, c)
-                  }
-               }
-            }
-         }
-      }
-
-      fun <E, A, B, C, D> zip(
-         a: IO<E, A>,
-         b: IO<E, B>,
-         c: IO<E, C>,
-         d: IO<E, D>,
-      ): IO<E, Tuple4<A, B, C, D>> = object : IO<E, Tuple4<A, B, C, D>>() {
-         override suspend fun apply(): Either<E, Tuple4<A, B, C, D>> {
-            return a.apply().flatMap { a ->
-               b.apply().flatMap { b ->
-                  c.apply().flatMap { c ->
-                     d.apply().map { d ->
-                        Tuple4(a, b, c, d)
-                     }
-                  }
-               }
-            }
-         }
-      }
-
       fun <E, T> par(effects: List<IO<E, T>>): IO<E, List<T>> = object : IO<E, List<T>>() {
          override suspend fun apply(): Either<E, List<T>> {
             return try {
