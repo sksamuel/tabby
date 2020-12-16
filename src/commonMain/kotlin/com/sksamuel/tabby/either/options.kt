@@ -14,6 +14,7 @@ fun <A, B> Either<A, Option<B>>.trifold(fa: (A) -> Unit, fn: () -> Unit, fs: (B)
 
 @OptIn(ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@Deprecated("Use map and then flatten, which allows passing in an error message")
 fun <B, C> Either<Throwable, B>.flatMap(f: (B) -> Option<C>): Either<Throwable, C> {
    return this@flatMap.flatMap { b ->
       f(b).fold({ NoSuchElementException().left() }, { it.right() })

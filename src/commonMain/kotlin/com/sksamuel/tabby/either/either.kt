@@ -143,6 +143,14 @@ fun <A, B> Either<A, Either<A, B>>.flatten(): Either<A, B> = when (this) {
    is Either.Right -> b
 }
 
+fun <B> Try<Option<B>>.flatten(ifNone: () -> String): Try<B> = when (this) {
+   is Either.Left -> this
+   is Either.Right -> when (val b = this.b) {
+      is Option.Some -> b.value.right()
+      is Option.None -> NoSuchElementException(ifNone()).left()
+   }
+}
+
 fun <A, B> Either<A, B>.toIO(): IO<A, B> = IO.either(this)
 
 inline fun <A, B, D> Either<A, B>.flatMap(f: (B) -> Either<A, D>): Either<A, D> = when (this) {

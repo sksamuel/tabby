@@ -33,7 +33,23 @@ fun <E, T> IO<E, Option<T>>.orElse(f: () -> IO<E, T>): IO<E, T> = object : IO<E,
 fun <A> Task<Option<A>>.flatten(): Task<A> = object : Task<A>() {
    override suspend fun apply(): Either<Throwable, A> {
       return this@flatten.run()
-         .flatMap { result -> result.fold({ NoSuchElementException().left() }, { it.right() }) }
+         .flatMap { result -> result.fold({ NoSuchElementException("Flattned option into task").left() }, { it.right() }) }
+   }
+}
+
+/**
+ * Returns an effect which flattens this effect, mapping a successful result of none
+ * to a failed IO of [NoSuchElementException], or mapping a successful result of some to an IO<A>.
+ */
+@JvmName("flattenOption")
+fun <A> Task<Option<A>>.flatten(ifNone: () -> String): Task<A> = object : Task<A>() {
+   override suspend fun apply(): Either<Throwable, A> {
+      return this@flatten.run()
+         .flatMap { result ->
+            result.fold(
+               { NoSuchElementException(ifNone()).left() },
+               { it.right() })
+         }
    }
 }
 
@@ -45,7 +61,7 @@ fun <T> Task<Option<T>>.absolve(): Task<T> = object : Task<T>() {
          { it.left() },
          { right ->
             right.fold(
-               { NoSuchElementException().left() },
+               { NoSuchElementException("Absolved option into task").left() },
                { it.right() }
             )
          }
