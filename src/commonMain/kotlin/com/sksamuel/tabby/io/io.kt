@@ -16,6 +16,7 @@ import com.sksamuel.tabby.either.left
 import com.sksamuel.tabby.option.none
 import com.sksamuel.tabby.either.right
 import com.sksamuel.tabby.option.some
+import com.sksamuel.tabby.option.toOption
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
@@ -607,6 +608,13 @@ abstract class IO<out E, out T> {
          }
          return memoized as Either<E, T>
       }
+   }
+
+   /**
+    * Wraps the successful result of this IO in an option.
+    */
+   fun optional(): IO<E, Option<T>> = object : IO<E, Option<T>>() {
+      override suspend fun apply(): Either<E, Option<T>> = this@IO.apply().map { it.toOption() }
    }
 
    /**
