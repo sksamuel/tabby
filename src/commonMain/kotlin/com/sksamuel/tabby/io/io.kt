@@ -179,14 +179,14 @@ abstract class IO<out E, out T> {
    /**
     * Returns an effect that runs the safe, side effecting function on the success of this effect.
     */
-   fun forEach(f: (T) -> Unit): IO<E, T> = object : IO<E, T>() {
+   fun forEach(f: suspend (T) -> Unit): IO<E, T> = object : IO<E, T>() {
       override suspend fun apply(): Either<E, T> = this@IO.apply().onRight { f(it) }
    }
 
    /**
     * Alias for forEach
     */
-   fun onSuccess(f: (T) -> Unit): IO<E, T> = forEach(f)
+   fun onSuccess(f: suspend (T) -> Unit): IO<E, T> = forEach(f)
 
    companion object {
 
