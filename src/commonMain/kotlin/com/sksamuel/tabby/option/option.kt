@@ -34,8 +34,7 @@ sealed class Option<out A> {
    inline fun forEach(f: (A) -> Unit): Option<A> {
       when (this) {
          is Some -> f(value)
-         is None -> {
-         }
+         is None -> Unit
       }
       return this
    }
@@ -221,7 +220,7 @@ fun <A, B, C, D, R> applicative(
 
 val none = Option.None
 
-fun <T> T.some(): Option<T> = Option.Some(this)
+fun <T> T.some(): Option<T> = if (this == null) error("Cannot use .some on a null") else Option.Some(this)
 
 fun <T> T?.toOption(): Option<T> = this?.some() ?: Option.None
 
