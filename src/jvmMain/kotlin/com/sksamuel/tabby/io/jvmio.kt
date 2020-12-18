@@ -9,7 +9,6 @@ package com.sksamuel.tabby.io
  * The resource is guaranteed to be closed before the effect completes.
  * Any error in closing the resource is ignored.
  */
-@Deprecated("use use")
 fun <A : AutoCloseable, B> IO.Companion.use(
    acquire: Task<A>,
    apply: (A) -> Task<B>,
