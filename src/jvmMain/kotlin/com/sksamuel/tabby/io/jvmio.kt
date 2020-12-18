@@ -2,6 +2,8 @@
 
 package com.sksamuel.tabby.io
 
+import kotlin.experimental.ExperimentalTypeInference
+
 /**
  * Returns an effect that acquires an [AutoCloseable] resource using the given
  * [acquire] effect, and then applies that resource to the given [apply] effect.
@@ -20,16 +22,8 @@ fun <A : AutoCloseable, B> IO.Companion.useWith(
    }
 }
 
-fun <A : AutoCloseable, B> IO.Companion.use(
-   acquire: Task<A>,
-   apply: (A) -> Task<B>,
-): Task<B> {
-   return acquire.flatMap { a ->
-      val close = effect { a.close() }
-      apply(a).tap { close }.tapError { close }
-   }
-}
-
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
 fun <A : AutoCloseable, B> IO.Companion.use(
    acquire: Task<A>,
    apply: suspend (A) -> B,
@@ -37,6 +31,18 @@ fun <A : AutoCloseable, B> IO.Companion.use(
    return acquire.flatMap { a ->
       val close = effect { a.close() }
       effect { apply(a) }.then(close)
+   }
+}
+
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+fun <A : AutoCloseable, B> IO.Companion.use(
+   acquire: Task<A>,
+   apply: (A) -> Task<B>,
+): Task<B> {
+   return acquire.flatMap { a ->
+      val close = effect { a.close() }
+      apply(a).tap { close }.tapError { close }
    }
 }
 
@@ -76,7 +82,7 @@ fun <A : AutoCloseable, B> Task<A>.use(f: suspend (A) -> B): Task<B> {
  * closing this resource safely after the effect has completed (either
  * successfully, or with an error).
  */
-fun <A : AutoCloseable, B> Task<A>.useWith(f: (A) -> Task<B>): Task<B> {
+fun <A : AutoCloseable, B> Task<A>.use(f: (A) -> Task<B>): Task<B> {
    return this.flatMap { a ->
       val close = IO.effect { a.close() }
       f(a).tap { close }.tapError { close }
