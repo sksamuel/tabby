@@ -675,7 +675,7 @@ suspend fun <T> Task<T>.runOrThrow() = run().fold({ throw it }, { it })
 /**
  * Recovers from an error by using the given function.
  */
-fun <E, T> IO<E, T>.recover(f: (E) -> T): IO<E, T> = object : UIO<T>() {
+fun <E, T> IO<E, T>.recover(f: (E) -> T): UIO<T> = object : UIO<T>() {
    override suspend fun apply(): Either<Nothing, T> = this@recover.apply().fold({ f(it).right() }, { it.right() })
 }
 
