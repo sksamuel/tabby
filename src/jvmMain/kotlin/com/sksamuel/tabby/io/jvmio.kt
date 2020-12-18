@@ -9,12 +9,34 @@ package com.sksamuel.tabby.io
  * The resource is guaranteed to be closed before the effect completes.
  * Any error in closing the resource is ignored.
  */
+@Deprecated("use use")
 fun <A : AutoCloseable, B> IO.Companion.useWith(
    acquire: Task<A>,
    apply: (A) -> Task<B>,
 ): Task<B> {
    return acquire.flatMap { a ->
       val close = effect { a.close() }
+      apply(a).tap { close }.tapError { close }
+   }
+}
+
+fun <A : AutoCloseable, B> IO.Companion.use(
+   acquire: Task<A>,
+   apply: (A) -> Task<B>,
+): Task<B> {
+   return acquire.flatMap { a ->
+      val close = effect { a.close() }
+      apply(a).tap { close }.tapError { close }
+   }
+}
+
+fun <A : AutoCloseable, B> IO.Companion.use(
+   acquire: Task<A>,
+   apply: suspend (A) -> B,
+): Task<B> {
+   return acquire.flatMap { a ->
+      val close = effect { a.close() }
+      effect { apply(a) }.andThen { close }
       apply(a).tap { close }.tapError { close }
    }
 }

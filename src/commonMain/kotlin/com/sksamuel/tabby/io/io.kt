@@ -514,6 +514,38 @@ abstract class IO<out E, out T> {
    }
 
    /**
+    * Applies the given, potentially side effecting function after this IO has completed,
+    * regardless of the outcome of this IO.
+    *
+    * The result of the function is ignored and errors are suppressed.
+    *
+    * Returns this IO.
+    */
+   fun then(f: suspend (Pair<E?, T?>) -> Unit): IO<E, T> = object : IO<E, T>() {
+      override suspend fun apply(): Either<E, T> {
+         return this@IO.run()
+            .onLeft { f(Pair(it, null)) }
+            .onRight { f(Pair(null, it)) }
+      }
+   }
+
+   /**
+    * Applies the given effect after this IO has completed, regardless of the outcome.
+    * Returns this IO.
+    *
+    * The result of the effect is ignored.
+    *
+    * Returns this IO.
+    */
+   fun then(t: Task<Unit>): IO<E, T> = object : IO<E, T>() {
+      override suspend fun apply(): Either<E, T> {
+         return this@IO.run()
+            .onLeft { t.run() }
+            .onRight { t.run() }
+      }
+   }
+
+   /**
     * Provides a context switch for this IO.
     */
    fun onContext(context: CoroutineContext): IO<E, T> = WithContext(this, context)
@@ -688,8 +720,9 @@ fun <E, T> IO<E, T>.tapError(f: (E) -> IO<*, *>): IO<E, T> = object : IO<E, T>()
 
 /**
  * Returns an effect which runs the given effect if this effect evaluates to true.
- * Returns the this effect.
+ * Returns this effect.
  */
+@Deprecated("replaced")
 fun <E, T> IO<E, T>.then(f: () -> IO<*, *>): IO<E, T> = object : IO<E, T>() {
    override suspend fun apply(): Either<E, T> {
       return this@then.apply().onRight { f().run() }
