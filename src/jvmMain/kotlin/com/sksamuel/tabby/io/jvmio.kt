@@ -36,8 +36,7 @@ fun <A : AutoCloseable, B> IO.Companion.use(
 ): Task<B> {
    return acquire.flatMap { a ->
       val close = effect { a.close() }
-      effect { apply(a) }.andThen { close }
-      apply(a).tap { close }.tapError { close }
+      effect { apply(a) }.then(close)
    }
 }
 
