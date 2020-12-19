@@ -9,6 +9,7 @@ package com.sksamuel.tabby.io
  * The resource is guaranteed to be closed before the effect completes.
  * Any error in closing the resource is ignored.
  */
+@Deprecated("use IO.use")
 fun <A : AutoCloseable, B> IO.Companion.use(
    acquire: Task<A>,
    apply: (A) -> Task<B>,
@@ -19,6 +20,7 @@ fun <A : AutoCloseable, B> IO.Companion.use(
    }
 }
 
+@Deprecated("use IO.use")
 fun <A : AutoCloseable, B> IO.Companion.useEffect(
    acquire: Task<A>,
    apply: suspend (A) -> B,
@@ -38,7 +40,6 @@ fun <A : AutoCloseable, B> IO.Companion.useEffect(
  * The resource is guaranteed to be closed before the effect completes.
  * Any error in closing the resource is ignored.
  */
-@Deprecated("use useEffect")
 fun <A : AutoCloseable, B> IO.Companion.use(
    acquire: suspend () -> A,
    apply: suspend (A) -> B,
@@ -66,9 +67,10 @@ fun <A : AutoCloseable, B> Task<A>.use(f: suspend (A) -> B): Task<B> {
  * closing this resource safely after the effect has completed (either
  * successfully, or with an error).
  */
-fun <A : AutoCloseable, B> Task<A>.use(f: (A) -> Task<B>): Task<B> {
+fun <A : AutoCloseable, B> Task<A>.useWith(f: (A) -> Task<B>): Task<B> {
    return this.flatMap { a ->
       val close = IO.effect { a.close() }
       f(a).tap { close }.tapError { close }
    }
 }
+
