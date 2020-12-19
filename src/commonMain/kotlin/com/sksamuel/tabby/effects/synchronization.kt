@@ -6,9 +6,9 @@ import kotlinx.coroutines.sync.withPermit
 
 /**
  * Wraps this IO in a synchronization operation that will ensure the effect
- * only takes place once a permit is acquired from the given semaphore.
+ * only takes place once a permit is acquired from the given [semaphore].
  *
- * While waiting to acquire, the effect will suspend.
+ * When waiting to acquire, the effect will suspend until a permit is available.
  */
 fun <A> IO<A>.synchronize(semaphore: Semaphore): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> =

@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package com.sksamuel.tabby.effects
 
 import com.sksamuel.tabby.either.Either
@@ -29,14 +31,6 @@ abstract class IO<out A> {
 
    class Failed(private val t: suspend () -> Throwable) : IO<Nothing>() {
       override suspend fun apply(): Try<Nothing> = Try.failure(t())
-   }
-
-   class Effect<A>(private val f: suspend () -> A) : IO<A>() {
-      override suspend fun apply(): Try<A> = catch { f() }
-   }
-
-   class EffectTotal<A>(private val f: suspend () -> A) : IO<A>() {
-      override suspend fun apply(): Try<A> = Try.success(f())
    }
 
    /**
@@ -155,12 +149,16 @@ abstract class IO<out A> {
       /**
        * Wraps a safe function as a successfully completed IO.
        */
-      fun <A> success(f: () -> A): IO<A> = Pure(f)
+      fun <A> success(f: () -> A): IO<A> = object : IO<A>() {
+         override suspend fun apply(): Try<A> = Try.success(f())
+      }
 
       /**
        * Wraps a strict value as a failed IO.
        */
-      fun failure(t: Throwable): IO<Nothing> = Failed { t }
+      fun failure(t: Throwable): IO<Nothing> = object : IO<Nothing>() {
+         override suspend fun apply(): Try<Nothing> = Try.failure(t)
+      }
 
       /**
        * Wraps a function as a failed IO.
@@ -175,7 +173,9 @@ abstract class IO<out A> {
       /**
        * Wraps a potentially throwing, effectful function as a lazy IO.
        */
-      fun <A> effect(f: suspend () -> A): IO<A> = Effect(f)
+      fun <A> effect(f: suspend () -> A): IO<A> = object : IO<A>() {
+         override suspend fun apply(): Try<A> = catch { f() }
+      }
 
       fun <A> from(result: Try<A>): IO<A> = object : IO<A>() {
          override suspend fun apply(): Try<A> = result
@@ -188,27 +188,29 @@ abstract class IO<out A> {
       /**
        * Wraps an infallible, effectful function as a lazy IO.
        */
-      fun <T> safe(f: suspend () -> T): IO<T> = EffectTotal(f)
+      fun <A> safe(f: suspend () -> A): IO<A> = object : IO<A>() {
+         override suspend fun apply(): Try<A> = Try.success(f())
+      }
 
       /**
        * Evaluate the predicate, wrapping the effectful function [success] if the predicate is true,
        * wrapping the effectful function [error] otherwise.
        */
-      fun <E, A> cond(predicate: Boolean, success: suspend () -> A, error: suspend () -> Throwable): IO<A> =
+      fun <A> cond(predicate: Boolean, success: suspend () -> A, error: suspend () -> Throwable): IO<A> =
          if (predicate) effect(success) else failure(error)
 
       /**
        * Evaluate the [predicate] function, wrapping the effectful function [success] if the predicate is true,
        * wrapping the effectful function [error] otherwise.
        */
-      fun <E, A> cond(predicate: () -> Boolean, success: suspend () -> A, error: suspend () -> Throwable): IO<A> =
+      fun <A> cond(predicate: () -> Boolean, success: suspend () -> A, error: suspend () -> Throwable): IO<A> =
          if (predicate()) effect(success) else failure(error)
 
       /**
        * Reduces IOs using the supplied function, working sequentially, or returns the
        * first failure.
        */
-      fun <E, A> reduce(first: IO<A>, vararg rest: IO<A>, f: (A, A) -> A): IO<A> = object : IO<A>() {
+      fun <A> reduce(first: IO<A>, vararg rest: IO<A>, f: (A, A) -> A): IO<A> = object : IO<A>() {
          override suspend fun apply(): Try<A> {
             if (rest.isEmpty()) return first.apply()
             var acc = first.apply().fold({ return it.left() }, { it })

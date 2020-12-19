@@ -122,6 +122,10 @@ sealed class Either<out A, out B> {
    fun toOption(): Option<B> = fold({ none }, { it.some() })
 }
 
+inline fun <A, B> Either<A, B>.orElse(other: () -> Either<A, B>): Either<A, B> {
+   return fold({ other() }, { it.right() })
+}
+
 /**
  * Invokes the given function [f] wrapping the result into an [Either.Right], or, if an exception
  * is thrown, will wrap the throwable into an [Either.Left].

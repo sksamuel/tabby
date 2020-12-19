@@ -4,7 +4,8 @@ import com.sksamuel.tabby.either.Try
 import com.sksamuel.tabby.either.right
 
 /**
- * Recovers from an error by using the given function.
+ * Recovers from an error by invoking the given function [f]. The return value of this
+ * function will replace the error in the effect.
  */
 fun <A> IO<A>.recover(f: (Throwable) -> A): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> = this@recover.apply().fold({ f(it).right() }, { it.right() })

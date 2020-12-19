@@ -1,6 +1,9 @@
+@file:Suppress("unused")
+
 package com.sksamuel.tabby.effects
 
 import com.sksamuel.tabby.Tuple4
+import com.sksamuel.tabby.Tuple5
 import com.sksamuel.tabby.either.Try
 import com.sksamuel.tabby.either.flatMap
 import kotlinx.coroutines.delay
@@ -54,3 +57,26 @@ fun <A, B, C, D> IO.Companion.zip(
       }
    }
 }
+
+fun <A, B, C, D, E> IO.Companion.zip(
+   a: IO<A>,
+   b: IO<B>,
+   c: IO<C>,
+   d: IO<D>,
+   e: IO<E>,
+): IO<Tuple5<A, B, C, D, E>> = object : IO<Tuple5<A, B, C, D, E>>() {
+   override suspend fun apply(): Try<Tuple5<A, B, C, D, E>> {
+      return a.apply().flatMap { a ->
+         b.apply().flatMap { b ->
+            c.apply().flatMap { c ->
+               d.apply().flatMap { d ->
+                  e.apply().map { e ->
+                     Tuple5(a, b, c, d, e)
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+
