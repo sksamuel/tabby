@@ -39,6 +39,7 @@ import kotlin.time.TimeSource
  *
  * IO can be executed as a regular suspendable function in the current coroutine scope.
  */
+@Deprecated("use the new throwable based effects.IO")
 abstract class IO<out E, out T> {
 
    abstract suspend fun apply(): Either<E, T>
@@ -190,57 +191,69 @@ abstract class IO<out E, out T> {
 
    companion object {
 
+      @Deprecated("use the new throwable based effects.IO")
       val unit = pure(Unit)
 
+      @Deprecated("use the new throwable based effects.IO")
       val empty = pure(none)
 
       /**
        * Wraps a strict value as a successfully completed IO.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <T> success(t: T): UIO<T> = Succeeded(t)
 
       // synonym for success
+      @Deprecated("use the new throwable based effects.IO")
       fun <T> pure(t: T): UIO<T> = success(t)
 
       /**
        * Wraps a function as a successfully completed IO.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <T> success(f: () -> T): UIO<T> = Success(f)
 
       /**
        * Wraps a strict value as a failed IO.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <E> failure(e: E): FIO<E> = Failed(e)
 
       /**
        * Wraps a function as a failed IO.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <E> failure(f: () -> E): FIO<E> = Failure(f)
 
       /**
        * Returns a failed IO with the given message converted to a runtime exception.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun fail(msg: String): FIO<Throwable> = Failure { RuntimeException(msg) }
 
       /**
        * Wraps a potentially throwing effectful function as an IO.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <T> effect(f: suspend () -> T): Task<T> = Effect(f)
 
       /**
        * Wraps a potentially throwing effectful error handling function as an IO.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, T> effectWith(f: suspend () -> Either<E, T>): IO<E, T> = EffectWith(f)
 
       /**
        * Wraps an infallible effectful function as a lazy IO.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <T> effectTotal(f: suspend () -> T): UIO<T> = EffectTotal(f)
 
       /**
        * Evaluate the predicate, returning T as success if the predicate is true,
        * returning E as other otherwise.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, T> cond(predicate: Boolean, success: () -> T, error: () -> E): IO<E, T> =
          if (predicate) IO.success(success()) else failure(error())
 
@@ -248,6 +261,7 @@ abstract class IO<out E, out T> {
        * Evaluate the predicate fn, returning T as success if the predicate is true,
        * returning E as other otherwise.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, T> cond(predicate: () -> Boolean, success: () -> T, error: () -> E): IO<E, T> =
          if (predicate()) IO.success(success()) else failure(error())
 
@@ -255,8 +269,10 @@ abstract class IO<out E, out T> {
        * Returns an effect that contains the results of the given effects. If any of the given
        * effects fails, this effect will fail and any successes will be dropped.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, T> traverse(vararg effects: IO<E, T>): IO<E, List<T>> = traverse(effects.asList())
 
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, T> traverse(effects: List<IO<E, T>>): IO<E, List<T>> = object : IO<E, List<T>>() {
          override suspend fun apply(): Either<E, List<T>> {
             return effects.fold(emptyList<T>()) { acc, effect ->
@@ -272,15 +288,19 @@ abstract class IO<out E, out T> {
        * Evaluate and run each effect in the structure, in sequence,
        * and collect discarding failed ones.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, T> collectSuccess(vararg effects: IO<E, T>): Task<List<T>> = CollectSuccess(effects.asList())
 
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, T> collectSuccess(effects: List<IO<E, T>>): Task<List<T>> = CollectSuccess(effects)
 
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, T> either(either: Either<E, T>) = WrapEither(either)
 
       /**
        * Acquires a resource, uses that resource, with a guaranteed release operation.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <T, U> bracket(acquire: () -> T, use: (T) -> U, release: (T) -> Unit): Task<U> =
          Bracket(acquire, use, release)
 
@@ -288,6 +308,7 @@ abstract class IO<out E, out T> {
        * Reduces IOs using the supplied function, working sequentially, or returns the
        * first failure.
        */
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, T> reduce(first: IO<E, T>, vararg rest: IO<E, T>, f: (T, T) -> T): IO<E, T> = object : IO<E, T>() {
          override suspend fun apply(): Either<E, T> {
             if (rest.isEmpty()) return first.apply()
@@ -302,12 +323,14 @@ abstract class IO<out E, out T> {
          }
       }
 
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, A, B, R> mapN(first: IO<E, A>, second: IO<E, B>, f: (A, B) -> R): IO<E, R> = object : IO<E, R>() {
          override suspend fun apply(): Either<E, R> {
             return first.apply().flatMap { a -> second.apply().map { b -> f(a, b) } }
          }
       }
 
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, A, B, C, R> mapN(
          first: IO<E, A>,
          second: IO<E, B>,
@@ -325,6 +348,7 @@ abstract class IO<out E, out T> {
          }
       }
 
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, A, B, C, D, R> mapN(
          first: IO<E, A>,
          second: IO<E, B>,
@@ -345,6 +369,7 @@ abstract class IO<out E, out T> {
          }
       }
 
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, A, B> parN(ioa: IO<E, A>, iob: IO<E, B>) = object : IO<E, Tuple2<A, B>>() {
          override suspend fun apply(): Either<E, Tuple2<A, B>> {
             return try {
@@ -369,6 +394,7 @@ abstract class IO<out E, out T> {
          }
       }
 
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, A, B, C> parN(ioa: IO<E, A>, iob: IO<E, B>, ioc: IO<E, C>) = object : IO<E, Tuple3<A, B, C>>() {
          override suspend fun apply(): Either<E, Tuple3<A, B, C>> {
             return try {
@@ -399,6 +425,7 @@ abstract class IO<out E, out T> {
          }
       }
 
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, A, B, C, D> parN(
          ioa: IO<E, A>,
          iob: IO<E, B>,
@@ -440,6 +467,7 @@ abstract class IO<out E, out T> {
          }
       }
 
+      @Deprecated("use the new throwable based effects.IO")
       fun <E, T> par(effects: List<IO<E, T>>): IO<E, List<T>> = object : IO<E, List<T>>() {
          override suspend fun apply(): Either<E, List<T>> {
             return try {
@@ -464,14 +492,17 @@ abstract class IO<out E, out T> {
    }
 
 
+   @Deprecated("use the new throwable based effects.IO")
    fun <U> map(f: (T) -> U): IO<E, U> = FlatMap({ f(it).success() }, this)
 
    /**
     * Executes the given function if this is an error.
     * Returns this
     */
+   @Deprecated("use the new throwable based effects.IO")
    fun onError(f: (E) -> Unit): IO<E, T> = OnError(this, f)
 
+   @Deprecated("use the new throwable based effects.IO")
    fun <K> trace(before: suspend () -> K, after: suspend (K) -> Unit): IO<E, T> = object : IO<E, T>() {
       override suspend fun apply(): Either<E, T> {
          val k = try {
@@ -494,19 +525,24 @@ abstract class IO<out E, out T> {
     *
     * While waiting to acquire, the effect will suspend.
     */
+   @Deprecated("use the new throwable based effects.IO")
    fun synchronize(semaphore: Semaphore): IO<E, T> = object : IO<E, T>() {
       override suspend fun apply(): Either<E, T> =
          semaphore.withPermit { this@IO.apply() }
    }
 
+   @Deprecated("use the new throwable based effects.IO")
    fun <E2> mapError(f: (E) -> E2): IO<E2, T> = MapErrorFn(f, this)
 
+   @Deprecated("use the new throwable based effects.IO")
    fun <E2> flatMapError(f: (E) -> FIO<E2>): IO<E2, T> = FlatMapErrorFn(f, this)
 
+   @Deprecated("use the new throwable based effects.IO")
    fun swap(): IO<T, E> = object : IO<T, E>() {
       override suspend fun apply(): Either<T, E> = this@IO.apply().swap()
    }
 
+   @Deprecated("use the new throwable based effects.IO")
    fun onEach(ifError: (E) -> Unit, ifSuccess: (T) -> Unit): IO<E, T> = object : IO<E, T>() {
       override suspend fun apply(): Either<E, T> {
          return this@IO.run().onLeft { ifError(it) }.onRight { ifSuccess(it) }
@@ -521,6 +557,7 @@ abstract class IO<out E, out T> {
     *
     * Returns this IO.
     */
+   @Deprecated("use the new throwable based effects.IO")
    fun then(f: suspend (Pair<E?, T?>) -> Unit): IO<E, T> = object : IO<E, T>() {
       override suspend fun apply(): Either<E, T> {
          return this@IO.run()
@@ -537,6 +574,7 @@ abstract class IO<out E, out T> {
     *
     * Returns this IO.
     */
+   @Deprecated("use the new throwable based effects.IO")
    fun then(t: Task<Unit>): IO<E, T> = object : IO<E, T>() {
       override suspend fun apply(): Either<E, T> {
          return this@IO.run()
@@ -548,19 +586,23 @@ abstract class IO<out E, out T> {
    /**
     * Provides a context switch for this IO.
     */
+   @Deprecated("use the new throwable based effects.IO")
    fun onContext(context: CoroutineContext): IO<E, T> = WithContext(this, context)
 
    /**
     * Executes this IO, returning the result as an [Either].
     */
+   @Deprecated("use the new throwable based effects.IO")
    suspend fun run(): Either<E, T> = this@IO.apply()
 
+   @Deprecated("use the new throwable based effects.IO")
    suspend fun runUnsafe(): T = run().getRightUnsafe()
 
    /**
     * Returns a new IO which is just this IO but with the result of a successful execution
     * replaced with the given strict value.
     */
+   @Deprecated("use the new throwable based effects.IO")
    fun <B> with(b: B): IO<E, B> = object : IO<E, B>() {
       override suspend fun apply(): Either<E, B> = this@IO.run().map { b }
    }
@@ -569,18 +611,21 @@ abstract class IO<out E, out T> {
     * Executes this IO, with the calling coroutine as the context.
     * Returns the successful result or null.
     */
+   @Deprecated("use the new throwable based effects.IO")
    suspend fun runOrNull(): T? = run().getRightOrNull()
 
    /**
     * Executes this IO, with the calling coroutine as the context.
     * Returns the successful result wrapped in an option, or none.
     */
+   @Deprecated("use the new throwable based effects.IO")
    suspend fun runOrNone(): Option<T> = run().toOption()
 
    /**
     * Executes this IO, using the supplied dispatcher as the context.
     * Shorthand for `context(dispatcher).run()`
     */
+   @Deprecated("use the new throwable based effects.IO")
    suspend fun runOn(dispatcher: CoroutineDispatcher): Either<E, T> {
       return withContext(dispatcher) {
          this@IO.apply()
@@ -590,6 +635,7 @@ abstract class IO<out E, out T> {
    /**
     * Ignores any success value, returning an effect that producess Unit.
     */
+   @Deprecated("use the new throwable based effects.IO")
    fun unit(): IO<E, Unit> = object : IO<E, Unit>() {
       override suspend fun apply(): Either<E, Unit> = this@IO.apply().map { Unit }
    }
@@ -597,6 +643,7 @@ abstract class IO<out E, out T> {
    /**
     * Returns a memoized version of this effect.
     */
+   @Deprecated("use the new throwable based effects.IO")
    fun memoize(): IO<E, T> = object : IO<E, T>() {
       var memoized: Any? = null
       override suspend fun apply(): Either<E, T> {
@@ -610,6 +657,7 @@ abstract class IO<out E, out T> {
    /**
     * Wraps the successful result of this IO in an option.
     */
+   @Deprecated("use the new throwable based effects.IO")
    fun optional(): IO<E, Option<T>> = object : IO<E, Option<T>>() {
       override suspend fun apply(): Either<E, Option<T>> = this@IO.apply().map { it.toOption() }
    }
@@ -618,6 +666,7 @@ abstract class IO<out E, out T> {
     * Returns a memoized version of this effect that will hold the memoized value for the specified duration.
     */
    @OptIn(ExperimentalTime::class)
+   @Deprecated("use the new throwable based effects.IO")
    fun memoizeFor(duration: Duration): IO<E, T> = object : IO<E, T>() {
       var memoized: Any? = null
       var mark = TimeSource.Monotonic.markNow().plus(duration)
