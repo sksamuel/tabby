@@ -26,6 +26,8 @@ sealed class Either<out A, out B> {
 
    companion object {
 
+      operator fun <B> invoke(f: () -> B): Try<B> = catch(f)
+
       fun <A, B> cond(test: Boolean, ifFalse: () -> A, ifTrue: () -> B) = when (test) {
          false -> ifFalse().left()
          true -> ifTrue().right()
@@ -35,6 +37,9 @@ sealed class Either<out A, out B> {
          false -> ifFalse().left()
          true -> ifTrue().right()
       }
+
+      fun <A> success(a: A) = Right(a)
+      fun failure(t: Throwable) = Left(t)
    }
 
    data class Left<A>(val a: A) : Either<A, Nothing>() {
@@ -158,6 +163,7 @@ inline fun <A, B, D> Either<A, B>.flatMap(f: (B) -> Either<A, D>): Either<A, D> 
    is Either.Right -> f(b)
 }
 
+@Deprecated("use flatmap")
 inline fun <A, B, D> Either<A, B>.flatMapRight(f: (B) -> Either<A, D>): Either<A, D> = when (this) {
    is Either.Left -> this
    is Either.Right -> f(b)
