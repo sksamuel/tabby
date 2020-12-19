@@ -8,7 +8,7 @@ import com.sksamuel.tabby.either.right
  * For an IO<List<T>>, applies the given function to each element of the list,
  * returning a new IO with the mapped list.
  */
-fun <T, U> IO<List<T>>.mapList(f: (T) -> U): IO<List<U>> {
+fun <A, B> IO<List<A>>.mapElements(f: (A) -> B): IO<List<B>> {
    return this.map { it.map(f) }
 }
 
