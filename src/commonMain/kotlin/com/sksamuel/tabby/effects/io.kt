@@ -120,9 +120,10 @@ abstract class IO<out A> {
     */
    suspend fun run(): Try<A> = this@IO.apply()
 
+   /**
+    * Evaluates this effect, returning the value if successful, or throwing if evaluation fails.
+    */
    suspend fun runUnsafe(): A = run().getRightUnsafe()
-
-   suspend fun runOrThrow() = run().fold({ throw it }, { it })
 
    /**
     * Alias for forEach
