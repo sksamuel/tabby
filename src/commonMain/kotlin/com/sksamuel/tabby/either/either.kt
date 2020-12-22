@@ -268,10 +268,12 @@ fun <A, B, C, D> Either<A, B>.mapNWith(other: Either<A, C>, f: (B, C) -> Either<
 
 typealias Try<B> = Either<Throwable, B>
 
+@Deprecated("use toEither")
 fun <A, B> Option<B>.either(ifEmpty: () -> A): Either<A, B> = fold({ ifEmpty().left() }, { it.right() })
 
 fun <A, B, C> Either<A, List<B>>.mapK(f: (B) -> C): Either<A, List<C>> = fold({ it.left() }, { it.map(f).right() })
 
+@Deprecated("use mapN")
 inline fun <A, B, E, R> applicative(
    a: Either<E, A>,
    b: Either<E, B>,
@@ -282,6 +284,7 @@ inline fun <A, B, E, R> applicative(
    return fn(a.getRightUnsafe(), b.getRightUnsafe()).right()
 }
 
+@Deprecated("use mapN")
 inline fun <A, B, C, E, R> applicative(
    a: Either<E, A>,
    b: Either<E, B>,
@@ -294,6 +297,7 @@ inline fun <A, B, C, E, R> applicative(
    return fn(a.getRightUnsafe(), b.getRightUnsafe(), c.getRightUnsafe()).right()
 }
 
+@Deprecated("use mapN")
 inline fun <A, B, C, D, E, R> applicative(
    a: Either<E, A>,
    b: Either<E, B>,
