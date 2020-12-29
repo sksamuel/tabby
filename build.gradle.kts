@@ -19,8 +19,11 @@ plugins {
    signing
 }
 
-kotlin {
+repositories {
+   mavenCentral()
+}
 
+kotlin {
    targets {
       jvm {
          compilations.all {
@@ -30,36 +33,6 @@ kotlin {
          }
       }
    }
-
-   sourceSets {
-
-      val commonMain by getting {
-         dependencies {
-            implementation(kotlin("stdlib-common"))
-            implementation(Libs.Coroutines.core)
-         }
-      }
-
-      val jvmMain by getting {
-         dependsOn(commonMain)
-         dependencies {
-            implementation(kotlin("stdlib-jdk8"))
-            implementation(Libs.Coroutines.coreJvm)
-         }
-      }
-
-      val jvmTest by getting {
-         dependencies {
-            implementation("io.kotest:kotest-assertions-core:4.3.1")
-            implementation("io.kotest:kotest-runner-junit5-jvm:4.3.1")
-         }
-      }
-   }
-}
-
-
-repositories {
-   mavenCentral()
 }
 
 group = "com.sksamuel.tabby"
