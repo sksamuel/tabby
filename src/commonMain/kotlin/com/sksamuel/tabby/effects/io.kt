@@ -103,6 +103,10 @@ abstract class IO<out A> {
       override suspend fun apply(): Try<B> = this@IO.apply().map { b }
    }
 
+   suspend fun runOrElse(ifError: (Throwable) -> Unit): A? {
+      return run().onLeft(ifError).getRightOrNull()
+   }
+
    /**
     * Executes this IO, with the calling coroutine as the context.
     * Returns the successful result or null.
