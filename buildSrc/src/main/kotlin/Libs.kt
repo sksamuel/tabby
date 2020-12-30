@@ -5,8 +5,9 @@ object Libs {
 
    object Kotest {
       private const val version = "4.3.2"
-      const val assertions = "io.kotest:kotest-assertions-core-jvm:$version"
-      const val junit5 = "io.kotest:kotest-runner-junit5-jvm:$version"
+      const val shared = "io.kotest:kotest-assertions-shared:$version"
+      const val assertions = "io.kotest:kotest-assertions-core:$version"
+      const val junit5 = "io.kotest:kotest-runner-junit5:$version"
    }
 
    object Jackson {
