@@ -4,5 +4,5 @@ object Ci {
    val isRelease = !isGithub
    private const val releaseVersion = "0.95.0"
    private val snapshotVersion = "0.95.0.${githubBuildNumber}-SNAPSHOT"
-   val publishVersion = if (isRelease) releaseVersion else snapshotVersion.value
+   val publishVersion = if (isRelease) releaseVersion else snapshotVersion
 }
