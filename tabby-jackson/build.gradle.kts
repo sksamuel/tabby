@@ -70,42 +70,6 @@ kotlin {
             implementation(Libs.Kotest.junit5)
          }
       }
-
-      val desktopMain by creating {
-         dependsOn(commonMain)
-      }
-
-      val macosX64Main by getting {
-         dependsOn(desktopMain)
-      }
-
-      val mingwX64Main by getting {
-         dependsOn(desktopMain)
-      }
-
-      val linuxX64Main by getting {
-         dependsOn(desktopMain)
-      }
-
-      val iosX64Main by getting {
-         dependsOn(desktopMain)
-      }
-
-      val iosArm64Main by getting {
-         dependsOn(desktopMain)
-      }
-
-      val iosArm32Main by getting {
-         dependsOn(desktopMain)
-      }
-
-      val watchosMain by getting {
-         dependsOn(desktopMain)
-      }
-
-      val tvosMain by getting {
-         dependsOn(desktopMain)
-      }
    }
 }
 
