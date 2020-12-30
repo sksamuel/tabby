@@ -1,26 +1,39 @@
 buildscript {
-
    repositories {
       mavenCentral()
       mavenLocal()
-   }
-
-   repositories {
-      mavenCentral()
+      maven("https://dl.bintray.com/kotlin/kotlin-eap")
+      maven("https://kotlin.bintray.com/kotlinx")
+      gradlePluginPortal()
    }
 }
 
 plugins {
    java
-   `java-library`
+   kotlin("multiplatform") version Libs.kotlinVersion
    id("java-library")
    id("maven-publish")
-   kotlin("multiplatform").version(Libs.kotlinVersion)
    signing
+   id("org.jetbrains.dokka") version Libs.dokkaVersion
 }
 
-repositories {
-   mavenCentral()
+tasks {
+   javadoc {
+   }
+}
+
+allprojects {
+
+   repositories {
+      mavenCentral()
+      jcenter()
+      google()
+      maven("https://kotlin.bintray.com/kotlinx")
+      maven("https://dl.bintray.com/kotlin/kotlin-eap")
+   }
+
+   group = "com.sksamuel.tabby"
+   version = Ci.publishVersion
 }
 
 kotlin {
@@ -35,28 +48,15 @@ kotlin {
    }
 }
 
-group = "com.sksamuel.tabby"
-version = Ci.publishVersion.value
-
-tasks.named<Test>("jvmTest") {
-   useJUnitPlatform()
-   filter {
-      isFailOnNoMatchingTests = true
-   }
-   testLogging {
-      showExceptions = true
-      showStandardStreams = true
-      events = setOf(
-         org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
-         org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
-      )
-      exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-   }
-}
-
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-   kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
    kotlinOptions.jvmTarget = "1.8"
+   kotlinOptions.apiVersion = "1.4"
 }
 
-apply(from = "./publish.gradle.kts")
+val publications: PublicationContainer = (extensions.getByName("publishing") as PublishingExtension).publications
+
+signing {
+   useGpgCmd()
+   if (Ci.isRelease)
+      sign(publications)
+}

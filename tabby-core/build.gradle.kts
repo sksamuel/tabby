@@ -1,22 +1,11 @@
-buildscript {
-
-   repositories {
-      mavenCentral()
-      mavenLocal()
-   }
-
-   repositories {
-      mavenCentral()
-   }
+plugins {
+   id("java")
+   id("kotlin-multiplatform")
+   id("java-library")
 }
 
-plugins {
-   java
-   `java-library`
-   id("java-library")
-   id("maven-publish")
-   kotlin("multiplatform")
-   signing
+repositories {
+   mavenCentral()
 }
 
 kotlin {
@@ -29,13 +18,36 @@ kotlin {
             }
          }
       }
+      js {
+         browser()
+         nodejs()
+      }
+
+      linuxX64()
+
+      mingwX64()
+
+      macosX64()
+      tvos()
+      watchos()
+
+      iosX64()
+      iosArm64()
+      iosArm32()
+   }
+
+   targets.all {
+      compilations.all {
+         kotlinOptions {
+            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
+         }
+      }
    }
 
    sourceSets {
 
       val commonMain by getting {
          dependencies {
-            implementation(kotlin("stdlib-common"))
             implementation(Libs.Coroutines.core)
          }
       }
@@ -43,32 +55,66 @@ kotlin {
       val jvmMain by getting {
          dependsOn(commonMain)
          dependencies {
-            implementation(kotlin("stdlib-jdk8"))
-            implementation(Libs.Coroutines.coreJvm)
+            implementation(kotlin("reflect"))
          }
       }
 
       val jvmTest by getting {
+         dependsOn(jvmMain)
          dependencies {
-            implementation("io.kotest:kotest-assertions-core:4.3.1")
-            implementation("io.kotest:kotest-runner-junit5-jvm:4.3.1")
+            implementation(Libs.Kotest.assertions)
+            implementation(Libs.Kotest.junit5)
          }
+      }
+
+      val desktopMain by creating {
+         dependsOn(commonMain)
+      }
+
+      val macosX64Main by getting {
+         dependsOn(desktopMain)
+      }
+
+      val mingwX64Main by getting {
+         dependsOn(desktopMain)
+      }
+
+      val linuxX64Main by getting {
+         dependsOn(desktopMain)
+      }
+
+      val iosX64Main by getting {
+         dependsOn(desktopMain)
+      }
+
+      val iosArm64Main by getting {
+         dependsOn(desktopMain)
+      }
+
+      val iosArm32Main by getting {
+         dependsOn(desktopMain)
+      }
+
+      val watchosMain by getting {
+         dependsOn(desktopMain)
+      }
+
+      val tvosMain by getting {
+         dependsOn(desktopMain)
       }
    }
 }
 
-
-repositories {
-   mavenCentral()
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+   kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+   kotlinOptions.jvmTarget = "1.8"
+   kotlinOptions.apiVersion = "1.4"
 }
-
-group = "com.sksamuel.tabby"
-version = Ci.publishVersion.value
 
 tasks.named<Test>("jvmTest") {
    useJUnitPlatform()
    filter {
-      isFailOnNoMatchingTests = true
+      isFailOnNoMatchingTests = false
    }
    testLogging {
       showExceptions = true
@@ -81,9 +127,4 @@ tasks.named<Test>("jvmTest") {
    }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-   kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
-   kotlinOptions.jvmTarget = "1.8"
-}
-
-apply(from = "../publish.gradle.kts")
+apply(from = "../publish-mpp.gradle.kts")
