@@ -18,9 +18,7 @@ fun <A> IO<A>.then(f: suspend () -> Unit): IO<A> = object : IO<A>() {
 
 /**
  * Applies the given effect after this IO has completed, regardless of the outcome.
- * Returns this IO.
- *
- * The result of the effect is ignored.
+ * The result of the after effect is ignored.
  *
  * Returns this IO.
  */
@@ -32,6 +30,12 @@ fun <A> IO<A>.then(t: IO<Unit>): IO<A> = object : IO<A>() {
    }
 }
 
+/**
+ * Applies the given effect after this IO has completed, regardless of the outcome.
+ * The result of the after effect is ignored.
+ *
+ * Returns this IO.
+ */
 fun <A> IO<A>.then(ifError: (Throwable) -> Unit, ifSuccess: (A) -> Unit): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
       return this@then.run().onLeft { ifError(it) }.onRight { ifSuccess(it) }

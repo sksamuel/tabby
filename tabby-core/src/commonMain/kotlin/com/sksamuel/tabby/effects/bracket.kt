@@ -11,3 +11,16 @@ fun <R, A> IO.Companion.bracket(acquire: IO<R>, use: (R) -> IO<A>, release: (R) 
       return acquire.flatMap { r -> use(r).then(release(r)) }.apply()
    }
 }
+
+
+/**
+ * Acquires a resource of type R using the given effectful [acquire] function,
+ * passes that resource to the effectful [use] function, with the effectual [release]
+ * function guaranteed to execute on completion of the use function.
+ */
+fun <R, A> IO.Companion.bracket(
+   acquire: suspend () -> R,
+   use: suspend (R) -> A,
+   release: suspend (R) -> IO<Unit>
+): IO<A> = bracket(effect(acquire), { effect { use(it) } }, { effect { release(it) } })
+
