@@ -36,9 +36,9 @@ fun <A, B> IO<Option<A>>.flatMapValue(f: (A) -> Option<B>): IO<Option<B>> {
  *
  * The given function [ifNone] is used to generate the failure value in the case of an empty result.
  */
-fun <A> IO<Option<A>>.absolve(ifNone: () -> Throwable = { NoSuchElementException() }): IO<A> = object : IO<A>() {
+fun <A> IO<Option<A>>.flatten(ifNone: () -> Throwable = { NoSuchElementException() }): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
-      return this@absolve.apply().fold(
+      return this@flatten.apply().fold(
          { it.left() },
          { right ->
             right.fold(
