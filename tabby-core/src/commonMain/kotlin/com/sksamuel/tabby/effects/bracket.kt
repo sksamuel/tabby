@@ -21,6 +21,6 @@ fun <R, A> IO.Companion.bracket(acquire: IO<R>, use: (R) -> IO<A>, release: (R) 
 fun <R, A> IO.Companion.bracket(
    acquire: suspend () -> R,
    use: suspend (R) -> A,
-   release: suspend (R) -> IO<Unit>
+   release: suspend (R) -> Unit
 ): IO<A> = bracket(effect(acquire), { effect { use(it) } }, { effect { release(it) } })
 
