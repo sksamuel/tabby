@@ -162,6 +162,8 @@ fun <B> Try<Option<B>>.flatten(ifNone: () -> String): Try<B> = when (this) {
 
 fun <A, B> Either<A, B>.toIO(): IO<A, B> = IO.either(this)
 
+fun <B> Either<Throwable, B>.toIO(): com.sksamuel.tabby.effects.IO<B> = com.sksamuel.tabby.effects.IO.from(this)
+
 inline fun <A, B, D> Either<A, B>.flatMap(f: (B) -> Either<A, D>): Either<A, D> = when (this) {
    is Either.Left -> this
    is Either.Right -> f(b)
