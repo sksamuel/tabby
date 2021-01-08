@@ -17,8 +17,8 @@ sealed class Tristate<out A> {
    object None : Tristate<Nothing>()
    object Unspecified : Tristate<Nothing>()
 
-   fun isPresent() = this is Some
-   fun isAbsent() = this is None
+   fun isSome() = this is Some
+   fun isNone() = this is None
    fun isUnspecified() = this is Unspecified
 
    /**

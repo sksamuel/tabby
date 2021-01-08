@@ -8,7 +8,7 @@ import com.sksamuel.tabby.option.some
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
-class TabbyModuleTest : FunSpec({
+class TabbyModuleOptionTest : FunSpec({
 
    val mapper = jacksonObjectMapper()
    mapper.registerModule(TabbyModule)
