@@ -42,6 +42,10 @@ kotlin {
          compilations.all {
             kotlinOptions {
                jvmTarget = "1.8"
+               kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+               kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
+               kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
+               kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
             }
          }
       }
@@ -51,6 +55,16 @@ kotlin {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
    kotlinOptions.jvmTarget = "1.8"
    kotlinOptions.apiVersion = "1.4"
+   kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+   kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
+   kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
+   kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
+   kotlinOptions {
+      kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+      kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
+      kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
+      kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
+   }
 }
 
 val publications: PublicationContainer = (extensions.getByName("publishing") as PublishingExtension).publications
