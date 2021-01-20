@@ -16,7 +16,7 @@ import kotlin.time.measureTimedValue
  */
 @OptIn(ExperimentalTime::class)
 @OverloadResolutionByLambdaReturnType
-fun <A> IO<A>.time(f: (Duration) -> IO<Unit>): IO<A> = object : IO<A> {
+fun <A> IO<A>.time(f: (Duration) -> IO<Unit>): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
       val (result, time) = measureTimedValue { this@time.apply() }
       f(time).run()
