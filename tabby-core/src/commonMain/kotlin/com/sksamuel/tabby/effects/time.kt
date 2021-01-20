@@ -19,7 +19,7 @@ import kotlin.time.measureTimedValue
 fun <A> IO<A>.time(f: (Duration) -> IO<Unit>): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
       val (result, time) = measureTimedValue { this@time.apply() }
-      f(time).run()
+      f(time).run() // ignore result
       return result
    }
 }
@@ -35,4 +35,10 @@ fun <A> IO<A>.time(f: (Duration) -> IO<Unit>): IO<A> = object : IO<A>() {
 @OptIn(ExperimentalTime::class)
 @JvmName("timeUnit")
 @OverloadResolutionByLambdaReturnType
-fun <A> IO<A>.time(f: (Duration) -> Unit): IO<A> = this.time { time -> IO.effect { f(time) } }
+fun <A> IO<A>.time(f: suspend (Duration) -> Unit): IO<A> = object : IO<A>() {
+   override suspend fun apply(): Try<A> {
+      val (result, time) = measureTimedValue { this@time.apply() }
+      effect { f(time) }.run() // ignore result
+      return result
+   }
+}

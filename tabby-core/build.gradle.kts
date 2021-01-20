@@ -15,10 +15,10 @@ kotlin {
          compilations.all {
             kotlinOptions {
                jvmTarget = "1.8"
-               kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-               kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
-               kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
-               kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
+               freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
+               freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.Experimental"
+               freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
+               freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.time.ExperimentalTime"
             }
          }
       }
@@ -31,10 +31,10 @@ kotlin {
    targets.all {
       compilations.all {
          kotlinOptions {
-            kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-            kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
-            kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
-            kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
+            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
+            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.Experimental"
+            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
+            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.time.ExperimentalTime"
          }
       }
    }
@@ -68,17 +68,12 @@ kotlin {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
    kotlinOptions {
-      kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-      kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
-      kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
-      kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
+      apiVersion = "1.4"
+      freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
+      freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.Experimental"
+      freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
+      freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.time.ExperimentalTime"
    }
-   kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-   kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
-   kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
-   kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
-   kotlinOptions.jvmTarget = "1.8"
-   kotlinOptions.apiVersion = "1.4"
 }
 
 tasks.named<Test>("jvmTest") {
