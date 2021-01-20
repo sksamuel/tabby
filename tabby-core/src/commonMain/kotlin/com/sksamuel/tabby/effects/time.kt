@@ -7,8 +7,8 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
 /**
- * Upon completion of this IO, invokes the function [f] to retrieve an IO which is executed.
- * The argument to [f] is the duration of this IO.
+ * Upon completion of this IO, invokes the function [f] to retrieve an effect which is executed, with the
+ * duration of this IO as the argument.
  *
  * The result of the effect is ignored and errors are suppressed.
  *
@@ -25,10 +25,8 @@ fun <A> IO<A>.time(f: (Duration) -> IO<Unit>): IO<A> = object : IO<A>() {
 }
 
 /**
- * Applies the potentially side effecting function [f] after this IO has completed, with the
+ * Applies the safe function [f] after this IO has completed, with the
  * duration of this IO as the argument.
- *
- * Any errors in the effect are ignored.
  *
  * Returns this IO.
  */
@@ -36,17 +34,6 @@ fun <A> IO<A>.time(f: (Duration) -> IO<Unit>): IO<A> = object : IO<A>() {
 @JvmName("timeUnit")
 @OverloadResolutionByLambdaReturnType
 fun <A> IO<A>.time(f: (Duration) -> Unit): IO<A> = object : IO<A>() {
-   override suspend fun apply(): Try<A> {
-      val (result, time) = measureTimedValue { this@time.apply() }
-      effect { f(time) }.run() // ignore result
-      return result
-   }
-}
-
-@OptIn(ExperimentalTime::class)
-@JvmName("timeUnitSuspend")
-@OverloadResolutionByLambdaReturnType
-fun <A> IO<A>.time(f: suspend (Duration) -> Unit): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
       val (result, time) = measureTimedValue { this@time.apply() }
       effect { f(time) }.run() // ignore result
