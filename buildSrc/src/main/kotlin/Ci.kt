@@ -1,8 +1,18 @@
 object Ci {
-   private val isGithub = System.getenv("GITHUB_ACTIONS") == "true"
-   private val githubBuildNumber: String = System.getenv("GITHUB_RUN_NUMBER") ?: "0"
-   val isRelease = !isGithub
-   private const val releaseVersion = "0.95.0"
-   private val snapshotVersion = "0.95.0.${githubBuildNumber}-SNAPSHOT"
-   val publishVersion = if (isRelease) releaseVersion else snapshotVersion
+
+   // this is the version used for building snapshots
+   // .buildnumber-snapshot will be appended
+   private const val snapshotBase = "0.95.0"
+
+   private val githubBuildNumber = System.getenv("GITHUB_RUN_NUMBER")
+
+   private val snapshotVersion = when (githubBuildNumber) {
+      null -> "$snapshotBase-LOCAL"
+      else -> "$snapshotBase.${githubBuildNumber}-SNAPSHOT"
+   }
+
+   private val releaseVersion = System.getenv("RELEASE_VERSION")
+
+   val isRelease = releaseVersion != null
+   val publishVersion = releaseVersion ?: snapshotVersion
 }
