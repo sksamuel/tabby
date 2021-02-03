@@ -3,7 +3,6 @@
 package com.sksamuel.tabby.option
 
 import com.sksamuel.tabby.either.Either
-import com.sksamuel.tabby.either.Try
 import com.sksamuel.tabby.validated.Validated
 import com.sksamuel.tabby.validated.invalid
 import com.sksamuel.tabby.io.IO
@@ -168,7 +167,6 @@ sealed class Option<out A> {
     */
    fun <B> toEither(ifEmpty: () -> B): Either<B, A> = fold({ ifEmpty().left() }, { it.right() })
 
-   fun toTry(message: String): Try<A> = fold({ RuntimeException(message).left() }, { it.right() })
 
    /**
     * Transforms this option into a [Validated].
