@@ -129,5 +129,6 @@ fun <A> List<Try<A>>.split(): Pair<List<Throwable>, List<A>> {
    return failures.map { it.getErrorUnsafe() } to successes.map { it.getValueUnsafe() }
 }
 
+fun String.error() = Try.Failure(RuntimeException(this))
 fun Throwable.error() = Try.Failure(this)
 fun <B> B.value() = Try.Success(this)
