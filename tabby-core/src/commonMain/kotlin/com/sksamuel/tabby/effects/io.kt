@@ -129,6 +129,10 @@ abstract class IO<out A> {
     */
    suspend fun runUnsafe(): A = run().getRightUnsafe()
 
+   suspend fun <B> funFold(ifError: (Throwable) -> B, ifSuccess: (A) -> B): B {
+      return run().fold(ifError, ifSuccess)
+   }
+
    /**
     * Alias for forEach
     */
