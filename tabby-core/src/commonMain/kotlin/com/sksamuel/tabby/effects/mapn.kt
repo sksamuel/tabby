@@ -2,6 +2,13 @@ package com.sksamuel.tabby.effects
 
 import com.sksamuel.tabby.`try`.Try
 
+
+fun <A, B, R> IO<A>.mapN(other: IO<B>, f: (A, B) -> R): IO<R> = object : IO<R>() {
+   override suspend fun apply(): Try<R> {
+      return this@mapN.apply().flatMap { a -> other.apply().map { b -> f(a, b) } }
+   }
+}
+
 fun <A, B, R> IO.Companion.mapN(first: IO<A>, second: IO<B>, f: (A, B) -> R): IO<R> = object : IO<R>() {
    override suspend fun apply(): Try<R> {
       return first.apply().flatMap { a -> second.apply().map { b -> f(a, b) } }

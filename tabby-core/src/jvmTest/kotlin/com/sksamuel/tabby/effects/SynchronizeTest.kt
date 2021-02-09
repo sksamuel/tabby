@@ -1,4 +1,4 @@
-package com.sksamuel.tabby.io
+package com.sksamuel.tabby.effects
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -13,13 +13,13 @@ class SynchronizeTest : FunSpec() {
       test("synchronize should isolate depending on semaphore permits") {
          val ref = AtomicReference("")
          val mutex = Semaphore(1)
-         val a = IO.effect {
+         val a = IO {
             repeat(10) {
                ref.updateAndGet { it + "a" }
                delay(25)
             }
          }.synchronize(mutex)
-         val b = IO.effect {
+         val b = IO {
             repeat(10) {
                ref.updateAndGet { it + "b" }
                delay(25)

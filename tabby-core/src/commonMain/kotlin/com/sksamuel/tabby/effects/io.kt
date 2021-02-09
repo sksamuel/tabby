@@ -4,10 +4,12 @@ package com.sksamuel.tabby.effects
 
 import com.sksamuel.tabby.`try`.Try
 import com.sksamuel.tabby.`try`.catch
-import com.sksamuel.tabby.`try`.error
-import com.sksamuel.tabby.`try`.value
+import com.sksamuel.tabby.`try`.failure
+import com.sksamuel.tabby.`try`.success
 import com.sksamuel.tabby.option.Option
 import com.sksamuel.tabby.option.none
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
@@ -121,14 +123,14 @@ abstract class IO<out A> {
       fun <A> reduce(first: IO<A>, vararg rest: IO<A>, f: (A, A) -> A): IO<A> = object : IO<A>() {
          override suspend fun apply(): Try<A> {
             if (rest.isEmpty()) return first.apply()
-            var acc = first.apply().fold({ return it.error() }, { it })
+            var acc = first.apply().fold({ return it.failure() }, { it })
             rest.forEach { op ->
                when (val result = op.apply()) {
                   is Try.Failure -> return result
                   is Try.Success -> acc = f(acc, result.value)
                }
             }
-            return acc.value()
+            return acc.success()
          }
       }
    }
@@ -212,11 +214,21 @@ abstract class IO<out A> {
    }
 
    /**
-    * Returns a new IO which is just this IO but with the result of a successful execution
+    * Returns a new IO which is just this IO but with the success result
     * replaced with the given strict value.
     */
    fun <B> with(b: B): IO<B> = object : IO<B>() {
       override suspend fun apply(): Try<B> = this@IO.apply().map { b }
+   }
+
+   /**
+    * Wraps this IO in a synchronization operation that will ensure the effect
+    * only takes place once a permit is acquired from the given semaphore.
+    *
+    * While waiting to acquire, the effect will suspend.
+    */
+   fun synchronize(semaphore: Semaphore): IO<A> = object : IO<A>() {
+      override suspend fun apply(): Try<A> = semaphore.withPermit { this@IO.apply() }
    }
 
    suspend fun runOrElse(ifError: (Throwable) -> Unit): A? {

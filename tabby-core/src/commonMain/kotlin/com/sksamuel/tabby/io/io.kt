@@ -790,7 +790,10 @@ fun <E, T> IO<E, T>.fail(ifSuccess: (T) -> E): FIO<E> = object : IO<E, Nothing>(
    }
 }
 
+@Deprecated("use the effects.IO package")
 fun <T> T.success(): UIO<T> = IO.success(this)
+
+@Deprecated("use the effects.IO package")
 fun <E> E.failure(): FIO<E> = IO.failure(this)
 
 fun <E, A, B> IO<E, A>.zip(other: IO<E, B>): IO<E, Pair<A, B>> = object : IO<E, Pair<A, B>>() {
