@@ -2,9 +2,11 @@
 
 package com.sksamuel.tabby.effects
 
+import com.sksamuel.tabby.`try`.MonadControlException
 import com.sksamuel.tabby.`try`.Try
 import com.sksamuel.tabby.`try`.catch
 import com.sksamuel.tabby.`try`.failure
+import com.sksamuel.tabby.`try`.getValueOrElse
 import com.sksamuel.tabby.`try`.success
 import com.sksamuel.tabby.option.Option
 import com.sksamuel.tabby.option.none
@@ -260,8 +262,9 @@ abstract class IO<out A> {
    suspend fun <B> funFold(ifError: (Throwable) -> B, ifSuccess: (A) -> B): B {
       return run().fold(ifError, ifSuccess)
    }
-}
 
+   suspend operator fun not() = run().getValueOrElse { throw MonadControlException(it) }
+}
 
 fun <A> IO<IO<A>>.flatten(): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
