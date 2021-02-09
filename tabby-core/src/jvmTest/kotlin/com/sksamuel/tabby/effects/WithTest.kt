@@ -3,7 +3,7 @@ package com.sksamuel.tabby.effects
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
-class ComprehensionTest : FunSpec() {
+class WithTest : FunSpec() {
    init {
 
       test("try comprehension without errors") {
@@ -11,7 +11,7 @@ class ComprehensionTest : FunSpec() {
          val a = IO { "a" }
          val b = IO { "b" }
 
-         val c = forcomp {
+         val c = with {
             !a + !b
          }
 
@@ -23,7 +23,7 @@ class ComprehensionTest : FunSpec() {
          val a = IO<String> { error("a") }
          val b = IO { "b" }
 
-         val c = forcomp {
+         val c = with {
             !a + !b
          }
 

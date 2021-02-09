@@ -5,7 +5,7 @@ import com.sksamuel.tabby.`try`.Try
 import com.sksamuel.tabby.`try`.failure
 import com.sksamuel.tabby.`try`.success
 
-fun <A> forcomp(f: suspend () -> A): IO<A> = object : IO<A>() {
+fun <A> with(f: suspend () -> A): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
       return try {
          f().success()

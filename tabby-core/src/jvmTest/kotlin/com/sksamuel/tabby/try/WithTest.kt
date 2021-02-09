@@ -3,7 +3,7 @@ package com.sksamuel.tabby.`try`
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
-class ComprehensionTest : FunSpec() {
+class WithTest : FunSpec() {
    init {
 
       test("try comprehension without errors") {
@@ -11,7 +11,7 @@ class ComprehensionTest : FunSpec() {
          val a = Try { "a" }
          val b = Try { "b" }
 
-         val c = forcomp {
+         val c = with {
             !a + !b
          }
 
@@ -24,7 +24,7 @@ class ComprehensionTest : FunSpec() {
          val a = Try<String> { error("a") }
          val b = Try { "b" }
 
-         val c = forcomp {
+         val c = with {
             !a + !b
          }
 

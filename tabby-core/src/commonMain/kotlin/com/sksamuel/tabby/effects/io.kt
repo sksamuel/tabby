@@ -56,7 +56,7 @@ abstract class IO<out A> {
       operator fun <A> invoke(f: suspend () -> A): IO<A> = Effect { catch { f() } }
 
       /**
-       * Alias to [invoke].
+       * Alias to [with].
        */
       fun <A> effect(f: suspend () -> A): IO<A> = invoke(f)
 
