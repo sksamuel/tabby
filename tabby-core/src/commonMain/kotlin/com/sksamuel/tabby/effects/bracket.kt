@@ -1,6 +1,6 @@
 package com.sksamuel.tabby.effects
 
-import com.sksamuel.tabby.either.Try
+import com.sksamuel.tabby.`try`.Try
 
 /**
  * Acquires a resource of type R using the given [acquire] effect, passes that resource to a [use] effect,

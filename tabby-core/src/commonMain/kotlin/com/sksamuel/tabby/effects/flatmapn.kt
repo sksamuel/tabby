@@ -1,11 +1,9 @@
 package com.sksamuel.tabby.effects
 
-import com.sksamuel.tabby.either.Either
-import com.sksamuel.tabby.either.Try
-import com.sksamuel.tabby.either.flatMap
+import com.sksamuel.tabby.`try`.Try
 
 fun <A, B, R> IO.Companion.flatMapN(first: IO<A>, second: IO<B>, f: (A, B) -> IO<R>): IO<R> = object : IO<R>() {
-   override suspend fun apply(): Either<Throwable, R> {
+   override suspend fun apply(): Try<R> {
       return first.apply().flatMap { a -> second.apply().flatMap { b -> f(a, b).apply() } }
    }
 }

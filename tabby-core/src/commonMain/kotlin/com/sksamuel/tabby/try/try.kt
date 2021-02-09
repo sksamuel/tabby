@@ -3,7 +3,6 @@
 package com.sksamuel.tabby.`try`
 
 import com.sksamuel.tabby.effects.IO
-import com.sksamuel.tabby.either.Either
 import com.sksamuel.tabby.option.Option
 import com.sksamuel.tabby.option.none
 import com.sksamuel.tabby.option.some
@@ -67,6 +66,11 @@ sealed class Try<out A> {
    inline fun onFailure(f: (Throwable) -> Unit): Try<A> =
       fold({ f(it); this }, { this })
 
+   inline fun onComplete(onFailure: (Throwable) -> Unit, onSuccess: (A) -> Unit): Try<A> =
+      onFailure(onFailure).onSuccess(onSuccess)
+
+   inline fun onError(f: (Throwable) -> Unit): Try<A> = onFailure(f)
+
    inline fun onSuccess(f: (A) -> Unit): Try<A> =
       fold({ this }, { f(it); this })
 
@@ -101,8 +105,8 @@ inline fun <A> Try<A>.orElse(other: () -> Try<A>): Try<A> {
    return fold({ other() }, { it.value() })
 }
 
-inline fun <A> Try<A>.getValueOrElse(default: (Throwable) -> A): A =
-   fold({ default(it) }, { it })
+inline fun <A> Try<A>.getValueOrElse(orElse: (Throwable) -> A): A =
+   fold({ orElse(it) }, { it })
 
 /**
  * Invokes the given function [f] wrapping the result into a [Try.Success], or, if an exception
@@ -119,7 +123,7 @@ fun <A> Try<Try<A>>.flatten(): Try<A> = when (this) {
    is Try.Failure -> this
 }
 
-fun <A> Try<A>.toIO(): IO<A> = IO.from(this.fold({ Either.Left(it) }, { Either.Right(it) }))
+fun <A> Try<A>.toIO(): IO<A> = IO.from(this)
 
 /**
  * Splits a list of [Try] into a pair of lists, one containing failures and one containing successes.
@@ -130,5 +134,11 @@ fun <A> List<Try<A>>.split(): Pair<List<Throwable>, List<A>> {
 }
 
 fun String.error() = Try.Failure(RuntimeException(this))
+
+@Deprecated("use .failure()", ReplaceWith("Try.Failure(this)"))
 fun Throwable.error() = Try.Failure(this)
+fun Throwable.failure() = Try.Failure(this)
+
+@Deprecated("Use .success()", ReplaceWith("Try.Success(this)"))
 fun <B> B.value() = Try.Success(this)
+fun <B> B.success() = Try.Success(this)

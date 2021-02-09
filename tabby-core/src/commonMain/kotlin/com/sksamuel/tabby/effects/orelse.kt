@@ -1,7 +1,7 @@
 package com.sksamuel.tabby.effects
 
-import com.sksamuel.tabby.either.Try
-import com.sksamuel.tabby.either.orElse
+import com.sksamuel.tabby.`try`.Try
+import com.sksamuel.tabby.`try`.orElse
 
 /**
  * Invokes and returns the result of [other] if the result of this IO is a failure.

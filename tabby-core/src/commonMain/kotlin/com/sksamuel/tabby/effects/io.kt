@@ -2,13 +2,10 @@
 
 package com.sksamuel.tabby.effects
 
-import com.sksamuel.tabby.either.Either
-import com.sksamuel.tabby.either.Try
-import com.sksamuel.tabby.either.catch
-import com.sksamuel.tabby.either.flatMap
-import com.sksamuel.tabby.either.left
-import com.sksamuel.tabby.either.right
-import com.sksamuel.tabby.io.Task
+import com.sksamuel.tabby.`try`.Try
+import com.sksamuel.tabby.`try`.catch
+import com.sksamuel.tabby.`try`.error
+import com.sksamuel.tabby.`try`.value
 import com.sksamuel.tabby.option.Option
 import com.sksamuel.tabby.option.none
 import kotlinx.coroutines.withContext
@@ -25,123 +22,22 @@ abstract class IO<out A> {
 
    abstract suspend fun apply(): Try<A>
 
-   class Pure<A>(private val a: () -> A) : IO<A>() {
-      override suspend fun apply(): Try<A> = Try.success(a())
+   class Pure<A>(private val a: A) : IO<A>() {
+      override suspend fun apply(): Try<A> = Try.success(a)
    }
 
    class Failed(private val t: suspend () -> Throwable) : IO<Nothing>() {
       override suspend fun apply(): Try<Nothing> = Try.failure(t())
    }
 
-   /**
-    * Returns an effect that runs the safe, side effecting function on the success of this effect.
-    */
-   fun forEach(f: suspend (A) -> Unit): IO<A> = object : IO<A>() {
-      override suspend fun apply(): Try<A> = this@IO.apply().onRight { f(it) }
+   class Effect<A>(private val f: suspend () -> Try<A>) : IO<A>() {
+      override suspend fun apply(): Try<A> = f()
    }
-
-   /**
-    * Returns an effect that runs the given task on the success of this effect.
-    */
-   fun forEach(f: (A) -> Task<Unit>): IO<A> = object : IO<A>() {
-      override suspend fun apply(): Try<A> = this@IO.apply().onRight { f(it) }
-   }
-
-   fun <B> map(f: (A) -> B): IO<B> = object : IO<B>() {
-      override suspend fun apply(): Try<B> = this@IO.apply().map(f)
-   }
-
-   /**
-    * Returns an effect which applies the given side effecting function to it's success,
-    * wrapping the supplied function in an effect before execution.
-    *
-    * In other words, this is a shorthand for the following.
-    *
-    * task.flatMap { IO.effect { f(it) } }
-    */
-   fun <B> mapEffect(f: suspend (A) -> B): IO<B> = flatMap { t -> effect { f(t) } }
-
-   fun mapError(f: (Throwable) -> Throwable): IO<A> = object : IO<A>() {
-      override suspend fun apply(): Try<A> = this@IO.apply().mapLeft { f(it) }
-   }
-
-   fun <B> flatMap(f: (A) -> IO<B>): IO<B> = object : IO<B>() {
-      override suspend fun apply(): Try<B> = this@IO.apply().flatMap { f(it).apply() }
-   }
-
-   /**
-    * Executes the given function if this is an error.
-    * Returns this IO.
-    */
-   fun onError(f: (Throwable) -> Unit): IO<A> = object : IO<A>() {
-      override suspend fun apply(): Try<A> {
-         val result = this@IO.apply()
-         if (result is Either.Left) f(result.a)
-         return result
-      }
-   }
-
-   /**
-    * Ignores any success value from this effect, returning an effect that produces Unit.
-    */
-   fun unit(): IO<Unit> = object : IO<Unit>() {
-      override suspend fun apply(): Try<Unit> = this@IO.apply().map { }
-   }
-
-   /**
-    * Provides a context switch for this IO.
-    */
-   fun onContext(context: CoroutineContext): IO<A> = object : IO<A>() {
-      override suspend fun apply(): Try<A> = withContext(context) { this@IO.apply() }
-   }
-
-   /**
-    * Returns a new IO which is just this IO but with the result of a successful execution
-    * replaced with the given strict value.
-    */
-   fun <B> with(b: B): IO<B> = object : IO<B>() {
-      override suspend fun apply(): Try<B> = this@IO.apply().map { b }
-   }
-
-   suspend fun runOrElse(ifError: (Throwable) -> Unit): A? {
-      return run().onLeft(ifError).getRightOrNull()
-   }
-
-   /**
-    * Executes this IO, with the calling coroutine as the context.
-    * Returns the successful result or null.
-    */
-   suspend fun runOrNull(): A? = apply().getRightOrNull()
-
-   /**
-    * Executes this IO, with the calling coroutine as the context.
-    * Returns the successful result wrapped in an option, or none if the execution failed.
-    */
-   suspend fun runOrNone(): Option<A> = apply().toOption()
-
-   /**
-    * Executes this IO, returning the result as a [Try].
-    */
-   suspend fun run(): Try<A> = this@IO.apply()
-
-   /**
-    * Evaluates this effect, returning the value if successful, or throwing if evaluation fails.
-    */
-   suspend fun runUnsafe(): A = run().getRightUnsafe()
-
-   suspend fun <B> funFold(ifError: (Throwable) -> B, ifSuccess: (A) -> B): B {
-      return run().fold(ifError, ifSuccess)
-   }
-
-   /**
-    * Alias for forEach
-    */
-   fun onSuccess(f: suspend (A) -> Unit): IO<A> = forEach(f)
 
    companion object {
 
       /**
-       * Returns a successful effect that wraps Unit.
+       * Returns a successful effect that wraps [Unit].
        */
       val unit = pure(Unit)
 
@@ -151,9 +47,19 @@ abstract class IO<out A> {
       val empty = pure(none)
 
       /**
+       * Wraps a potentially throwing, effectful function as an IO.
+       */
+      operator fun <A> invoke(f: suspend () -> A): IO<A> = Effect { catch { f() } }
+
+      /**
+       * Alias to [invoke].
+       */
+      fun <A> effect(f: suspend () -> A): IO<A> = invoke(f)
+
+      /**
        * Wraps a strict value as a successfully completed IO.
        */
-      fun <A> pure(a: A): IO<A> = Pure { a }
+      fun <A> pure(a: A): IO<A> = Pure(a)
 
       /**
        * Wraps a safe function as a successfully completed IO.
@@ -178,13 +84,6 @@ abstract class IO<out A> {
        * Returns a failed IO with the given message converted to a runtime exception.
        */
       fun failure(msg: String): IO<Nothing> = Failed { RuntimeException(msg) }
-
-      /**
-       * Wraps a potentially throwing, effectful function as a lazy IO.
-       */
-      fun <A> effect(f: suspend () -> A): IO<A> = object : IO<A>() {
-         override suspend fun apply(): Try<A> = catch { f() }
-      }
 
       fun <A> from(result: Try<A>): IO<A> = object : IO<A>() {
          override suspend fun apply(): Try<A> = result
@@ -222,16 +121,132 @@ abstract class IO<out A> {
       fun <A> reduce(first: IO<A>, vararg rest: IO<A>, f: (A, A) -> A): IO<A> = object : IO<A>() {
          override suspend fun apply(): Try<A> {
             if (rest.isEmpty()) return first.apply()
-            var acc = first.apply().fold({ return it.left() }, { it })
+            var acc = first.apply().fold({ return it.error() }, { it })
             rest.forEach { op ->
                when (val result = op.apply()) {
-                  is Either.Left -> return result
-                  is Either.Right -> acc = f(acc, result.b)
+                  is Try.Failure -> return result
+                  is Try.Success -> acc = f(acc, result.value)
                }
             }
-            return acc.right()
+            return acc.value()
          }
       }
+   }
+
+   /**
+    * Runs the safe, side effecting function [f] upon the success of this effect.
+    *
+    * Returns this effect.
+    */
+   fun forEach(f: suspend (A) -> Unit): IO<A> = object : IO<A>() {
+      override suspend fun apply(): Try<A> = this@IO.apply().onSuccess { f(it) }
+   }
+
+   /**
+    * Runs the effect generated by the given function [f] upon the success of this effect.
+    *
+    * Returns this effect.
+    */
+   fun forEach(f: (A) -> IO<Unit>): IO<A> = object : IO<A>() {
+      override suspend fun apply(): Try<A> = this@IO.apply().onSuccess { f(it) }
+   }
+
+   /**
+    * Returns an effect which maps the value of this effect upon success.
+    */
+   fun <B> map(f: (A) -> B): IO<B> = object : IO<B>() {
+      override suspend fun apply(): Try<B> = this@IO.apply().map(f)
+   }
+
+   /**
+    * Returns an effect which applies the given side effecting function to it's success,
+    * wrapping the supplied function in an effect before execution.
+    *
+    * In other words, this is a shorthand for the following.
+    *
+    * task.flatMap { IO.effect { f(it) } }
+    */
+   fun <B> mapEffect(f: suspend (A) -> B): IO<B> = flatMap { t -> effect { f(t) } }
+
+   fun mapError(f: (Throwable) -> Throwable): IO<A> = object : IO<A>() {
+      override suspend fun apply(): Try<A> = this@IO.apply().mapError(f)
+   }
+
+   fun <B> flatMap(f: (A) -> IO<B>): IO<B> = object : IO<B>() {
+      override suspend fun apply(): Try<B> = this@IO.apply().flatMap { f(it).apply() }
+   }
+
+   fun <B> flatMapEffect(f: suspend (A) -> B): IO<B> {
+      val ff: (A) -> IO<B> = { IO { f(it) } }
+      return this.flatMap(ff)
+   }
+
+   /**
+    * Returns an effect that executes the given function if this effect evaluates to an error.
+    */
+   fun onError(f: (Throwable) -> Unit): IO<A> = object : IO<A>() {
+      override suspend fun apply(): Try<A> {
+         val result = this@IO.apply()
+         result.onFailure(f)
+         return result
+      }
+   }
+
+   /**
+    * Alias for [forEach].
+    */
+   fun onSuccess(f: suspend (A) -> Unit): IO<A> = forEach(f)
+
+   /**
+    * Ignores any success value from this effect, returning an effect that produces Unit.
+    */
+   fun unit(): IO<Unit> = object : IO<Unit>() {
+      override suspend fun apply(): Try<Unit> = this@IO.apply().map { }
+   }
+
+   /**
+    * Provides a context switch for this IO.
+    */
+   fun onContext(context: CoroutineContext): IO<A> = object : IO<A>() {
+      override suspend fun apply(): Try<A> = withContext(context) { this@IO.apply() }
+   }
+
+   /**
+    * Returns a new IO which is just this IO but with the result of a successful execution
+    * replaced with the given strict value.
+    */
+   fun <B> with(b: B): IO<B> = object : IO<B>() {
+      override suspend fun apply(): Try<B> = this@IO.apply().map { b }
+   }
+
+   suspend fun runOrElse(ifError: (Throwable) -> Unit): A? {
+      return run().onFailure(ifError).getValueOrNull()
+   }
+
+   /**
+    * Executes this IO, with the calling coroutine as the context.
+    * Returns the successful result or null.
+    */
+   suspend fun runOrNull(): A? = apply().getValueOrNull()
+
+   /**
+    * Executes this IO, with the calling coroutine as the context.
+    * Returns the successful result wrapped in an option, or none if the execution failed.
+    */
+   suspend fun runOrNone(): Option<A> = apply().toOption()
+
+   /**
+    * Executes this IO, returning the result as a [Try].
+    */
+   suspend fun run(): Try<A> = this@IO.apply()
+
+   /**
+    * Evaluates this effect, returning the value if successful, or throwing if evaluation fails.
+    */
+   suspend fun runUnsafe(): A = run().getValueUnsafe()
+
+   suspend fun <B> funFold(ifError: (Throwable) -> B, ifSuccess: (A) -> B): B {
+      return run().fold(ifError, ifSuccess)
    }
 }
 
@@ -242,6 +257,7 @@ fun <A> IO<IO<A>>.flatten(): IO<A> = object : IO<A>() {
    }
 }
 
+fun <A> A.pure() = IO.pure(this)
 fun Throwable.fail(): IO<Nothing> = IO.failure(this)
 fun <A> Try<A>.effect(): IO<A> = IO.from(this)
 

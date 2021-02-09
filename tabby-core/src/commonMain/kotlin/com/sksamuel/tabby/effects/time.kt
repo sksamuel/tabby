@@ -1,20 +1,18 @@
 package com.sksamuel.tabby.effects
 
-import com.sksamuel.tabby.either.Try
+import com.sksamuel.tabby.`try`.Try
 import kotlin.jvm.JvmName
 import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
 /**
  * Upon completion of this IO, invokes the function [f] to retrieve an effect which is executed, with the
  * duration of this IO as the argument.
  *
- * The result of the effect is ignored and errors are suppressed.
+ * The result of the effect returned by [f] is ignored and errors are suppressed.
  *
  * Returns this IO.
  */
-@OptIn(ExperimentalTime::class)
 @OverloadResolutionByLambdaReturnType
 fun <A> IO<A>.time(f: (Duration) -> IO<Unit>): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
@@ -30,7 +28,6 @@ fun <A> IO<A>.time(f: (Duration) -> IO<Unit>): IO<A> = object : IO<A>() {
  *
  * Returns this IO.
  */
-@OptIn(ExperimentalTime::class)
 @JvmName("timeUnit")
 @OverloadResolutionByLambdaReturnType
 fun <A> IO<A>.time(f: (Duration) -> Unit): IO<A> = object : IO<A>() {

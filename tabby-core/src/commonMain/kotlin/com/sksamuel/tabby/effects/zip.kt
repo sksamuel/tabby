@@ -4,8 +4,7 @@ package com.sksamuel.tabby.effects
 
 import com.sksamuel.tabby.Tuple4
 import com.sksamuel.tabby.Tuple5
-import com.sksamuel.tabby.either.Try
-import com.sksamuel.tabby.either.flatMap
+import com.sksamuel.tabby.`try`.Try
 import kotlinx.coroutines.delay
 
 fun <A, B> IO.Companion.zip(

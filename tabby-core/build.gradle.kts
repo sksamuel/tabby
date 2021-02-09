@@ -11,31 +11,10 @@ repositories {
 kotlin {
 
    targets {
-      jvm {
-         compilations.all {
-            kotlinOptions {
-               jvmTarget = "1.8"
-               freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
-               freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.Experimental"
-               freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
-               freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.time.ExperimentalTime"
-            }
-         }
-      }
+      jvm()
       js {
          browser()
          nodejs()
-      }
-   }
-
-   targets.all {
-      compilations.all {
-         kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
-            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.Experimental"
-            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
-            freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.time.ExperimentalTime"
-         }
       }
    }
 
@@ -62,17 +41,20 @@ kotlin {
             implementation(Libs.Kotest.junit5)
          }
       }
+
+      all {
+         languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
+         languageSettings.useExperimentalAnnotation("kotlin.experimental.ExperimentalTypeInference")
+         languageSettings.useExperimentalAnnotation("kotlin.OverloadResolutionByLambdaReturnType")
+      }
    }
 }
 
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
    kotlinOptions {
+      jvmTarget = "1.8"
       apiVersion = "1.4"
-      freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
-      freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.Experimental"
-      freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.experimental.ExperimentalTypeInference"
-      freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.time.ExperimentalTime"
    }
 }
 

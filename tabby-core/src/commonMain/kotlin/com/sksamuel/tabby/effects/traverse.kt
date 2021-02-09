@@ -1,12 +1,11 @@
 package com.sksamuel.tabby.effects
 
-import com.sksamuel.tabby.either.Either
-import com.sksamuel.tabby.either.Try
-import com.sksamuel.tabby.either.right
+import com.sksamuel.tabby.`try`.Try
+import com.sksamuel.tabby.`try`.success
 
 /**
  * Returns an effect that contains the results of the given effects. If any of the given
- * effects fails, this effect will fail and any successes will be dropped.
+ * effects fails, this effect will fail and any successes will be ignored.
  */
 fun <A> IO.Companion.traverse(vararg effects: IO<A>): IO<List<A>> = traverse(effects.asList())
 
@@ -14,10 +13,10 @@ fun <A> IO.Companion.traverse(effects: List<IO<A>>): IO<List<A>> = object : IO<L
    override suspend fun apply(): Try<List<A>> {
       return effects.fold(emptyList<A>()) { acc, effect ->
          when (val result = effect.apply()) {
-            is Either.Left -> return result
-            is Either.Right -> acc + result.b
+            is Try.Failure -> return result
+            is Try.Success -> acc + result.value
          }
-      }.right()
+      }.success()
    }
 }
 

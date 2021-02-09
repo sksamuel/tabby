@@ -1,7 +1,7 @@
 package com.sksamuel.tabby.effects
 
-import com.sksamuel.tabby.either.Try
-import com.sksamuel.tabby.either.right
+import com.sksamuel.tabby.`try`.Try
+import com.sksamuel.tabby.`try`.value
 
 /**
  * Evaluate and run each effect in the structure, in sequence,
@@ -13,7 +13,7 @@ fun <A> IO.Companion.collect(effects: List<IO<A>>): IO<List<A>> = object : IO<Li
    override suspend fun apply(): Try<List<A>> {
       return effects.fold(emptyList<A>()) { acc, op ->
          op.apply().fold({ acc }, { acc + it })
-      }.right()
+      }.value()
    }
 }
 

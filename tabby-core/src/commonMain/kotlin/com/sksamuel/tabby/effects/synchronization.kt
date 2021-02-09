@@ -1,6 +1,6 @@
 package com.sksamuel.tabby.effects
 
-import com.sksamuel.tabby.either.Try
+import com.sksamuel.tabby.`try`.Try
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 

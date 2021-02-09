@@ -1,8 +1,7 @@
 package com.sksamuel.tabby.effects
 
-import com.sksamuel.tabby.either.Either
-import com.sksamuel.tabby.either.Try
-import com.sksamuel.tabby.either.right
+import com.sksamuel.tabby.`try`.Try
+import com.sksamuel.tabby.`try`.success
 
 /**
  * For an IO<List<T>>, applies the given function to each element of the list,
@@ -13,7 +12,7 @@ fun <A, B> IO<List<A>>.mapElements(f: (A) -> B): IO<List<B>> {
 }
 
 /**
- * Executes the list of IOs in turn, returning the first success.
+ * Returns an effect that will execute the list of IOs in turn, returning the first success.
  *
  * This method short-circuits and each successive IO is not started until the previous one fails,
  * or returns successfully.
@@ -27,8 +26,8 @@ fun <A> List<IO<A>>.firstOrNone(): IO<A> {
          var lastError: Throwable? = null
          this@firstOrNone.forEach {
             when (val result = it.apply()) {
-               is Either.Left -> lastError = result.a
-               is Either.Right -> return result.b.right()
+               is Try.Failure -> lastError = result.error
+               is Try.Success -> return result.value.success()
             }
          }
          return Try.failure(lastError ?: NoSuchElementException())

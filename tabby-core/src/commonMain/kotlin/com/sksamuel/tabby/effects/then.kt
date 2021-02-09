@@ -1,6 +1,6 @@
 package com.sksamuel.tabby.effects
 
-import com.sksamuel.tabby.either.Try
+import com.sksamuel.tabby.`try`.Try
 
 /**
  * Applies the potentially side effecting function [f] after this IO has completed,
@@ -12,7 +12,7 @@ import com.sksamuel.tabby.either.Try
  */
 fun <A> IO<A>.then(f: suspend () -> Unit): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
-      return this@then.apply().onLeft { f() }.onRight { f() }
+      return this@then.apply().onFailure { f() }.onSuccess { f() }
    }
 }
 
@@ -25,8 +25,8 @@ fun <A> IO<A>.then(f: suspend () -> Unit): IO<A> = object : IO<A>() {
 fun <A> IO<A>.then(t: IO<Unit>): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
       return this@then.apply()
-         .onLeft { t.run() }
-         .onRight { t.run() }
+         .onError { t.run() }
+         .onSuccess { t.run() }
    }
 }
 
@@ -38,6 +38,6 @@ fun <A> IO<A>.then(t: IO<Unit>): IO<A> = object : IO<A>() {
  */
 fun <A> IO<A>.then(ifError: (Throwable) -> Unit, ifSuccess: (A) -> Unit): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
-      return this@then.run().onLeft { ifError(it) }.onRight { ifSuccess(it) }
+      return this@then.run().onError(ifError).onSuccess(ifSuccess)
    }
 }
