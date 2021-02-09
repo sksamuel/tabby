@@ -1,6 +1,6 @@
 # tabby
 
-Some very lightweight, super simple, functional programming datatypes.
+Some very lightweight, super simple, functional programming datatypes: Either, Try, Validated, Option, Tristate, IO.
 
 Think of this as a very basic version of [Arrow's](https://arrow-kt.io/) datatypes if you need something multi-platform.
 
