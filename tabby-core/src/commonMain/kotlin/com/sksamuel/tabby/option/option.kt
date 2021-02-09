@@ -5,9 +5,6 @@ package com.sksamuel.tabby.option
 import com.sksamuel.tabby.either.Either
 import com.sksamuel.tabby.validated.Validated
 import com.sksamuel.tabby.validated.invalid
-import com.sksamuel.tabby.io.IO
-import com.sksamuel.tabby.io.failure
-import com.sksamuel.tabby.io.success
 import com.sksamuel.tabby.either.left
 import com.sksamuel.tabby.either.right
 import com.sksamuel.tabby.validated.valid
@@ -175,8 +172,6 @@ sealed class Option<out A> {
     * function [isEmpty], otherwise returns a [Validated.Valid] with the value of the [Some].
     */
    fun <E> toValidated(isEmpty: () -> E): Validated<E, A> = fold({ isEmpty().invalid() }, { it.valid() })
-
-   fun <E> fail(f: () -> E): IO<E, A> = fold({ f().failure() }, { it.success() })
 }
 
 fun <A> Option<A>.contains(a: A) = fold(false, { it == a })

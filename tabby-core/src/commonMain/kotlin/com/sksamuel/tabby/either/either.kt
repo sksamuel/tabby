@@ -2,9 +2,9 @@
 
 package com.sksamuel.tabby.either
 
+import com.sksamuel.tabby.effects.IO
 import com.sksamuel.tabby.validated.Validated
 import com.sksamuel.tabby.validated.invalid
-import com.sksamuel.tabby.io.IO
 import com.sksamuel.tabby.option.Option
 import com.sksamuel.tabby.option.none
 import com.sksamuel.tabby.option.some
@@ -159,8 +159,6 @@ fun <B> Try<Option<B>>.flatten(ifNone: () -> String): Try<B> = when (this) {
       is Option.None -> NoSuchElementException(ifNone()).left()
    }
 }
-
-fun <A, B> Either<A, B>.toIO(): IO<A, B> = IO.either(this)
 
 inline fun <A, B, D> Either<A, B>.flatMap(f: (B) -> Either<A, D>): Either<A, D> = when (this) {
    is Either.Left -> this
