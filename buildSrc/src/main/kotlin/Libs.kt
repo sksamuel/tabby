@@ -1,6 +1,6 @@
 object Libs {
 
-   const val kotlinVersion = "1.4.21"
+   const val kotlinVersion = "1.4.30"
    const val dokkaVersion = "0.10.1"
 
    object Kotest {
