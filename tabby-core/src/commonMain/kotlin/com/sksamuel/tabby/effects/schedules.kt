@@ -36,66 +36,63 @@ sealed class Decision {
 }
 
 /**
- * A Schedule is invoked with an error and returns a [Decision] on whether to retry or not.
+ * A Schedule is invoked with the  and returns a [Decision] on whether to retry or not.
  */
 fun interface Schedule {
 
-   fun invoke(result: Throwable): Decision
+   fun decide(): Decision
+
+   class Delay(private val duration: Duration) : Schedule {
+      override fun decide(): Decision = Decision.Continue(duration.some(), this)
+   }
+
+   object Forever : Schedule {
+      override fun decide(): Decision = Decision.Continue(none, this)
+   }
+
+   object Never : Schedule {
+      override fun decide(): Decision = Decision.Halt
+   }
+
+   object Once : Schedule {
+      override fun decide(): Decision = Decision.Continue(none, Never)
+   }
+
+   class Loop(private val m: Int, private val n: Int) : Schedule {
+      override fun decide(): Decision {
+         return if (m < n) Decision.Continue(none, Loop(m + 1, n)) else Decision.Halt
+      }
+   }
 
    companion object {
 
-      val halt: Decision = Decision.Halt
+      val never: Schedule = Never
 
-      val never = Schedule { Decision.Halt }
-
-      fun once(): Schedule = Schedule { Decision.Continue(none, never) }
+      /**
+       * Returns a [Schedule] that will decide to continue once, and then halt.
+       */
+      fun once(): Schedule = Once
 
       /**
        * Returns a [Schedule] that will decide to coninue forever, with no delay.
        */
-      fun forever(): Schedule {
-         fun loop(): Schedule = Schedule { Decision.Continue(none, loop()) }
-         return loop()
-      }
-
+      fun forever(): Schedule = Forever
 
       /**
        * Returns a new Schedule that continues forever and delays for the given duration
        * between effects.
        */
-      fun delay(duration: Duration): Schedule = delay { duration }
-
-      fun delay(f: (Throwable) -> Duration): Schedule = Schedule { Decision.Continue(f(it).some(), delay(f)) }
-
-      /**
-       * Returns a new Schedule that continues forever, adding the given delay if the predicate
-       * evaluates to true.
-       */
-      fun delayIf(duration: Duration,
-                  test: (Throwable) -> Boolean): Schedule = Schedule {
-         val next = delayIf(duration, test)
-         if (test(it)) Decision.Continue(duration.some(), next) else Decision.Continue(none, next)
-      }
-
-      fun whileTrue(test: (Throwable) -> Boolean): Schedule = Schedule {
-         val next = whileTrue(test)
-         if (test(it)) Decision.Continue(none, next) else halt
-      }
+      fun delay(duration: Duration): Schedule = Delay(duration)
 
       /**
        * Returns a new schedule that repeats k times.
        */
-      fun <T> iterations(k: Int): Schedule {
-         fun loop(counter: Int): Schedule = Schedule {
-            if (counter < k) Decision.Continue(none, loop(counter + 1)) else halt
-         }
-         return loop(0)
-      }
+      fun iterations(k: Int): Schedule = Loop(0, k)
    }
 }
 
 /**
- * Returns a new [Schedule] that randomly modifies the size of the intervals of the given schedule.
+ * Returns a new [Schedule] that randomly modifies the size of the intervals of this schedule.
  */
 fun Schedule.jittered(): Schedule = jittered(0.0, 2.0)
 
@@ -109,42 +106,23 @@ fun Schedule.jittered(min: Double, max: Double): Schedule = delayM { duration ->
 /**
  * Returns a new schedule that decorates this schedule, adding the given delay to each decision to continue.
  */
-fun Schedule.delay(duration: Duration): Schedule = delay { duration }
-
-/**
- * Returns a new schedule that decorates this schedule by modifiying the existing delay (if any) using
- * the given function.
- */
-fun Schedule.delayM(f: (Option<Duration>) -> Option<Duration>): Schedule = Schedule { result ->
-   when (val d = this@delayM.invoke(result)) {
-      is Decision.Halt -> d
-      is Decision.Continue -> Decision.Continue(f(d.duration), d.next.delayM(f))
-   }
-}
-
-/**
- * Returns a new Schedule that decorates this schedule, adding the delay returned from the specified
- * function to each decision to continue.
- */
-fun Schedule.delay(f: (Throwable) -> Duration): Schedule = Schedule { result ->
-   when (val d = this@delay.invoke(result)) {
-      is Decision.Halt -> d
+fun Schedule.delay(duration: Duration): Schedule = Schedule {
+   when (val decision = this@delay.decide()) {
+      is Decision.Halt -> decision
       is Decision.Continue -> {
-         val duration = d.duration.getOrElse(0.milliseconds) + f(result)
-         Decision.Continue(duration.some(), d.next.delay(f))
+         val d2 = decision.duration.getOrElse(0.milliseconds) + duration
+         Decision.Continue(d2.some(), decision.next.delay(duration))
       }
    }
 }
 
 /**
- * Returns a new [Schedule] that decorates this schedule, adding a delay if the predicate
- * evaluates to true, otherwise adding no delay.
+ * Returns a new schedule that decorates this schedule by modifiying the existing delay (if any) using
+ * the given function.
  */
-fun Schedule.delayIf(duration: Duration,
-                     predicate: (Throwable) -> Boolean) = Schedule {
-   if (predicate(it)) {
-      this@delayIf.invoke(it).plusDuration(duration)
-   } else {
-      this@delayIf.invoke(it)
+fun Schedule.delayM(f: (Option<Duration>) -> Option<Duration>): Schedule = Schedule {
+   when (val decision = this@delayM.decide()) {
+      is Decision.Halt -> decision
+      is Decision.Continue -> Decision.Continue(f(decision.duration), decision.next.delayM(f))
    }
 }

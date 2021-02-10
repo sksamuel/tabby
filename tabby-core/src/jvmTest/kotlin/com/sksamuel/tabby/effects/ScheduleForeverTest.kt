@@ -1,25 +1,15 @@
 //package com.sksamuel.tabby.io
 //
+//import com.sksamuel.tabby.effects.IO
+//import com.sksamuel.tabby.effects.Schedule
 //import io.kotest.core.spec.style.FunSpec
 //import io.kotest.matchers.longs.shouldBeBetween
 //import io.kotest.matchers.shouldBe
 //import kotlin.time.ExperimentalTime
 //import kotlin.time.milliseconds
 //
-//@OptIn(ExperimentalTime::class)
 //class ScheduleForeverTest : FunSpec() {
 //   init {
-//
-//      test("schedule forever should run until an error") {
-//         var counter = 0
-//         val effect = IO.effect {
-//            counter++
-//            if (counter == 1000)
-//               error("stop")
-//         }
-//         effect.repeat(Schedule.forever()).run()
-//         counter shouldBe 1000
-//      }
 //
 //      test("Schedule.delay should run until an error with added delay") {
 //         var counter = 0

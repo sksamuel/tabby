@@ -1,22 +1,23 @@
 //package com.sksamuel.tabby.io
 //
+//import com.sksamuel.tabby.effects.IO
+//import com.sksamuel.tabby.effects.Schedule
 //import io.kotest.core.spec.style.FunSpec
 //import io.kotest.matchers.shouldBe
 //import java.util.concurrent.atomic.AtomicInteger
 //import kotlin.time.ExperimentalTime
 //
-//@OptIn(ExperimentalTime::class)
 //class ScheduleWhileTest : FunSpec() {
 //   init {
 //
-//      test("Schedule.whileState should run while predicate is true") {
+//      test("Schedule.whileTrue should run while predicate is true") {
 //         val counter = AtomicInteger(0)
-//         val effect = IO.effect { counter.incrementAndGet() }
+//         val effect = IO { counter.incrementAndGet() }
 //         effect.repeat(Schedule.whileTrue { it < 10 }).run()
 //         counter.get() shouldBe 10
 //      }
 //
-//      test("Schedule.whileState should run while predicate is true or an error is reached") {
+//      test("Schedule.whileTrue should run while predicate is true or an error is reached") {
 //         var counter = 0
 //         val effect = IO.effect {
 //            counter++

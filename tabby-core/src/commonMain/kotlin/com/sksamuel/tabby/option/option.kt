@@ -191,29 +191,6 @@ inline fun <A> Option<A>.getOrElse(f: () -> A): A = when (this) {
    is Option.Some -> this.value
 }
 
-@Deprecated("use mapN")
-fun <A, B, R> applicative(a: Option<A>, b: Option<B>, f: (A, B) -> R): Option<R> {
-   return when (a) {
-      is Option.Some -> when (b) {
-         is Option.Some -> f(a.value, b.value).some()
-         Option.None -> Option.None
-      }
-      Option.None -> Option.None
-   }
-}
-
-@Deprecated("use mapN")
-fun <A, B, C, D, R> applicative(
-   a: Option<A>,
-   b: Option<B>,
-   c: Option<C>,
-   d: Option<D>,
-   f: (A, B, C, D) -> R,
-): Option<R> {
-   if (a.isEmpty() || b.isEmpty() || c.isEmpty() || d.isEmpty()) return Option.None
-   return f(a.getUnsafe(), b.getUnsafe(), c.getUnsafe(), d.getUnsafe()).some()
-}
-
 val none = Option.None
 
 fun <T> T.some(): Option<T> = if (this == null) error("Cannot use .some on a null") else Option.Some(this)
