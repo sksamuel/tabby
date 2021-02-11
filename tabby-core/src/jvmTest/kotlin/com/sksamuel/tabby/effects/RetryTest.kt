@@ -2,8 +2,11 @@ package com.sksamuel.tabby.effects
 
 import com.sksamuel.tabby.option.none
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.longs.shouldBeBetween
 import io.kotest.matchers.shouldBe
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.time.measureTime
+import kotlin.time.milliseconds
 
 class RetryTest : FunSpec() {
    init {
@@ -33,6 +36,12 @@ class RetryTest : FunSpec() {
             Decision.Continue(none, Schedule.forever())
          }.run()
          triggered.get() shouldBe false
+      }
+
+      test("IO.retry with delayed schedule") {
+         measureTime {
+            IO { error("boom") }.retry(Schedule.iterations(3).delay(100.milliseconds)).run()
+         }.toLongMilliseconds().shouldBeBetween(300, 400)
       }
    }
 }
