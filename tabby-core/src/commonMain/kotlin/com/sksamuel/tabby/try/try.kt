@@ -67,7 +67,7 @@ sealed class Try<out A> {
    fun getErrorOrNull(): Throwable? = fold({ it }, { null })
 
    inline fun <B> bimap(isFailure: (Throwable) -> Throwable, ifSuccess: (A) -> B): Try<B> =
-      fold({ isFailure(it).error() }, { ifSuccess(it).value() })
+      fold({ isFailure(it).failure() }, { ifSuccess(it).success() })
 
    // process the given function if this is an error, and then return this
    inline fun onFailure(f: (Throwable) -> Unit): Try<A> =
@@ -108,8 +108,10 @@ fun <A, R> Try<Option<A>>.trifold(ifError: (Throwable) -> R, ifEmpty: () -> R, i
    )
 }
 
+fun <A> A?.failureIfNull(f: () -> Throwable): Try<A> = this?.success() ?: f().failure()
+
 inline fun <A> Try<A>.orElse(other: () -> Try<A>): Try<A> {
-   return fold({ other() }, { it.value() })
+   return fold({ other() }, { it.success() })
 }
 
 inline fun <A> Try<A>.getValueOrElse(orElse: (Throwable) -> A): A =
@@ -120,9 +122,9 @@ inline fun <A> Try<A>.getValueOrElse(orElse: (Throwable) -> A): A =
  * is thrown, will wrap the throwable into an [Try.Failure].
  */
 inline fun <A> catch(f: () -> A): Try<A> = try {
-   f().value()
+   f().success()
 } catch (t: Throwable) {
-   t.error()
+   t.failure()
 }
 
 fun <A> Try<Try<A>>.flatten(): Try<A> = when (this) {
