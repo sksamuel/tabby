@@ -46,6 +46,10 @@ fun interface Schedule {
       override fun decide(): Decision = Decision.Continue(duration.some(), this)
    }
 
+   class DelayF(private val f: (Int) -> Duration, private val iteration: Int) : Schedule {
+      override fun decide(): Decision = Decision.Continue(f(iteration).some(), DelayF(f, iteration + 1))
+   }
+
    object Forever : Schedule {
       override fun decide(): Decision = Decision.Continue(none, this)
    }
@@ -89,6 +93,12 @@ fun interface Schedule {
        * between effects.
        */
       fun delay(duration: Duration): Schedule = Delay(duration)
+
+      /**
+       * Returns a new [Schedule] that continues forever and delays a duration calculated
+       * by the given function [f], which is passed the iteration count.
+       */
+      fun delay(f: (Int) -> Duration): Schedule = DelayF(f, 0)
 
       /**
        * Returns a [Schedule] that repeats k times.
