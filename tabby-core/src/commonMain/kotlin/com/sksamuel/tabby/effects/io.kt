@@ -142,7 +142,7 @@ abstract class IO<out A> {
     *
     * Returns this effect.
     */
-   fun forEach(f: suspend (A) -> Unit): IO<A> = object : IO<A>() {
+   fun forEachWith(f: suspend (A) -> Unit): IO<A> = object : IO<A>() {
       override suspend fun apply(): Try<A> = this@IO.apply().onSuccess { f(it) }
    }
 
@@ -170,6 +170,7 @@ abstract class IO<out A> {
     *
     * task.flatMap { IO.effect { f(it) } }
     */
+   @Deprecated("this is now called flatMapEffect")
    fun <B> mapEffect(f: suspend (A) -> B): IO<B> = flatMap { t -> effect { f(t) } }
 
    fun mapError(f: (Throwable) -> Throwable): IO<A> = object : IO<A>() {
@@ -199,7 +200,7 @@ abstract class IO<out A> {
    /**
     * Alias for [forEach].
     */
-   fun onSuccess(f: suspend (A) -> Unit): IO<A> = forEach(f)
+   fun onSuccess(f: suspend (A) -> Unit): IO<A> = forEachWith(f)
 
    /**
     * Ignores any success value from this effect, returning an effect that produces Unit.

@@ -1,8 +1,5 @@
-package com.sksamuel.tabby.io
+package com.sksamuel.tabby.effects
 
-import com.sksamuel.tabby.effects.IO
-import com.sksamuel.tabby.effects.Schedule
-import com.sksamuel.tabby.effects.repeat
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.longs.shouldBeBetween
 import io.kotest.matchers.shouldBe
