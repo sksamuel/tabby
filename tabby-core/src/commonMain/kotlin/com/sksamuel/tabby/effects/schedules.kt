@@ -64,6 +64,12 @@ fun interface Schedule {
       }
    }
 
+   class WhileTrue(private val predicate: () -> Boolean) : Schedule {
+      override fun decide(): Decision {
+         return if (predicate()) Decision.Continue(none, this) else Decision.Halt
+      }
+   }
+
    companion object {
 
       val never: Schedule = Never
@@ -79,15 +85,21 @@ fun interface Schedule {
       fun forever(): Schedule = Forever
 
       /**
-       * Returns a new Schedule that continues forever and delays for the given duration
+       * Returns a new [Schedule] that continues forever and delays for the given duration
        * between effects.
        */
       fun delay(duration: Duration): Schedule = Delay(duration)
 
       /**
-       * Returns a new schedule that repeats k times.
+       * Returns a [Schedule] that repeats k times.
        */
       fun iterations(k: Int): Schedule = Loop(0, k)
+
+      /**
+       * Returns a [Schedule] that evals to [Decision.Continue] while the given [predicate]
+       * returns true.
+       */
+      fun whileTrue(predicate: () -> Boolean): Schedule = WhileTrue(predicate)
    }
 }
 
