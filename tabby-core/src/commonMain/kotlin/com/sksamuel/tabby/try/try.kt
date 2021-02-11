@@ -6,6 +6,9 @@ import com.sksamuel.tabby.effects.IO
 import com.sksamuel.tabby.option.Option
 import com.sksamuel.tabby.option.none
 import com.sksamuel.tabby.option.some
+import com.sksamuel.tabby.validated.Validated
+import com.sksamuel.tabby.validated.invalid
+import com.sksamuel.tabby.validated.valid
 
 sealed class Try<out A> {
 
@@ -154,3 +157,6 @@ fun Throwable.failure() = Try.Failure(this)
 @Deprecated("Use .success()", ReplaceWith("Try.Success(this)"))
 fun <B> B.value() = Try.Success(this)
 fun <B> B.success() = Try.Success(this)
+
+fun <A> Try<A>.toValidated(): Validated<Throwable, A> = fold({ it.invalid() }, { it.valid() })
+

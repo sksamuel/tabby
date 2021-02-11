@@ -50,6 +50,8 @@ abstract class IO<out A> {
        */
       val empty = pure(none)
 
+      fun <A> emptyList(): IO<List<A>> = pure(listOf())
+
       /**
        * Wraps a potentially throwing, effectful function as an IO.
        */
