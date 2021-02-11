@@ -106,7 +106,7 @@ sealed class Either<out A, out B> {
    inline fun <reified C> filterRightIsInstance(otherwise: (B) -> Any): Either<A, C> = when (this) {
       is Left -> this
       is Right -> when (val b = this.b) {
-         is C -> b.right() as Either<A, C>
+         is C -> b.right()
          else -> (otherwise(this.b) as A).left()
       }
    }
@@ -152,6 +152,7 @@ fun <A, B> Either<A, Either<A, B>>.flatten(): Either<A, B> = when (this) {
    is Either.Right -> b
 }
 
+@Deprecated("use com.sksamuel.tabby.`try`.Try")
 fun <B> Try<Option<B>>.flatten(ifNone: () -> String): Try<B> = when (this) {
    is Either.Left -> this
    is Either.Right -> when (val b = this.b) {
@@ -209,27 +210,28 @@ fun <A, B> B?.rightIfNotNull(ifNull: () -> A): Either<A, B> =
 fun <A> A.left() = Either.Left(this)
 fun <B> B.right() = Either.Right(this)
 
-@Deprecated("use catch {} ")
+@Deprecated("use com.sksamuel.tabby.`try`.catch")
 inline fun <B> catching(thunk: () -> B): Either<Throwable, B> = try {
    thunk().right()
 } catch (t: Throwable) {
    t.left()
 }
 
-@Deprecated("use catch {} ")
+@Deprecated("use com.sksamuel.tabby.`try`.catch")
 inline fun <A, B> catching(fn: () -> B, handle: (Throwable) -> A): Either<A, B> = try {
    fn().right()
 } catch (t: Throwable) {
    handle(t).left()
 }
 
-@Deprecated("use catch {} ")
+@Deprecated("use com.sksamuel.tabby.`try`.catch")
 inline fun <A, B> catching(handle: (Throwable) -> A, thunk: () -> B): Either<A, B> = try {
    thunk().right()
 } catch (t: Throwable) {
    handle(t).left()
 }
 
+@Deprecated("use com.sksamuel.tabby.`try`.catch")
 inline fun <A> catch(thunk: () -> A): Try<A> = try {
    thunk().right()
 } catch (t: Throwable) {
@@ -264,6 +266,7 @@ fun <A, B, C, D> Either<A, B>.mapNWith(other: Either<A, C>, f: (B, C) -> Either<
    }
 }
 
+@Deprecated("use com.sksamuel.tabby.`try`.Try`")
 typealias Try<B> = Either<Throwable, B>
 
 @Deprecated("use toEither")
@@ -429,6 +432,7 @@ inline fun <reified A, reified B> List<Either<A, B>>.sequence(): Either<List<A>,
    return if (`as`.isEmpty()) bs.right() else `as`.left()
 }
 
+@Deprecated("use com.sksamuel.tabby.`try`.Try`")
 fun <A> Try<A>.onFailure(f: (Throwable) -> Unit): Try<A> {
    if (this is Either.Left) f(this.a)
    return this
