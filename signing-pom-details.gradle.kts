@@ -48,13 +48,13 @@ publishing {
          //if (Ci.isRelease)
          pom {
             name.set("Tabby")
-            description.set("MPP FP Datatypes")
+            description.set("Multiplatform FP Datatypes")
             url.set("http://www.github.com/sksamuel/tabby")
 
             scm {
-               connection.set("scm:git:http://www.github.com/sksamuel/tabby/")
-               developerConnection.set("scm:git:http://github.com/sksamuel/")
-               url.set("http://www.github.com/sksamuel/tabby/")
+               connection.set("scm:git:http://www.github.com/sksamuel/tabby")
+               developerConnection.set("scm:git:http://github.com/sksamuel")
+               url.set("http://www.github.com/sksamuel/tabby")
             }
 
             licenses {
