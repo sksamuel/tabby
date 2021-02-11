@@ -1,4 +1,4 @@
-name: release_linux_and_common
+name: release
 
 on:
    workflow_dispatch:
