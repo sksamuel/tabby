@@ -277,6 +277,10 @@ fun <A> IO<IO<A>>.flatten(): IO<A> = object : IO<A>() {
 
 fun <A> A.pure() = IO.pure(this)
 fun Throwable.fail(): IO<Nothing> = IO.failure(this)
+
+/**
+ * Returns an IO that gets it's value from this Try.
+ */
 fun <A> Try<A>.effect(): IO<A> = IO.from(this)
 
 // Unproductive IO, will never succeed
