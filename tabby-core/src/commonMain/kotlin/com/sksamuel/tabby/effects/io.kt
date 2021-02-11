@@ -209,6 +209,8 @@ abstract class IO<out A> {
       override suspend fun apply(): Try<Unit> = this@IO.apply().map { }
    }
 
+   fun <B> zip(other: IO<B>): IO<Pair<A, B>> = IO.zip(this, other)
+
    /**
     * Provides a context switch for this IO.
     */
