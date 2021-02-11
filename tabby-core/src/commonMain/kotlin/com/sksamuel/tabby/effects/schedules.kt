@@ -81,12 +81,12 @@ fun interface Schedule {
       /**
        * Returns a [Schedule] that will decide to continue once, and then halt.
        */
-      fun once(): Schedule = Once
+      val once: Schedule = Once
 
       /**
        * Returns a [Schedule] that will decide to coninue forever, with no delay.
        */
-      fun forever(): Schedule = Forever
+      val forever: Schedule = Forever
 
       /**
        * Returns a new [Schedule] that continues forever and delays for the given duration

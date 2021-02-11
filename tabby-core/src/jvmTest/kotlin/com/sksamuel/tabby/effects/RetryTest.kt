@@ -25,7 +25,7 @@ class RetryTest : FunSpec() {
          IO.effect {
             iterations++
             if (iterations == 5) "foo" else error("boom")
-         }.retry(Schedule.forever()).run().getValueUnsafe() shouldBe "foo"
+         }.retry(Schedule.forever).run().getValueUnsafe() shouldBe "foo"
          iterations shouldBe 5
       }
 
@@ -33,7 +33,7 @@ class RetryTest : FunSpec() {
          val triggered = AtomicBoolean(false)
          IO { "foo" }.retry {
             triggered.set(true)
-            Decision.Continue(none, Schedule.forever())
+            Decision.Continue(none, Schedule.forever)
          }.run()
          triggered.get() shouldBe false
       }

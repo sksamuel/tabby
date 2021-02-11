@@ -18,6 +18,9 @@ fun <A> IO<A>.repeat(schedule: Schedule): IO<A> = repeatWhile(schedule) { it.isS
  */
 fun <A> IO<A>.retry(schedule: Schedule): IO<A> = repeatWhile(schedule) { it.isFailure }
 
+/**
+ * Returns an effect that will repeat while the predicate is true, using the given schedule.
+ */
 fun <A> IO<A>.repeatWhile(schedule: Schedule, predicate: (Try<A>) -> Boolean): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
       var result: Try<A> = this@repeatWhile.apply()
@@ -33,5 +36,22 @@ fun <A> IO<A>.repeatWhile(schedule: Schedule, predicate: (Try<A>) -> Boolean): I
          }
       }
       return result
+   }
+}
+
+/**
+ * Returns an effect that will repeat based on the schedule returned by the function.
+ * A new schedule is requested on each repeat.
+ */
+fun <A> IO<A>.repeatWhile(f: (IndexedValue<Try<A>>) -> Schedule): IO<A> = object : IO<A>() {
+   override suspend fun apply(): Try<A> {
+      var n = 0
+      while (true) {
+         val result: Try<A> = this@repeatWhile.apply()
+         when (f(IndexedValue(n++, result)).decide()) {
+            is Decision.Continue -> Unit
+            is Decision.Halt -> return result
+         }
+      }
    }
 }
