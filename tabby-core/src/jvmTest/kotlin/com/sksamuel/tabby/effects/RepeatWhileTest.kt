@@ -1,8 +1,11 @@
 package com.sksamuel.tabby.effects
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.longs.shouldBeBetween
 import io.kotest.matchers.shouldBe
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.time.measureTime
+import kotlin.time.milliseconds
 
 class RepeatWhileTest : FunSpec() {
    init {
@@ -20,9 +23,11 @@ class RepeatWhileTest : FunSpec() {
       }
 
       test("IO.repeatWhile(f) should contine while function returns a predicate") {
-         val counter = AtomicInteger(0)
-         IO { counter.incrementAndGet() }.repeatWhile { if (it.index < 10) Schedule.once else Schedule.never }.run()
-         counter.get() shouldBe 11
+         measureTime {
+            val counter = AtomicInteger(0)
+            IO { counter.incrementAndGet() }.repeatWhile { if (it.index < 10) Schedule.delay(25.milliseconds) else Schedule.never }.run()
+            counter.get() shouldBe 11
+         }.toLongMilliseconds().shouldBeBetween(250, 325)
       }
    }
 }

@@ -48,8 +48,8 @@ fun <A> IO<A>.repeatWhile(f: (IndexedValue<Try<A>>) -> Schedule): IO<A> = object
       var n = 0
       while (true) {
          val result: Try<A> = this@repeatWhile.apply()
-         when (f(IndexedValue(n++, result)).decide()) {
-            is Decision.Continue -> Unit
+         when (val decision = f(IndexedValue(n++, result)).decide()) {
+            is Decision.Continue -> decision.duration.forEach { delay(it) }
             is Decision.Halt -> return result
          }
       }
