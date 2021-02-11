@@ -110,6 +110,9 @@ fun <A, R> Try<Option<A>>.trifold(ifError: (Throwable) -> R, ifEmpty: () -> R, i
 
 fun <A> A?.failureIfNull(f: () -> Throwable): Try<A> = this?.success() ?: f().failure()
 
+fun <A> A.failureIf(isError: (A) -> Boolean, onError: () -> Throwable): Try<A> =
+   if (isError(this)) onError().failure() else this.success()
+
 inline fun <A> Try<A>.orElse(other: () -> Try<A>): Try<A> {
    return fold({ other() }, { it.success() })
 }
