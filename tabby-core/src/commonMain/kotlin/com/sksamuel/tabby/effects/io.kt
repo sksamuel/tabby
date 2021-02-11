@@ -142,7 +142,7 @@ abstract class IO<out A> {
     *
     * Returns this effect.
     */
-   fun forEachWith(f: suspend (A) -> Unit): IO<A> = object : IO<A>() {
+   fun forEachEffect(f: suspend (A) -> Unit): IO<A> = object : IO<A>() {
       override suspend fun apply(): Try<A> = this@IO.apply().onSuccess { f(it) }
    }
 
@@ -200,7 +200,7 @@ abstract class IO<out A> {
    /**
     * Alias for [forEach].
     */
-   fun onSuccess(f: suspend (A) -> Unit): IO<A> = forEachWith(f)
+   fun onSuccess(f: suspend (A) -> Unit): IO<A> = forEachEffect(f)
 
    /**
     * Ignores any success value from this effect, returning an effect that produces Unit.
