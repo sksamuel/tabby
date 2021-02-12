@@ -21,6 +21,18 @@ class ParTest : FunSpec() {
          IO.par(a, b).runUnsafe() shouldBe listOf("foo", "bar")
       }
 
+      test("IO.par extension version should run in parallel with suspend").config(timeout = 350.milliseconds) {
+         val a = IO {
+            delay(250)
+            "foo"
+         }
+         val b = IO {
+            delay(250)
+            "bar"
+         }
+         listOf(a, b).par().runUnsafe() shouldBe listOf("foo", "bar")
+      }
+
       test("IO.par should run in parallel with cpu").config(timeout = 1400.milliseconds) {
          val a = IO {
             val end = System.currentTimeMillis() + 1000
