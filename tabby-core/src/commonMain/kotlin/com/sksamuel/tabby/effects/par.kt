@@ -11,6 +11,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
+fun <A> List<IO<A>>.par(): IO<List<A>> = IO.par(this)
+
 fun <A> IO.Companion.par(effects: List<IO<A>>): IO<List<A>> = object : IO<List<A>>() {
    override suspend fun apply(): Try<List<A>> = catch {
       coroutineScope {
