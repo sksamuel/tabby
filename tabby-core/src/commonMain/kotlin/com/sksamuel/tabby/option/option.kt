@@ -2,11 +2,15 @@
 
 package com.sksamuel.tabby.option
 
+import com.sksamuel.tabby.`try`.Try
+import com.sksamuel.tabby.`try`.failure
+import com.sksamuel.tabby.`try`.success
 import com.sksamuel.tabby.either.Either
 import com.sksamuel.tabby.validated.Validated
 import com.sksamuel.tabby.validated.invalid
 import com.sksamuel.tabby.either.left
 import com.sksamuel.tabby.either.right
+import com.sksamuel.tabby.tristate.Tristate
 import com.sksamuel.tabby.validated.valid
 import kotlin.jvm.JvmName
 
@@ -164,6 +168,9 @@ sealed class Option<out A> {
     */
    fun <B> toEither(ifEmpty: () -> B): Either<B, A> = fold({ ifEmpty().left() }, { it.right() })
 
+   fun toTry(ifEmpty: () -> Throwable): Try<A> = fold({ ifEmpty().failure() }, { it.success() })
+
+   fun toTristate(): Tristate<A> = fold({ Tristate.None }, { Tristate.Some(it) })
 
    /**
     * Transforms this option into a [Validated].
