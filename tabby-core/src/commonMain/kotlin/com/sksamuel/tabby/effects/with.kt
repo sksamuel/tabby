@@ -5,7 +5,9 @@ import com.sksamuel.tabby.`try`.Try
 import com.sksamuel.tabby.`try`.failure
 import com.sksamuel.tabby.`try`.success
 
-fun <A> with(f: suspend () -> A): IO<A> = object : IO<A>() {
+@Deprecated("with is a scope function in kotlin; use comprehension {}")
+fun <A> with(f: suspend () -> A): IO<A> = comprehension(f)
+fun <A> comprehension(f: suspend () -> A): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
       return try {
          f().success()
