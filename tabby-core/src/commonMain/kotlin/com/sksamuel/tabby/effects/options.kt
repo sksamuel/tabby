@@ -1,8 +1,8 @@
 package com.sksamuel.tabby.effects
 
 import com.sksamuel.tabby.`try`.Try
-import com.sksamuel.tabby.`try`.error
-import com.sksamuel.tabby.`try`.value
+import com.sksamuel.tabby.`try`.failure
+import com.sksamuel.tabby.`try`.success
 import com.sksamuel.tabby.option.Option
 import com.sksamuel.tabby.option.toOption
 
@@ -39,11 +39,11 @@ fun <A, B> IO<Option<A>>.flatMapValue(f: (A) -> Option<B>): IO<Option<B>> {
 fun <A> IO<Option<A>>.flatten(ifNone: () -> Throwable = { NoSuchElementException() }): IO<A> = object : IO<A>() {
    override suspend fun apply(): Try<A> {
       return this@flatten.apply().fold(
-         { it.error() },
+         { it.failure() },
          { right ->
             right.fold(
-               { ifNone().error() },
-               { it.value() }
+               { ifNone().failure() },
+               { it.success() }
             )
          }
       )

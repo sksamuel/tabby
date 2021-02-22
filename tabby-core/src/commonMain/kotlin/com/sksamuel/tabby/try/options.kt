@@ -4,11 +4,11 @@ import com.sksamuel.tabby.option.Option
 import com.sksamuel.tabby.option.none
 import com.sksamuel.tabby.option.some
 
-fun <A> Option<A>.toTry(message: String) = fold({ message.error() }, { it.value() })
+fun <A> Option<A>.toTry(message: String) = fold({ message.error() }, { it.success() })
 
 fun <A> Try<Option<A>>.flatten(ifEmpty: () -> A): Try<A> = when (this) {
    is Try.Failure -> this
-   is Try.Success -> value.fold({ ifEmpty().value() }, { it.value() })
+   is Try.Success -> value.fold({ ifEmpty().success() }, { it.success() })
 }
 
 fun <A> Try<Option<A>>.flatten(emptyMessage: String? = null): Try<A> = when (this) {

@@ -1,13 +1,13 @@
 package com.sksamuel.tabby.effects
 
 import com.sksamuel.tabby.`try`.Try
-import com.sksamuel.tabby.`try`.value
+import com.sksamuel.tabby.`try`.success
 
 /**
  * Recovers from an error by applying the given function to create an effect, which is then executed.
  */
 fun <A> IO<A>.recover(f: (Throwable) -> IO<A>): IO<A> = object : IO<A>() {
-   override suspend fun apply(): Try<A> = this@recover.apply().fold({ f(it).apply() }, { it.value() })
+   override suspend fun apply(): Try<A> = this@recover.apply().fold({ f(it).apply() }, { it.success() })
 }
 
 /**

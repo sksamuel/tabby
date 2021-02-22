@@ -20,7 +20,7 @@ inline fun <A, B, R> Try.Companion.mapN(
 ): Try<R> {
    if (a.isFailure) return a as Try<R>
    if (b.isFailure) return b as Try<R>
-   return fn(a.getValueUnsafe(), b.getValueUnsafe()).value()
+   return fn(a.getValueUnsafe(), b.getValueUnsafe()).success()
 }
 
 inline fun <A, B, C, R> Try.Companion.mapN(
@@ -32,7 +32,7 @@ inline fun <A, B, C, R> Try.Companion.mapN(
    if (a.isFailure) return a as Try<R>
    if (b.isFailure) return b as Try<R>
    if (c.isFailure) return c as Try<R>
-   return fn(a.getValueUnsafe(), b.getValueUnsafe(), c.getValueUnsafe()).value()
+   return fn(a.getValueUnsafe(), b.getValueUnsafe(), c.getValueUnsafe()).success()
 }
 
 inline fun <A, B, C, D, R> Try.Companion.mapN(
@@ -46,7 +46,7 @@ inline fun <A, B, C, D, R> Try.Companion.mapN(
    if (b.isFailure) return b as Try<R>
    if (c.isFailure) return c as Try<R>
    if (d.isFailure) return d as Try<R>
-   return fn(a.getValueUnsafe(), b.getValueUnsafe(), c.getValueUnsafe(), d.getValueUnsafe()).value()
+   return fn(a.getValueUnsafe(), b.getValueUnsafe(), c.getValueUnsafe(), d.getValueUnsafe()).success()
 }
 
 inline fun <A, B, C, D, E, R> Try.Companion.mapN(
@@ -62,7 +62,7 @@ inline fun <A, B, C, D, E, R> Try.Companion.mapN(
    if (c.isFailure) return c as Try<R>
    if (d.isFailure) return d as Try<R>
    if (e.isFailure) return e as Try<R>
-   return fn(a.getValueUnsafe(), b.getValueUnsafe(), c.getValueUnsafe(), d.getValueUnsafe(), e.getValueUnsafe()).value()
+   return fn(a.getValueUnsafe(), b.getValueUnsafe(), c.getValueUnsafe(), d.getValueUnsafe(), e.getValueUnsafe()).success()
 }
 
 inline fun <A, B, C, D, E, F, R> Try.Companion.mapN(
@@ -87,7 +87,7 @@ inline fun <A, B, C, D, E, F, R> Try.Companion.mapN(
       d.getValueUnsafe(),
       e.getValueUnsafe(),
       f.getValueUnsafe(),
-   ).value()
+   ).success()
 }
 
 inline fun <A, B, C, D, E, F, G, R> Try.Companion.mapN(
@@ -115,5 +115,5 @@ inline fun <A, B, C, D, E, F, G, R> Try.Companion.mapN(
       e.getValueUnsafe(),
       f.getValueUnsafe(),
       g.getValueUnsafe(),
-   ).value()
+   ).success()
 }
