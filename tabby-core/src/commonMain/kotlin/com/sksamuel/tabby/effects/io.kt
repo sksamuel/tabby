@@ -162,6 +162,12 @@ abstract class IO<out A> {
       override suspend fun apply(): Try<B> = this@IO.apply().map(f)
    }
 
+   fun <B> fold(ifError: (Throwable) -> B, ifSuccess: (A) -> B): IO<A> {
+      return object : IO<A>() {
+         override suspend fun apply(): Try<A> = this@IO.run()
+      }
+   }
+
    /**
     * Returns an effect which applies the given side effecting function to it's success,
     * wrapping the supplied function in an effect before execution.

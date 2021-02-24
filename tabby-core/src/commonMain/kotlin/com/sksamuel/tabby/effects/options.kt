@@ -4,6 +4,7 @@ import com.sksamuel.tabby.`try`.Try
 import com.sksamuel.tabby.`try`.failure
 import com.sksamuel.tabby.`try`.success
 import com.sksamuel.tabby.option.Option
+import com.sksamuel.tabby.option.some
 import com.sksamuel.tabby.option.toOption
 
 /**
@@ -49,3 +50,5 @@ fun <A> IO<Option<A>>.flatten(ifNone: () -> Throwable = { NoSuchElementException
       )
    }
 }
+
+fun <A> Option<IO<A>>.transpose(): IO<Option<A>> = this.fold({ IO.empty }, { a -> a.map { it.some() } })
