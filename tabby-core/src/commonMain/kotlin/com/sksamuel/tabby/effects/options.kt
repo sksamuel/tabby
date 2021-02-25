@@ -51,4 +51,4 @@ fun <A> IO<Option<A>>.flatten(ifNone: () -> Throwable = { NoSuchElementException
    }
 }
 
-fun <A> Option<IO<A>>.transpose(): IO<Option<A>> = this.fold({ IO.empty }, { a -> a.map { it.some() } })
+fun <A> Option<IO<A>>.transpose(): IO<Option<A>> = this.fold({ IO.empty }, { it.map { it.some() } })
