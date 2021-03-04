@@ -4,6 +4,9 @@ import com.sksamuel.tabby.Tuple2
 import com.sksamuel.tabby.Tuple3
 import com.sksamuel.tabby.Tuple4
 import com.sksamuel.tabby.Tuple5
+import com.sksamuel.tabby.Tuple6
+import com.sksamuel.tabby.Tuple7
+import com.sksamuel.tabby.Tuple8
 import com.sksamuel.tabby.`try`.Try
 import com.sksamuel.tabby.`try`.catch
 import com.sksamuel.tabby.`try`.getValueOrElse
@@ -89,7 +92,7 @@ fun <A, B, C, D, E> IO.Companion.parN(
    iob: IO<B>,
    ioc: IO<C>,
    iod: IO<D>,
-   ioe: IO<E>
+   ioe: IO<E>,
 ) = object : IO<Tuple5<A, B, C, D, E>>() {
    override suspend fun apply(): Try<Tuple5<A, B, C, D, E>> = catch {
       coroutineScope {
@@ -109,6 +112,117 @@ fun <A, B, C, D, E> IO.Companion.parN(
             ioe.run().getValueOrElse { throw it }
          }
          Tuple5(a.await(), b.await(), c.await(), d.await(), e.await())
+      }
+   }
+}
+
+fun <A, B, C, D, E, F> IO.Companion.parN(
+   ioa: IO<A>,
+   iob: IO<B>,
+   ioc: IO<C>,
+   iod: IO<D>,
+   ioe: IO<E>,
+   iof: IO<F>,
+) = object : IO<Tuple6<A, B, C, D, E, F>>() {
+   override suspend fun apply(): Try<Tuple6<A, B, C, D, E, F>> = catch {
+      coroutineScope {
+         val a = async {
+            ioa.run().getValueOrElse { throw it }
+         }
+         val b = async {
+            iob.run().getValueOrElse { throw it }
+         }
+         val c = async {
+            ioc.run().getValueOrElse { throw it }
+         }
+         val d = async {
+            iod.run().getValueOrElse { throw it }
+         }
+         val e = async {
+            ioe.run().getValueOrElse { throw it }
+         }
+         val f = async {
+            iof.run().getValueOrElse { throw it }
+         }
+         Tuple6(a.await(), b.await(), c.await(), d.await(), e.await(), f.await())
+      }
+   }
+}
+
+fun <A, B, C, D, E, F, G> IO.Companion.parN(
+   ioa: IO<A>,
+   iob: IO<B>,
+   ioc: IO<C>,
+   iod: IO<D>,
+   ioe: IO<E>,
+   iof: IO<F>,
+   iog: IO<G>,
+) = object : IO<Tuple7<A, B, C, D, E, F, G>>() {
+   override suspend fun apply(): Try<Tuple7<A, B, C, D, E, F, G>> = catch {
+      coroutineScope {
+         val a = async {
+            ioa.run().getValueOrElse { throw it }
+         }
+         val b = async {
+            iob.run().getValueOrElse { throw it }
+         }
+         val c = async {
+            ioc.run().getValueOrElse { throw it }
+         }
+         val d = async {
+            iod.run().getValueOrElse { throw it }
+         }
+         val e = async {
+            ioe.run().getValueOrElse { throw it }
+         }
+         val f = async {
+            iof.run().getValueOrElse { throw it }
+         }
+         val g = async {
+            iog.run().getValueOrElse { throw it }
+         }
+         Tuple7(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await())
+      }
+   }
+}
+
+fun <A, B, C, D, E, F, G, H> IO.Companion.parN(
+   ioa: IO<A>,
+   iob: IO<B>,
+   ioc: IO<C>,
+   iod: IO<D>,
+   ioe: IO<E>,
+   iof: IO<F>,
+   iog: IO<G>,
+   ioh: IO<H>,
+) = object : IO<Tuple8<A, B, C, D, E, F, G, H>>() {
+   override suspend fun apply(): Try<Tuple8<A, B, C, D, E, F, G, H>> = catch {
+      coroutineScope {
+         val a = async {
+            ioa.run().getValueOrElse { throw it }
+         }
+         val b = async {
+            iob.run().getValueOrElse { throw it }
+         }
+         val c = async {
+            ioc.run().getValueOrElse { throw it }
+         }
+         val d = async {
+            iod.run().getValueOrElse { throw it }
+         }
+         val e = async {
+            ioe.run().getValueOrElse { throw it }
+         }
+         val f = async {
+            iof.run().getValueOrElse { throw it }
+         }
+         val g = async {
+            iog.run().getValueOrElse { throw it }
+         }
+         val h = async {
+            ioh.run().getValueOrElse { throw it }
+         }
+         Tuple8(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await())
       }
    }
 }

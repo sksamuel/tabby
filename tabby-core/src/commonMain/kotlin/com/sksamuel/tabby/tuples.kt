@@ -80,3 +80,32 @@ data class Tuple10<A, B, C, D, E, F, G, H, I, J>(
    val i: I,
    val j: J,
 )
+
+data class Tuple11<A, B, C, D, E, F, G, H, I, J, K>(
+   val a: A,
+   val b: B,
+   val c: C,
+   val d: D,
+   val e: E,
+   val f: F,
+   val g: G,
+   val h: H,
+   val i: I,
+   val j: J,
+   val k: K,
+)
+
+data class Tuple12<A, B, C, D, E, F, G, H, I, J, K, L>(
+   val a: A,
+   val b: B,
+   val c: C,
+   val d: D,
+   val e: E,
+   val f: F,
+   val g: G,
+   val h: H,
+   val i: I,
+   val j: J,
+   val k: K,
+   val l: L,
+)
