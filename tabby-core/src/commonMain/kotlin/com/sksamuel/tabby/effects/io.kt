@@ -286,6 +286,7 @@ fun <A> IO<A?>.mapIfNull(f: () -> A): IO<A> = this.map { it ?: f() }
 fun <A, B> IO<A?>.mapIfNotNull(f: (A) -> B): IO<B?> = this.map { if (it == null) null else f(it) }
 fun <A, B> IO<A?>.flatMapIfNotNull(f: (A) -> IO<B>): IO<B?> = this.flatMap { if (it == null) IO.pure(null) else f(it) }
 
+fun <A : Any> IO<List<A?>>.filterNotNull(): IO<List<A>> = this.map { it.filterNotNull() }
 
 fun <A> A.pure() = IO.pure(this)
 fun Throwable.fail(): IO<Nothing> = IO.failure(this)
