@@ -3,4 +3,4 @@
 A few lightweight Monads for Kotlin: Either, Try, Validated, Option, Tristate, IO.
 
 Think of this as a basic version of [Arrow](https://arrow-kt.io/) for Kotlin multi-platform.
-If you are developing only for the JVM, you should use that instead.
+If you are developing only for the JVM, you should use that instead. This is a personal project for my own applications and no support is given.
