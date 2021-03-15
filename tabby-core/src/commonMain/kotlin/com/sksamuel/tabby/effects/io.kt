@@ -208,6 +208,19 @@ abstract class IO<out A> {
    fun onSuccess(f: suspend (A) -> Unit): IO<A> = forEachEffect(f)
 
    /**
+    * If this effect evaluates to success, runs the [also] effect.
+    * The result of [also] is disregarded, and the result of this effect
+    * is returned.
+    */
+   fun <B> onSuccess(also: IO<B>): IO<A> = object : IO<A>() {
+      override suspend fun apply(): Try<A> {
+         val result = this@IO.apply()
+         also.run()
+         return result
+      }
+   }
+
+   /**
     * Ignores any success value from this effect, returning an effect that produces Unit.
     */
    fun unit(): IO<Unit> = object : IO<Unit>() {
