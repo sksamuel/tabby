@@ -28,6 +28,11 @@ sealed class Try<out A> {
 
       fun <A> success(a: A) = Success(a)
       fun failure(t: Throwable) = Failure(t)
+
+      /**
+       * Creates a failed Try by first wrapping this message into an [Exception].
+       */
+      fun failure(message: String) = Failure(Exception(message))
    }
 
    data class Failure(val error: Throwable) : Try<Nothing>() {
