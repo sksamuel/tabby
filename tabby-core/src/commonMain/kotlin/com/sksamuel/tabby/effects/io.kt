@@ -48,7 +48,10 @@ abstract class IO<out A> {
       /**
        * Returns a successful effort that wraps null.
        */
+      @Deprecated("use IO.Null")
       val nullz = pure(null)
+
+      val Null = pure(null)
 
       /**
        * Returns a successful effect that wraps [none].
