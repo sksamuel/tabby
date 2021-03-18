@@ -301,6 +301,7 @@ abstract class IO<out A> {
     */
    suspend fun runUnsafe(): A = run().getValueUnsafe()
 
+   @Deprecated("Just to run().fold", ReplaceWith("run().fold(ifError, ifSuccess)"))
    suspend fun <B> funFold(ifError: (Throwable) -> B, ifSuccess: (A) -> B): B {
       return run().fold(ifError, ifSuccess)
    }
