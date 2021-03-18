@@ -74,6 +74,11 @@ abstract class IO<out A> {
       fun <A> pure(a: A): IO<A> = Pure(a)
 
       /**
+       * Wraps a strict value as a successfully completed IO.
+       */
+      fun <A> just(a: A): IO<A> = Pure(a)
+
+      /**
        * Wraps a safe function as a successfully completed IO.
        */
       fun <A> success(f: () -> A): IO<A> = object : IO<A>() {
@@ -318,6 +323,8 @@ fun <A, B> IO<A?>.flatMapIfNotNull(f: (A) -> IO<B>): IO<B?> = this.flatMap { if 
 fun <A : Any> IO<List<A?>>.filterNotNull(): IO<List<A>> = this.map { it.filterNotNull() }
 
 fun <A> A.pure() = IO.pure(this)
+fun <A> A.just() = IO.pure(this)
+
 fun Throwable.fail(): IO<Nothing> = IO.failure(this)
 
 /**

@@ -9,6 +9,7 @@ import com.sksamuel.tabby.option.some
 import com.sksamuel.tabby.validated.Validated
 import com.sksamuel.tabby.validated.invalid
 import com.sksamuel.tabby.validated.valid
+import kotlin.experimental.ExperimentalTypeInference
 
 sealed class Try<out A> {
 
@@ -62,9 +63,16 @@ sealed class Try<out A> {
       is Success -> ifSuccess(value)
    }
 
+   @OverloadResolutionByLambdaReturnType
    inline fun <B> flatMap(f: (A) -> Try<B>): Try<B> = when (this) {
       is Failure -> this
       is Success -> f(value)
+   }
+
+   @OverloadResolutionByLambdaReturnType
+   inline fun <B> flatMap(f: (A) -> IO<B>): IO<B> = when (this) {
+      is Failure -> IO.failure(this.error)
+      is Success -> f(this.value)
    }
 
    inline fun getErrorOrElse(default: (A) -> Throwable): Throwable =
