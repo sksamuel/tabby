@@ -24,8 +24,10 @@ sealed class Decision {
     *
     * A schedule is provided to evaluate the next loop if the retry also fails.
     */
-   data class Continue(val duration: Option<Duration>,
-                       val next: Schedule) : Decision()
+   data class Continue(
+      val duration: Option<Duration>,
+      val next: Schedule
+   ) : Decision()
 
    fun plusDuration(plus: Duration): Decision {
       return when (this) {
@@ -94,9 +96,14 @@ fun interface Schedule {
        */
       fun delay(duration: Duration): Schedule = Delay(duration)
 
+      fun exponential(duration: Duration, factor: Double): Schedule =
+         delay { (duration.inMilliseconds * (factor * it + 1)).toLong().milliseconds }
+
       /**
        * Returns a new [Schedule] that continues forever and delays a duration calculated
        * by the given function [f], which is passed the iteration count.
+       *
+       * The first iteration count will be zero.
        */
       fun delay(f: (Int) -> Duration): Schedule = DelayF(f, 0)
 
