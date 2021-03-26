@@ -1,7 +1,7 @@
 package com.sksamuel.tabby.`try`
 
-fun <A> List<Try<A>>.filterToSuccesses(): List<Try.Success<A>> =
-   filterIsInstance<Try.Success<A>>()
+fun <A> List<Try<A>>.filterToSuccesses(): List<A> =
+   filterIsInstance<Try.Success<A>>().map { it.value }
 
-fun <A> List<Try<A>>.filterToFailures(): List<Try.Failure> =
-   filterIsInstance<Try.Failure>()
+fun <A> List<Try<A>>.filterToFailures(): List<Throwable> =
+   filterIsInstance<Try.Failure>().map { it.error }
