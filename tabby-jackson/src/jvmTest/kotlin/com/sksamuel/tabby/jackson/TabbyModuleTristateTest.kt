@@ -14,13 +14,13 @@ class TabbyModuleTristateTest : FunSpec({
    test("deserialize tristate") {
       data class Foo(val a: Tristate<String>, val b: Tristate<Int>, val c: Tristate<Boolean>)
 
-      mapper.readValue<Foo>("""{"a": "a", "b": null, "c": "_unspecified"}""") shouldBe Foo(
+      mapper.readValue<Foo>("""{"a": "a", "b": null}""") shouldBe Foo(
          Tristate.Some("a"),
          Tristate.None,
          Tristate.Unspecified
       )
 
-      mapper.readValue<Foo>("""{"a": "_unspecified", "b": null, "c": true}""") shouldBe Foo(
+      mapper.readValue<Foo>("""{"b": null, "c": true}""") shouldBe Foo(
          Tristate.Unspecified,
          Tristate.None,
          Tristate.Some(true)
@@ -30,7 +30,7 @@ class TabbyModuleTristateTest : FunSpec({
    test("deserialize tristate recursively") {
       data class Foo(val a: Tristate<Foo>, val b: Tristate<Int>, val c: Tristate<Boolean>)
 
-      mapper.readValue<Foo>("""{"a": { "a": null, "b": "_unspecified", "c": true }, "b": null, "c": "_unspecified"}""") shouldBe Foo(
+      mapper.readValue<Foo>("""{"a": { "a": null, "c": true }, "b": null}""") shouldBe Foo(
          Tristate.Some(Foo(Tristate.None, Tristate.Unspecified, Tristate.Some(true))),
          Tristate.None,
          Tristate.Unspecified
@@ -55,7 +55,7 @@ class TabbyModuleTristateTest : FunSpec({
             Tristate.None,
             Tristate.Some(true)
          )
-      ) shouldBe """{"a":"_unspecified","b":null,"c":true}"""
+      ) shouldBe """{"b":null,"c":true}"""
 
       mapper.writeValueAsString(
          Foo(
@@ -63,7 +63,7 @@ class TabbyModuleTristateTest : FunSpec({
             Tristate.Some(123),
             Tristate.Unspecified
          )
-      ) shouldBe """{"a":null,"b":123,"c":"_unspecified"}"""
+      ) shouldBe """{"a":null,"b":123}"""
    }
 
    test("serialize tristate recursively") {
@@ -81,6 +81,6 @@ class TabbyModuleTristateTest : FunSpec({
                )
             )
          )
-      ) shouldBe """{"a":"foo","b":null,"c":{"a":null,"b":3122,"c":"_unspecified"}}"""
+      ) shouldBe """{"a":"foo","b":null,"c":{"a":null,"b":3122}}"""
    }
 })

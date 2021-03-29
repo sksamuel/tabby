@@ -9,11 +9,14 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonSerializer
+import com.fasterxml.jackson.databind.PropertyName
 import com.fasterxml.jackson.databind.SerializationConfig
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.deser.Deserializers
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.ser.BeanPropertyWriter
+import com.fasterxml.jackson.databind.ser.BeanSerializerModifier
 import com.fasterxml.jackson.databind.ser.Serializers
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
 import com.sksamuel.tabby.option.Option
@@ -37,11 +40,12 @@ class OptionDeserializer(private val type: JavaType) : StdDeserializer<Option<*>
 }
 
 object TristateSerializer : StdSerializer<Tristate<*>>(Tristate::class.java) {
+
    override fun serialize(value: Tristate<*>, gen: JsonGenerator, provider: SerializerProvider) {
       value.fold(
          { provider.defaultSerializeValue(it, gen) },
          { gen.writeNull() },
-         { gen.writeString("_unspecified") }
+         { gen.writeString("qwe") }
       )
    }
 }
@@ -58,7 +62,9 @@ class TristateDeserializer(private val type: JavaType) : StdDeserializer<Tristat
       }
    }
 
-   override fun getNullValue(ctxt: DeserializationContext?): Tristate<*> = Tristate.None
+   override fun getNullValue(ctxt: DeserializationContext): Tristate<*> =
+      if (ctxt.parser.hasToken(JsonToken.VALUE_NULL)) Tristate.None
+      else Tristate.Unspecified
 }
 
 internal class TabbySerializers : Serializers.Base() {
@@ -89,9 +95,33 @@ internal class TabbyDeserializers : Deserializers.Base() {
    }
 }
 
+internal class TabbySerializerModifiers : BeanSerializerModifier() {
+   override fun changeProperties(
+      config: SerializationConfig,
+      beanDesc: BeanDescription,
+      props: MutableList<BeanPropertyWriter>
+   ): List<BeanPropertyWriter> = props.map {
+      if (it.type.isTypeOrSubTypeOf(Tristate::class.java)) TristateBeanPropertyWriter(it)
+      else it
+   }
+}
+
+internal class TristateBeanPropertyWriter : BeanPropertyWriter {
+   constructor(delegate: BeanPropertyWriter) : super(delegate)
+   constructor(delegate: BeanPropertyWriter, name: PropertyName) : super(delegate, name)
+
+   override fun serializeAsField(bean: Any, gen: JsonGenerator, provider: SerializerProvider) {
+      when (get(bean)) {
+         is Tristate.Unspecified -> Unit
+         else -> super.serializeAsField(bean, gen, provider)
+      }
+   }
+}
+
 object TabbyModule : SimpleModule() {
    override fun setupModule(context: SetupContext) {
       context.addSerializers(TabbySerializers())
       context.addDeserializers(TabbyDeserializers())
+      context.addBeanSerializerModifier(TabbySerializerModifiers())
    }
 }
