@@ -28,7 +28,7 @@ fun <A> IO<A>.repeatWhile(schedule: Schedule, predicate: (Try<A>) -> Boolean): I
       while (predicate(result)) {
          when (val decision = next.decide()) {
             is Decision.Continue -> {
-               decision.duration.forEach { delay(it) }
+               decision.duration.forEach { delay(it.toLongMilliseconds()) }
                result = this@repeatWhile.apply()
                next = decision.next
             }
@@ -49,7 +49,7 @@ fun <A> IO<A>.repeatWhile(f: (IndexedValue<Try<A>>) -> Schedule): IO<A> = object
       while (true) {
          val result: Try<A> = this@repeatWhile.apply()
          when (val decision = f(IndexedValue(n++, result)).decide()) {
-            is Decision.Continue -> decision.duration.forEach { delay(it) }
+            is Decision.Continue -> decision.duration.forEach { delay(it.toLongMilliseconds()) }
             is Decision.Halt -> return result
          }
       }
