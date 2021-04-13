@@ -9,7 +9,6 @@ import com.sksamuel.tabby.option.some
 import com.sksamuel.tabby.validated.Validated
 import com.sksamuel.tabby.validated.invalid
 import com.sksamuel.tabby.validated.valid
-import kotlin.experimental.ExperimentalTypeInference
 
 sealed class Try<out A> {
 
@@ -77,6 +76,11 @@ sealed class Try<out A> {
 
    inline fun getErrorOrElse(default: (A) -> Throwable): Throwable =
       fold({ it }, { default(it) })
+
+   fun mapNullToFailure(f: () -> Throwable): Try<A> = fold(
+      { it.failure() },
+      { it?.success() ?: f().failure() }
+   )
 
    fun getValueOrNull(): A? = fold({ null }, { it })
 
