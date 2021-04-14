@@ -15,16 +15,9 @@ sealed class Try<out A> {
    abstract val isSuccess: Boolean
    abstract val isFailure: Boolean
 
-   operator fun not(): A = when (this) {
-      is Success -> this.value
-      is Failure -> throw MonadControlException(error)
-   }
-
-   fun get(): A = not()
-
    companion object {
 
-      operator fun <B> invoke(f: () -> B): Try<B> = catch(f)
+      operator fun <B> invoke(f: () -> B): Try<B> = catch { f() }
 
       fun <A> success(a: A) = Success(a)
       fun failure(t: Throwable) = Failure(t)
@@ -145,15 +138,6 @@ inline fun <A> Try<A>.orElse(other: () -> Try<A>): Try<A> {
 inline fun <A> Try<A>.getValueOrElse(orElse: (Throwable) -> A): A =
    fold({ orElse(it) }, { it })
 
-/**
- * Invokes the given function [f] wrapping the result into a [Try.Success], or, if an exception
- * is thrown, will wrap the throwable into an [Try.Failure].
- */
-inline fun <A> catch(f: () -> A): Try<A> = try {
-   f().success()
-} catch (t: Throwable) {
-   t.failure()
-}
 
 fun <A> Try<Try<A>>.flatten(): Try<A> = when (this) {
    is Try.Success -> this.value
