@@ -13,6 +13,7 @@ data class Resource<A>(
 
    companion object {
       fun <A> just(a: A) = Resource({ a }, {})
+      val unit: Resource<Unit> = just(Unit)
    }
 
    suspend fun <T> use(f: suspend (A) -> Try<T>): Try<T> {
