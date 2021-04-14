@@ -1,5 +1,11 @@
 package com.sksamuel.tabby.`try`
 
+interface Catch {
+   fun <A> Try<A>.get(): A = fold({ throw it }, { it })
+}
+
+private object CatchImpl : Catch
+
 /**
  * Invokes the given function [f] wrapping the result into a [Try.Success], or, if an exception
  * is thrown, will wrap the throwable into an [Try.Failure].
@@ -8,11 +14,7 @@ package com.sksamuel.tabby.`try`
  * returning that failure.
  */
 inline fun <A> catch(f: Catch.() -> A): Try<A> = try {
-   Catch.f().success()
+   CatchImpl.f().success()
 } catch (t: Throwable) {
    t.failure()
-}
-
-object Catch {
-   fun <A> Try<A>.get(): A = fold({ throw it }, { it })
 }

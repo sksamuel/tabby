@@ -1,6 +1,7 @@
 package com.sksamuel.tabby.effects
 
 import com.sksamuel.tabby.`try`.Try
+import com.sksamuel.tabby.`try`.catch
 import kotlinx.coroutines.delay
 
 /**
@@ -17,6 +18,18 @@ fun <A> IO<A>.repeat(schedule: Schedule): IO<A> = repeatWhile(schedule) { it.isS
  * Retries this effect while it is an error, using the given schedule.
  */
 fun <A> IO<A>.retry(schedule: Schedule): IO<A> = repeatWhile(schedule) { it.isFailure }
+
+/**
+ * Repeats the given effect while the result is a failure.
+ */
+suspend fun <A> Schedule.retry(f: suspend () -> Try<A>): A {
+   return repeatWhile(this, { f() }) { it.isFailure }.getValueUnsafe()
+}
+
+/**
+ * Repeats the given effect while it fails to complete normally.
+ */
+suspend fun <A> Schedule.retrySafe(f: suspend () -> A): A = retry { catch { f() } }
 
 /**
  * Returns an effect that will repeat while the predicate is true, using the given schedule.
@@ -37,6 +50,29 @@ fun <A> IO<A>.repeatWhile(schedule: Schedule, predicate: (Try<A>) -> Boolean): I
       }
       return result
    }
+}
+
+/**
+ * Runs the given effect while the predicate is false.
+ */
+private suspend fun <A> repeatWhile(
+   schedule: Schedule,
+   f: suspend () -> Try<A>,
+   predicate: (Try<A>) -> Boolean
+): Try<A> {
+   var result: Try<A> = f()
+   var next = schedule
+   while (predicate(result)) {
+      when (val decision = next.decide()) {
+         is Decision.Continue -> {
+            decision.duration.forEach { delay(it.toLongMilliseconds()) }
+            result = f()
+            next = decision.next
+         }
+         is Decision.Halt -> return result
+      }
+   }
+   return result
 }
 
 /**

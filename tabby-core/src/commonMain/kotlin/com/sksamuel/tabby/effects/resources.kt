@@ -15,7 +15,7 @@ data class Resource<A>(
       fun <A> just(a: A) = Resource({ a }, {})
    }
 
-   suspend fun <T> useSafe(f: suspend (A) -> Try<T>): Try<T> {
+   suspend fun <T> use(f: suspend (A) -> Try<T>): Try<T> {
       suspend fun use(): Try<T> {
          val a = catch { acquire() }
          val t = a.flatMap { f(it) }
@@ -25,7 +25,7 @@ data class Resource<A>(
       return if (context == null) use() else withContext(context) { use() }
    }
 
-   suspend fun <T> use(f: suspend (A) -> T): Try<T> = useSafe { catch { f(it) } }
+   suspend fun <T> useSafe(f: suspend (A) -> T): Try<T> = use { catch { f(it) } }
 
    fun context(context: CoroutineContext): Resource<A> = copy(context = context)
 }
