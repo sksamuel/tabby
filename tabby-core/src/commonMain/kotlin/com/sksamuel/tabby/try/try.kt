@@ -75,11 +75,6 @@ sealed class Try<out A> {
       { it?.success() ?: f().failure() }
    )
 
-   /**
-    * Alias for [getValueUnsafe].
-    */
-   fun value() = getValueUnsafe()
-
    fun getValueOrNull(): A? = fold({ null }, { it })
 
    fun getErrorOrNull(): Throwable? = fold({ it }, { null })
