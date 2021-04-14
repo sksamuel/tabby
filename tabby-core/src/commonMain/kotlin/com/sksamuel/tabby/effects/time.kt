@@ -1,6 +1,7 @@
 package com.sksamuel.tabby.effects
 
 import com.sksamuel.tabby.`try`.Try
+import com.sksamuel.tabby.`try`.catch
 import kotlin.jvm.JvmName
 import kotlin.time.Duration
 import kotlin.time.measureTimedValue
@@ -36,4 +37,10 @@ fun <A> IO<A>.time(f: (Duration) -> Unit): IO<A> = object : IO<A>() {
       effect { f(time) }.run() // ignore result
       return result
    }
+}
+
+suspend fun <A> time(onResult: suspend (Duration) -> Unit, f: suspend () -> Try<A>): Try<A> {
+   val (result, time) = measureTimedValue { f() }
+   catch { onResult(time) }
+   return result
 }
