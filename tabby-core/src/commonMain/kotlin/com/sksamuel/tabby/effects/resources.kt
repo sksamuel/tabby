@@ -12,7 +12,7 @@ data class Resource<A>(
 ) {
 
    companion object {
-      fun <A> just(a: A) = Resource({ a }, {})
+      fun <A> just(a: A): Resource<A> = Resource({ a }, {})
       val unit: Resource<Unit> = just(Unit)
    }
 

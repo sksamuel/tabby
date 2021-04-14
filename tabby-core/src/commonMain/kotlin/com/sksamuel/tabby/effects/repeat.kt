@@ -20,16 +20,18 @@ fun <A> IO<A>.repeat(schedule: Schedule): IO<A> = repeatWhile(schedule) { it.isS
 fun <A> IO<A>.retry(schedule: Schedule): IO<A> = repeatWhile(schedule) { it.isFailure }
 
 /**
- * Repeats the given effect while the result is a failure.
+ * Repeats the given effect according to the specified
+ * schedule or until the first failure.
  */
-suspend fun <A> Schedule.retry(f: suspend () -> Try<A>): A {
-   return repeatWhile(this, { f() }) { it.isFailure }.getValueUnsafe()
+suspend fun <A> Schedule.repeat(f: suspend () -> Try<A>): Try<A> {
+   return repeatWhile(this, { f() }) { it.isSuccess }
 }
 
 /**
- * Repeats the given effect while it fails to complete normally.
+ * Repeats the given effect according to the specified
+ * schedule or until the first failure.
  */
-suspend fun <A> Schedule.retrySafe(f: suspend () -> A): A = retry { catch { f() } }
+suspend fun <A> Schedule.repeatSafe(f: suspend () -> A): Try<A> = repeat { catch { f() } }
 
 /**
  * Returns an effect that will repeat while the predicate is true, using the given schedule.
@@ -55,7 +57,7 @@ fun <A> IO<A>.repeatWhile(schedule: Schedule, predicate: (Try<A>) -> Boolean): I
 /**
  * Runs the given effect while the predicate is false.
  */
-private suspend fun <A> repeatWhile(
+internal suspend fun <A> repeatWhile(
    schedule: Schedule,
    f: suspend () -> Try<A>,
    predicate: (Try<A>) -> Boolean
