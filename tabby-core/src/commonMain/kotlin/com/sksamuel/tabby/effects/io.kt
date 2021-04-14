@@ -2,7 +2,6 @@
 
 package com.sksamuel.tabby.effects
 
-import com.sksamuel.tabby.`try`.MonadControlException
 import com.sksamuel.tabby.`try`.Try
 import com.sksamuel.tabby.`try`.catch
 import com.sksamuel.tabby.`try`.failure
