@@ -300,17 +300,6 @@ abstract class IO<out A> {
     */
    suspend fun runUnsafe(): A = run().getValueUnsafe()
 
-   /**
-    * Alias for [runUnsafe].
-    */
-   suspend fun await(): A = run().getValueUnsafe()
-
-   /**
-    * Evaluates this effect inside the given context, returning the value if successful,
-    * or throwing the returned error if evaluation fails.
-    */
-   suspend fun await(context: CoroutineContext) = withContext(context) { await() }
-
    @Deprecated("Just to run().fold", ReplaceWith("run().fold(ifError, ifSuccess)"))
    suspend fun <B> funFold(ifError: (Throwable) -> B, ifSuccess: (A) -> B): B {
       return run().fold(ifError, ifSuccess)

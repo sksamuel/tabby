@@ -4,7 +4,7 @@ interface Catch {
    fun <A> Try<A>.get(): A = fold({ throw it }, { it })
 }
 
-private object CatchImpl : Catch
+object CatchImpl : Catch
 
 /**
  * Invokes the given function [f] wrapping the result into a [Try.Success], or, if an exception
