@@ -109,3 +109,36 @@ data class Tuple12<A, B, C, D, E, F, G, H, I, J, K, L>(
    val k: K,
    val l: L,
 )
+
+data class Tuple13<A, B, C, D, E, F, G, H, I, J, K, L, M>(
+   val a: A,
+   val b: B,
+   val c: C,
+   val d: D,
+   val e: E,
+   val f: F,
+   val g: G,
+   val h: H,
+   val i: I,
+   val j: J,
+   val k: K,
+   val l: L,
+   val m: M,
+)
+
+data class Tuple14<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
+   val a: A,
+   val b: B,
+   val c: C,
+   val d: D,
+   val e: E,
+   val f: F,
+   val g: G,
+   val h: H,
+   val i: I,
+   val j: J,
+   val k: K,
+   val l: L,
+   val m: M,
+   val n: N,
+)
