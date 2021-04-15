@@ -17,7 +17,7 @@ data class Resource<A>(
    }
 
    @OverloadResolutionByLambdaReturnType
-   suspend fun <T> use(f: suspend (A) -> Unit) {
+   suspend fun use(f: suspend (A) -> Unit) {
       suspend fun use() {
          val a = catch { acquire() }
          val t = a.map { f(it) }
