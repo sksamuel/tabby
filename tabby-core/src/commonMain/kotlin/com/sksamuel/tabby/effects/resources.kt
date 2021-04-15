@@ -17,6 +17,7 @@ data class Resource<A>(
    }
 
    @OverloadResolutionByLambdaReturnType
+   @JvmName("useUnit")
    suspend fun use(f: suspend (A) -> Unit) {
       suspend fun use() {
          val a = catch { acquire() }
