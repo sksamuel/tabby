@@ -20,7 +20,7 @@ data class Resource<A>(
    suspend fun use(f: suspend (A) -> Unit) {
       suspend fun use() {
          val a = catch { acquire() }
-         val t = a.map { f(it) }
+         a.onSuccess { catch { f(it) } }
          a.onSuccess { catch { release(it) } }
       }
       if (context == null) use() else withContext(context) { use() }
