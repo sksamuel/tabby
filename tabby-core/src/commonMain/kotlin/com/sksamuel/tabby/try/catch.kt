@@ -1,7 +1,10 @@
 package com.sksamuel.tabby.`try`
 
+import kotlin.js.JsName
+
 interface Catch {
-   fun <A> Try<A>.get(): A = fold({ throw it }, { it })
+   @JsName("getValue")
+   fun <A> Try<A>.value(): A = fold({ throw it }, { it })
 }
 
 object CatchImpl : Catch
