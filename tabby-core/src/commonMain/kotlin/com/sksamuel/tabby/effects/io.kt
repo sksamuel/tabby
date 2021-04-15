@@ -63,9 +63,8 @@ abstract class IO<out A> {
       operator fun <A> invoke(f: suspend () -> A): IO<A> = Effect { catch { f() } }
 
       /**
-       * Alias to [invoke].
+       * Alias to [com.sksamuel.tabby.effects.effect].
        */
-      @Deprecated("use the effect comprehension", ReplaceWith("com.sksamuel.tabby.effects.effect { f() }", "com"))
       fun <A> effect(f: suspend () -> A): IO<A> = com.sksamuel.tabby.effects.effect { f() }
 
       /**
