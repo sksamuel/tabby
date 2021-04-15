@@ -16,6 +16,17 @@ data class Resource<A>(
       val unit: Resource<Unit> = just(Unit)
    }
 
+   @OverloadResolutionByLambdaReturnType
+   suspend fun <T> use(f: suspend (A) -> Unit) {
+      suspend fun use() {
+         val a = catch { acquire() }
+         val t = a.map { f(it) }
+         a.onSuccess { catch { release(it) } }
+      }
+      if (context == null) use() else withContext(context) { use() }
+   }
+
+   @OverloadResolutionByLambdaReturnType
    suspend fun <T> use(f: suspend (A) -> Try<T>): Try<T> {
       suspend fun use(): Try<T> {
          val a = catch { acquire() }
@@ -25,8 +36,6 @@ data class Resource<A>(
       }
       return if (context == null) use() else withContext(context) { use() }
    }
-
-   suspend fun <T> useSafe(f: suspend (A) -> T): Try<T> = use { catch { f(it) } }
 
    fun context(context: CoroutineContext): Resource<A> = copy(context = context)
 }
