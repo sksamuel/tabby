@@ -4,7 +4,6 @@ import com.sksamuel.tabby.`try`.Try
 import com.sksamuel.tabby.`try`.catch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
-import kotlin.jvm.JvmName
 
 data class Resource<A>(
    val acquire: suspend () -> A,
@@ -17,9 +16,7 @@ data class Resource<A>(
       val unit: Resource<Unit> = just(Unit)
    }
 
-   @OverloadResolutionByLambdaReturnType
-   @JvmName("useUnit")
-   suspend fun use(f: suspend (A) -> Unit) {
+   suspend fun useUnit(f: suspend (A) -> Unit) {
       suspend fun use() {
          val a = catch { acquire() }
          a.onSuccess { catch { f(it) } }
@@ -28,7 +25,6 @@ data class Resource<A>(
       if (context == null) use() else withContext(context) { use() }
    }
 
-   @OverloadResolutionByLambdaReturnType
    suspend fun <T> use(f: suspend (A) -> Try<T>): Try<T> {
       suspend fun use(): Try<T> {
          val a = catch { acquire() }
