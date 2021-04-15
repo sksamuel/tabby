@@ -4,6 +4,7 @@ import com.sksamuel.tabby.`try`.Try
 import com.sksamuel.tabby.`try`.catch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
+import kotlin.jvm.JvmName
 
 data class Resource<A>(
    val acquire: suspend () -> A,
