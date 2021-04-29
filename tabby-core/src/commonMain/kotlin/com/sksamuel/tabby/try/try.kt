@@ -70,11 +70,6 @@ sealed class Try<out A> {
    inline fun getErrorOrElse(default: (A) -> Throwable): Throwable =
       fold({ it }, { default(it) })
 
-   fun mapNullToFailure(f: () -> Throwable): Try<A> = fold(
-      { it.failure() },
-      { it?.success() ?: f().failure() }
-   )
-
    fun getValueOrNull(): A? = fold({ null }, { it })
 
    fun getErrorOrNull(): Throwable? = fold({ it }, { null })
@@ -120,6 +115,12 @@ fun <A, R> Try<Option<A>>.trifold(ifError: (Throwable) -> R, ifEmpty: () -> R, i
       }
    )
 }
+
+fun <A> Try<A?>.mapNullToFailure(f: () -> Throwable): Try<A> =
+   fold(
+      { it.failure() },
+      { it?.success() ?: f().failure() }
+   )
 
 fun <A> A?.failureIfNull(f: () -> Throwable): Try<A> = this?.success() ?: f().failure()
 
