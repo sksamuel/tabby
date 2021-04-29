@@ -116,6 +116,10 @@ fun <A, R> Try<Option<A>>.trifold(ifError: (Throwable) -> R, ifEmpty: () -> R, i
    )
 }
 
+/**
+ * If this Try contains a nullable value, will collapse to a Try of a non nullable value, or a
+ * failure if the value is null.
+ */
 fun <A> Try<A?>.mapNullToFailure(f: () -> Throwable): Try<A> =
    fold(
       { it.failure() },
