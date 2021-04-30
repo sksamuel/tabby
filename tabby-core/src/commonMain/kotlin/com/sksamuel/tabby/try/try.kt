@@ -117,10 +117,10 @@ fun <A, R> Try<Option<A>>.trifold(ifError: (Throwable) -> R, ifEmpty: () -> R, i
 }
 
 /**
- * If this Try contains a nullable value, will collapse to a Try of a non nullable value, or a
- * failure if the value is null.
+ * If this Try contains a null, will return a [Try.Failure] containing the error generated
+ * from the given function [f]. Otherwise returns a [Try.Success] with the non-null value.
  */
-fun <A> Try<A?>.mapNullToFailure(f: () -> Throwable): Try<A> =
+fun <A> Try<A?>.absolve(f: () -> Throwable): Try<A> =
    fold(
       { it.failure() },
       { it?.success() ?: f().failure() }
