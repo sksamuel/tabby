@@ -3,6 +3,9 @@
 package com.sksamuel.tabby.`try`
 
 import com.sksamuel.tabby.effects.IO
+import com.sksamuel.tabby.either.Either
+import com.sksamuel.tabby.either.left
+import com.sksamuel.tabby.either.right
 import com.sksamuel.tabby.option.Option
 import com.sksamuel.tabby.option.none
 import com.sksamuel.tabby.option.some
@@ -73,6 +76,8 @@ sealed class Try<out A> {
    fun getValueOrNull(): A? = fold({ null }, { it })
 
    fun getErrorOrNull(): Throwable? = fold({ it }, { null })
+
+   fun toEither(): Either<Throwable, A> = fold({ it.left() }, { it.right() })
 
    inline fun <B> bimap(isFailure: (Throwable) -> Throwable, ifSuccess: (A) -> B): Try<B> =
       fold({ isFailure(it).failure() }, { ifSuccess(it).success() })
