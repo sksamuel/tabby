@@ -20,10 +20,17 @@ sealed class Try<out A> {
 
    companion object {
 
-      operator fun <B> invoke(f: () -> B): Try<B> = catch { f() }
+      operator fun <A> invoke(f: () -> A): Try<A> = catch { f() }
 
-      fun <A> success(a: A) = Success(a)
-      fun failure(t: Throwable) = Failure(t)
+      /**
+       * Wraps a value in a success but returns the type signature Try.
+       * Very useful for lifting values for use in folds.
+       */
+      operator fun <A> invoke(a: A): Try<A> = success(a)
+
+      fun <A> success(a: A): Success<A> = Success(a)
+
+      fun failure(t: Throwable): Failure = Failure(t)
 
       /**
        * Creates a failed Try by first wrapping this message into an [Exception].
