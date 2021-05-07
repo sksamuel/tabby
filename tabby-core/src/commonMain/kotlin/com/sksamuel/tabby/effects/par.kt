@@ -16,6 +16,200 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
+typealias Effect<A> = suspend () -> Try<A>
+
+suspend fun <A, B> IO.Companion.parN(
+   effectA: Effect<A>,
+   effectB: Effect<B>,
+): Try<Pair<A, B>> = catch {
+   coroutineScope {
+      val a = async {
+         effectA().getValueOrElse { throw it }
+      }
+      val b = async {
+         effectB().getValueOrElse { throw it }
+      }
+      Pair(a.await(), b.await())
+   }
+}
+
+suspend fun <A, B, C> IO.Companion.parN(
+   effectA: Effect<A>,
+   effectB: Effect<B>,
+   effectC: Effect<C>,
+): Try<Tuple3<A, B, C>> = catch {
+   coroutineScope {
+      val a = async {
+         effectA().getValueOrElse { throw it }
+      }
+      val b = async {
+         effectB().getValueOrElse { throw it }
+      }
+      val c = async {
+         effectC().getValueOrElse { throw it }
+      }
+      Tuple3(a.await(), b.await(), c.await())
+   }
+}
+
+suspend fun <A, B, C, D> IO.Companion.parN(
+   effectA: Effect<A>,
+   effectB: Effect<B>,
+   effectC: Effect<C>,
+   effectD: Effect<D>,
+): Try<Tuple4<A, B, C, D>> = catch {
+   coroutineScope {
+      val a = async {
+         effectA().getValueOrElse { throw it }
+      }
+      val b = async {
+         effectB().getValueOrElse { throw it }
+      }
+      val c = async {
+         effectC().getValueOrElse { throw it }
+      }
+      val d = async {
+         effectD().getValueOrElse { throw it }
+      }
+      Tuple4(a.await(), b.await(), c.await(), d.await())
+   }
+}
+
+suspend fun <A, B, C, D, E> IO.Companion.parN(
+   effectA: Effect<A>,
+   effectB: Effect<B>,
+   effectC: Effect<C>,
+   effectD: Effect<D>,
+   effectE: Effect<E>,
+): Try<Tuple5<A, B, C, D, E>> = catch {
+   coroutineScope {
+      val a = async {
+         effectA().getValueOrElse { throw it }
+      }
+      val b = async {
+         effectB().getValueOrElse { throw it }
+      }
+      val c = async {
+         effectC().getValueOrElse { throw it }
+      }
+      val d = async {
+         effectD().getValueOrElse { throw it }
+      }
+      val e = async {
+         effectE().getValueOrElse { throw it }
+      }
+      Tuple5(a.await(), b.await(), c.await(), d.await(), e.await())
+   }
+}
+
+suspend fun <A, B, C, D, E, F> IO.Companion.parN(
+   effectA: Effect<A>,
+   effectB: Effect<B>,
+   effectC: Effect<C>,
+   effectD: Effect<D>,
+   effectE: Effect<E>,
+   effectF: Effect<F>,
+): Try<Tuple6<A, B, C, D, E, F>> = catch {
+   coroutineScope {
+      val a = async {
+         effectA().getValueOrElse { throw it }
+      }
+      val b = async {
+         effectB().getValueOrElse { throw it }
+      }
+      val c = async {
+         effectC().getValueOrElse { throw it }
+      }
+      val d = async {
+         effectD().getValueOrElse { throw it }
+      }
+      val e = async {
+         effectE().getValueOrElse { throw it }
+      }
+      val f = async {
+         effectF().getValueOrElse { throw it }
+      }
+      Tuple6(a.await(), b.await(), c.await(), d.await(), e.await(), f.await())
+   }
+}
+
+
+suspend fun <A, B, C, D, E, F, G> IO.Companion.parN(
+   effectA: Effect<A>,
+   effectB: Effect<B>,
+   effectC: Effect<C>,
+   effectD: Effect<D>,
+   effectE: Effect<E>,
+   effectF: Effect<F>,
+   effectG: Effect<G>,
+): Try<Tuple7<A, B, C, D, E, F, G>> = catch {
+   coroutineScope {
+      val a = async {
+         effectA().getValueOrElse { throw it }
+      }
+      val b = async {
+         effectB().getValueOrElse { throw it }
+      }
+      val c = async {
+         effectC().getValueOrElse { throw it }
+      }
+      val d = async {
+         effectD().getValueOrElse { throw it }
+      }
+      val e = async {
+         effectE().getValueOrElse { throw it }
+      }
+      val f = async {
+         effectF().getValueOrElse { throw it }
+      }
+      val g = async {
+         effectG().getValueOrElse { throw it }
+      }
+      Tuple7(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await())
+   }
+}
+
+
+suspend fun <A, B, C, D, E, F, G, H> IO.Companion.parN(
+   effectA: Effect<A>,
+   effectB: Effect<B>,
+   effectC: Effect<C>,
+   effectD: Effect<D>,
+   effectE: Effect<E>,
+   effectF: Effect<F>,
+   effectG: Effect<G>,
+   effectH: Effect<H>,
+): Try<Tuple8<A, B, C, D, E, F, G, H>> = catch {
+   coroutineScope {
+      val a = async {
+         effectA().getValueOrElse { throw it }
+      }
+      val b = async {
+         effectB().getValueOrElse { throw it }
+      }
+      val c = async {
+         effectC().getValueOrElse { throw it }
+      }
+      val d = async {
+         effectD().getValueOrElse { throw it }
+      }
+      val e = async {
+         effectE().getValueOrElse { throw it }
+      }
+      val f = async {
+         effectF().getValueOrElse { throw it }
+      }
+      val g = async {
+         effectG().getValueOrElse { throw it }
+      }
+      val h = async {
+         effectH().getValueOrElse { throw it }
+      }
+      Tuple8(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await())
+   }
+}
+
+
 fun <A> List<IO<A>>.par(): IO<List<A>> = IO.par(this)
 
 fun <A> IO.Companion.par(effects: List<IO<A>>): IO<List<A>> = object : IO<List<A>>() {
