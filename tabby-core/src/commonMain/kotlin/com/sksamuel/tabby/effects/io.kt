@@ -66,7 +66,7 @@ abstract class IO<out A> {
        * Alias to [invoke].
        */
       @Deprecated("use the effect comprehension", ReplaceWith("com.sksamuel.tabby.effects.effect { f() }", "com"))
-      fun <A> effect(f: suspend () -> A): IO<A> = com.sksamuel.tabby.effects.effect { f() }
+      fun <A> effect(f: suspend () -> A): IO<A> = effect { f() }
 
       /**
        * Wraps a strict value as a successfully completed IO.
