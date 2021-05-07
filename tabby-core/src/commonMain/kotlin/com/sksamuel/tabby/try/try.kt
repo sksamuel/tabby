@@ -185,3 +185,6 @@ inline fun <A> Try<A?>.flatMapIfNull(f: () -> Try<A>): Try<A> = flatMap { it?.su
 
 inline fun <A, B> Try<A?>.flatMapIfNotNull(f: (A) -> Try<B>): Try<B?> =
    flatMap { if (it == null) Try.success(null) else f(it) }
+
+inline fun <A, B> Try<A?>.mapIfNotNull(f: (A) -> B): Try<B?> =
+   map { if (it == null) null else f(it) }
