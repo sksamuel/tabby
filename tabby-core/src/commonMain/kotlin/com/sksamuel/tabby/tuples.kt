@@ -16,7 +16,9 @@ data class Tuple4<A, B, C, D>(
    val b: B,
    val c: C,
    val d: D,
-)
+) {
+   fun <R> map(fn: (A, B, C, D) -> R): R = fn(a, b, c, d)
+}
 
 data class Tuple5<A, B, C, D, E>(
    val a: A,
@@ -24,7 +26,9 @@ data class Tuple5<A, B, C, D, E>(
    val c: C,
    val d: D,
    val e: E,
-)
+) {
+   fun <R> map(fn: (A, B, C, D, E) -> R): R = fn(a, b, c, d, e)
+}
 
 data class Tuple6<A, B, C, D, E, F>(
    val a: A,
@@ -33,7 +37,9 @@ data class Tuple6<A, B, C, D, E, F>(
    val d: D,
    val e: E,
    val f: F,
-)
+) {
+   fun <R> map(fn: (A, B, C, D, E, F) -> R): R = fn(a, b, c, d, e, f)
+}
 
 data class Tuple7<A, B, C, D, E, F, G>(
    val a: A,
@@ -43,7 +49,9 @@ data class Tuple7<A, B, C, D, E, F, G>(
    val e: E,
    val f: F,
    val g: G,
-)
+) {
+   fun <R> map(fn: (A, B, C, D, E, F, G) -> R): R = fn(a, b, c, d, e, f, g)
+}
 
 data class Tuple8<A, B, C, D, E, F, G, H>(
    val a: A,

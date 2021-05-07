@@ -36,6 +36,8 @@ sealed class Try<out A> {
        * Creates a failed Try by first wrapping this message into an [Exception].
        */
       fun failure(message: String) = Failure(Exception(message))
+
+      val unit: Success<Unit> = Success(Unit)
    }
 
    data class Failure(val error: Throwable) : Try<Nothing>() {
