@@ -180,4 +180,5 @@ fun <B> B.success() = Try.Success(this)
 
 fun <A> Try<A>.toValidated(): Validated<Throwable, A> = fold({ it.invalid() }, { it.valid() })
 
+inline fun <A> Try<A?>.mapIfNull(f: () -> A): Try<A> = map { it ?: f() }
 inline fun <A> Try<A?>.flatMapIfNull(f: () -> Try<A>): Try<A> = flatMap { it?.success() ?: f() }
