@@ -5,6 +5,9 @@ import kotlin.js.JsName
 interface Catch {
    @JsName("getValue")
    fun <A> Try<A>.value(): A = fold({ throw it }, { it })
+   fun <A> Try<A>.raise(): Unit {
+      if (this is Try.Failure) throw this.error
+   }
 }
 
 object CatchImpl : Catch
