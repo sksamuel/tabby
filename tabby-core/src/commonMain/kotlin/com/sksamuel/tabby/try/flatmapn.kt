@@ -110,3 +110,34 @@ inline fun <A, B, C, D, E, F, G, R> Try.Companion.flatMapN(
       g.getValueUnsafe(),
    )
 }
+
+inline fun <A, B, C, D, E, F, G, H, R> Try.Companion.flatMapN(
+   a: Try<A>,
+   b: Try<B>,
+   c: Try<C>,
+   d: Try<D>,
+   e: Try<E>,
+   f: Try<F>,
+   g: Try<G>,
+   h: Try<H>,
+   fn: (A, B, C, D, E, F, G, H) -> Try<R>,
+): Try<R> {
+   if (a.isFailure) return a as Try<R>
+   if (b.isFailure) return b as Try<R>
+   if (c.isFailure) return c as Try<R>
+   if (d.isFailure) return d as Try<R>
+   if (e.isFailure) return e as Try<R>
+   if (f.isFailure) return f as Try<R>
+   if (g.isFailure) return g as Try<R>
+   if (h.isFailure) return h as Try<R>
+   return fn(
+      a.getValueUnsafe(),
+      b.getValueUnsafe(),
+      c.getValueUnsafe(),
+      d.getValueUnsafe(),
+      e.getValueUnsafe(),
+      f.getValueUnsafe(),
+      g.getValueUnsafe(),
+      h.getValueUnsafe(),
+   )
+}
