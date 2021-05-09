@@ -140,6 +140,8 @@ fun <A> Try<A?>.absolve(f: () -> Throwable): Try<A> =
       { it?.success() ?: f().failure() }
    )
 
+fun <A> Try<A>.recover(f: (Throwable) -> A): A = fold({ f(it) }, { it })
+
 fun <A> A?.failureIfNull(f: () -> Throwable): Try<A> = this?.success() ?: f().failure()
 
 fun <A> A.failureIf(isError: (A) -> Boolean, onError: () -> Throwable): Try<A> =
