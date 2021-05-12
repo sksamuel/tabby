@@ -103,7 +103,19 @@ sealed class Try<out A> {
    inline fun onSuccess(f: (A) -> Unit): Try<A> =
       fold({ this }, { f(it); this })
 
+   /**
+    * Invoked when we always expect the value to be present and want to short circuit if not.
+    * The error indicates that a success was expected.
+    *
+    * If an error can reasonably occur, then use getValueOrThrow which will not wrap the
+    * error in another exception.
+    */
    fun getValueUnsafe(): A = fold({ throw RuntimeException("Expected success but was $it") }, { it })
+
+   /**
+    * Invoked to retrieve the value if successful or throw the error if a failure.
+    */
+   fun getValueOrThrow(): A = fold({ throw it }, { it })
 
    fun getErrorUnsafe(): Throwable = fold({ it }, { throw RuntimeException("Expected failure but was $it") })
 
