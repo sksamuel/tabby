@@ -103,6 +103,14 @@ sealed class Try<out A> {
    inline fun onSuccess(f: (A) -> Unit): Try<A> =
       fold({ this }, { f(it); this })
 
+   fun failureIf(f: (A) -> Throwable?) = fold(
+      { it.left() },
+      {
+         val t = f(it)
+         t?.left() ?: it.right()
+      }
+   )
+
    /**
     * Invoked when we always expect the value to be present and want to short circuit if not.
     * The error indicates that a success was expected.
