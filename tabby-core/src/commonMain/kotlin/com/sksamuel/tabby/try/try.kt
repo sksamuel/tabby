@@ -103,11 +103,11 @@ sealed class Try<out A> {
    inline fun onSuccess(f: (A) -> Unit): Try<A> =
       fold({ this }, { f(it); this })
 
-   fun failureIf(f: (A) -> Throwable?) = fold(
-      { it.left() },
+   fun failureIf(f: (A) -> Throwable?): Try<A> = fold(
+      { it.failure() },
       {
          val t = f(it)
-         t?.left() ?: it.right()
+         t?.failure() ?: it.success()
       }
    )
 
