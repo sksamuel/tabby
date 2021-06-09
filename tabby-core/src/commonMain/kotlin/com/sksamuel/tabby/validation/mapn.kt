@@ -1,6 +1,6 @@
 package com.sksamuel.tabby.validation
 
-fun <A, B, R, ERROR> mapN(
+fun <A, B, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    f: (A, B) -> R
@@ -11,7 +11,7 @@ fun <A, B, R, ERROR> mapN(
    }
 }
 
-fun <A, B, C, R, ERROR> mapN(
+fun <A, B, C, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -23,7 +23,7 @@ fun <A, B, C, R, ERROR> mapN(
    }
 }
 
-fun <A, B, C, D, R, ERROR> mapN(
+fun <A, B, C, D, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -36,7 +36,7 @@ fun <A, B, C, D, R, ERROR> mapN(
    }
 }
 
-fun <A, B, C, D, E, R, ERROR> mapN(
+fun <A, B, C, D, E, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -50,7 +50,7 @@ fun <A, B, C, D, E, R, ERROR> mapN(
    }
 }
 
-fun <A, B, C, D, E, F, R, ERROR> mapN(
+fun <A, B, C, D, E, F, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -76,7 +76,7 @@ fun <A, B, C, D, E, F, R, ERROR> mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, R, ERROR> mapN(
+fun <A, B, C, D, E, F, G, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -104,7 +104,7 @@ fun <A, B, C, D, E, F, G, R, ERROR> mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, H, R, ERROR> mapN(
+fun <A, B, C, D, E, F, G, H, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -134,7 +134,7 @@ fun <A, B, C, D, E, F, G, H, R, ERROR> mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, H, I, R, ERROR> mapN(
+fun <A, B, C, D, E, F, G, H, I, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -166,7 +166,7 @@ fun <A, B, C, D, E, F, G, H, I, R, ERROR> mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, H, I, J, R, ERROR> mapN(
+fun <A, B, C, D, E, F, G, H, I, J, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -200,7 +200,7 @@ fun <A, B, C, D, E, F, G, H, I, J, R, ERROR> mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, H, I, J, K, R, ERROR> mapN(
+fun <A, B, C, D, E, F, G, H, I, J, K, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -236,7 +236,7 @@ fun <A, B, C, D, E, F, G, H, I, J, K, R, ERROR> mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, H, I, J, K, L, R, ERROR> mapN(
+fun <A, B, C, D, E, F, G, H, I, J, K, L, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -274,7 +274,7 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, R, ERROR> mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, H, I, J, K, L, M, R, ERROR> mapN(
+fun <A, B, C, D, E, F, G, H, I, J, K, L, M, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -315,7 +315,7 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, R, ERROR> mapN(
 }
 
 
-fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, R, ERROR> mapN(
+fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, R, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
