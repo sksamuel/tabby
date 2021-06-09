@@ -29,7 +29,7 @@ publishing {
    repositories {
       maven {
          name = "deploy"
-         val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+         val releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
          val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
          url = if (Ci.isRelease) releasesRepoUrl else snapshotsRepoUrl
          credentials {
