@@ -6,6 +6,7 @@ import com.sksamuel.tabby.either.Either
 import com.sksamuel.tabby.either.left
 import com.sksamuel.tabby.either.right
 
+@Deprecated("use com.sksamuel.tabby.validation.Validated")
 sealed class Validated<out E, out A> {
 
    data class Invalid<E>(val error: E) : Validated<E, Nothing>()
@@ -244,7 +245,10 @@ fun <A> A.validate(test: (A) -> Boolean): Validated<String, A> =
 fun <A, E> A.validate(ifInvalid: E, test: (A) -> Boolean): Validated<E, A> =
    if (test(this)) this.valid() else ifInvalid.invalid()
 
+@Deprecated("use com.sksamuel.tabby.validation.Validated")
 fun <A> A.valid(): Validated<Nothing, A> = Validated.Valid(this)
+
+@Deprecated("use com.sksamuel.tabby.validation.Validated")
 fun <E> E.invalid(): Validated<E, Nothing> = Validated.Invalid(this)
 
 /**

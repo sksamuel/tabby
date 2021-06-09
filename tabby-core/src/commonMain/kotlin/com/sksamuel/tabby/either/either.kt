@@ -2,12 +2,11 @@
 
 package com.sksamuel.tabby.either
 
-import com.sksamuel.tabby.effects.IO
-import com.sksamuel.tabby.validated.Validated
-import com.sksamuel.tabby.validated.invalid
 import com.sksamuel.tabby.option.Option
 import com.sksamuel.tabby.option.none
 import com.sksamuel.tabby.option.some
+import com.sksamuel.tabby.validated.Validated
+import com.sksamuel.tabby.validated.invalid
 import com.sksamuel.tabby.validated.valid
 
 /**
