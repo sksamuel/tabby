@@ -49,6 +49,10 @@ sealed class Validated<out E, out A> {
    fun toEither(): Either<List<E>, A> = fold({ it.left() }, { it.right() })
 }
 
+fun <I, A, E> Validated.Companion.repeated(f: (I) -> Validated<E, A>, inputs: List<I>): Validated<E, List<A>> {
+   return inputs.map { f(it) }.traverse()
+}
+
 inline fun <A, B, E> Validated<E, A>.flatMap(f: (A) -> Validated<E, B>): Validated<E, B> = when (this) {
    is Validated.Valid -> f(this.value)
    is Validated.Invalid -> this
