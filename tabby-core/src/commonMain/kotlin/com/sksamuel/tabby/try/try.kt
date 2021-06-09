@@ -112,6 +112,11 @@ sealed class Try<out A> {
    )
 
    /**
+    * Returns a try where the success has been mapped to a unit.
+    */
+   fun unit(): Try<Unit> = map { }
+
+   /**
     * Invoked when we always expect the value to be present and want to short circuit if not.
     * The error indicates that a success was expected.
     *
