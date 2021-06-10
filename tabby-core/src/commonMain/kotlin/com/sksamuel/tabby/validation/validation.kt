@@ -21,7 +21,7 @@ sealed class Validated<out E, out A> {
    }
 
    companion object {
-
+      operator fun <A> invoke(value: A) = Valid(value)
    }
 
    inline fun <B> map(f: (A) -> B): Validated<E, B> = when (this) {
@@ -81,3 +81,11 @@ fun <ERROR, A> List<Validated<ERROR, A>>.traverse(): Validated<ERROR, List<A>> {
 fun <A> A.valid(): Validated<Nothing, A> = Validated.Valid(this)
 fun <E> E.invalid(): Validated<E, Nothing> = Validated.Invalid(listOf(this))
 fun <E> List<E>.invalid(): Validated<E, Nothing> = Validated.Invalid(this)
+
+typealias Parser<I, A, E> = (I) -> Validated<E, A>
+
+fun <I, A, B, E> Parser<I, A, E>.map(f: (A) -> B): Parser<I, B, E> = { this@map.invoke(it).map(f) }
+
+fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> = { input ->
+   this@mapIfNotNull.invoke(input).map { if (it == null) null else f(it) }
+}
