@@ -3,7 +3,6 @@ package com.sksamuel.tabby.validation
 import com.sksamuel.tabby.either.Either
 import com.sksamuel.tabby.either.left
 import com.sksamuel.tabby.either.right
-import kotlin.reflect.KFunction1
 
 sealed class Validated<out E, out A> {
 
@@ -59,17 +58,9 @@ sealed class Validated<out E, out A> {
    fun toEither(): Either<List<E>, A> = fold({ it.left() }, { it.right() })
 }
 
-fun <I, A, E> Validated.Companion.repeated(f: (I) -> Validated<E, A>, inputs: List<I>): Validated<E, List<A>> {
-   return inputs.map { f(it) }.traverse()
-}
-
 inline fun <A, B, E> Validated<E, A>.flatMap(f: (A) -> Validated<E, B>): Validated<E, B> = when (this) {
    is Validated.Valid -> f(this.value)
    is Validated.Invalid -> this
-}
-
-private fun <I, E, O> KFunction1<I, Validated<E, O>>.multiple(input: List<I>): Validated<E, List<O>> {
-   return input.map { this@multiple.invoke(it) }.traverse()
 }
 
 fun <ERROR, A> List<Validated<ERROR, A>>.traverse(): Validated<ERROR, List<A>> {
@@ -80,15 +71,3 @@ fun <ERROR, A> List<Validated<ERROR, A>>.traverse(): Validated<ERROR, List<A>> {
 fun <A> A.valid(): Validated<Nothing, A> = Validated.Valid(this)
 fun <E> E.invalid(): Validated<E, Nothing> = Validated.Invalid(listOf(this))
 fun <E> List<E>.invalid(): Validated<E, Nothing> = Validated.Invalid(this)
-
-typealias Parser<I, A, E> = (I) -> Validated<E, A>
-
-fun <I, A, B, E> Parser<I, A, E>.map(f: (A) -> B): Parser<I, B, E> = { this@map.invoke(it).map(f) }
-
-fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> = { input ->
-   this@mapIfNotNull.invoke(input).map { if (it == null) null else f(it) }
-}
-
-fun <I, A, E> Parser<I, A, E>.repeated(): Parser<List<I>, List<A>, E> = { input ->
-   input.map { this@repeated.invoke(it) }.traverse()
-}
