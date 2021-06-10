@@ -22,6 +22,17 @@ fun <I, A, E> Parser<I, A, E>.repeated(): Parser<List<I>, List<A>, E> {
    }
 }
 
+/**
+ * Returns a new [Parser] to reject blank or null string inputs.
+ */
+fun <E> Parser.Companion.notNullOrBlank(ifNullOrBlank: () -> E): Parser<String?, String, E> {
+   return Parser { input ->
+      when {
+         input.isNullOrBlank() -> ifNullOrBlank().invalid()
+         else -> input.valid()
+      }
+   }
+}
 
 /**
  * Modifies an existing string parser to reject blank string inputs.
@@ -38,11 +49,11 @@ fun <A, E> Parser<String, A, E>.notBlank(ifBlank: () -> E): Parser<String, A, E>
 /**
  * Returns a new [Parser] from the given parser that rejects null inputs.
  */
-fun <I, A, E> Parser<I, A, E>.notnull(ifNull: () -> E): Parser<I?, A, E> {
+fun <I, A, E> Parser<I, A, E>.notNull(ifNull: () -> E): Parser<I?, A, E> {
    return Parser { input ->
       when (input) {
          null -> ifNull().invalid()
-         else -> this@notnull.parse(input)
+         else -> this@notNull.parse(input)
       }
    }
 }
@@ -78,7 +89,7 @@ fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> = 
 }
 
 /**
- * Creates a new parser from the given non-nullable validating function that accepts null.
+ * Creates a new [Parser] from the given non-nullable validating function that accepts null.
  */
 fun <I, A, E> Parser.Companion.nullable(f: (I) -> Validated<E, A>): Parser<I?, A?, E> = parser(f).nullable()
 
@@ -101,6 +112,11 @@ fun <E> Parser.Companion.int(ifError: (String) -> E): Parser<String, Int, E> = p
       null -> ifError(it).invalid()
       else -> int.valid()
    }
+}
+
+fun <I, A, E> (kotlin.reflect.KFunction1<I, Validated<E, A>>).asParser(): Parser<I, A, E> {
+   val self = this@asParser
+   return parser { self.invoke(it) }
 }
 
 /**
