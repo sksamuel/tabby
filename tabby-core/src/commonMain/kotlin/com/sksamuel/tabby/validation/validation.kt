@@ -7,8 +7,18 @@ import kotlin.reflect.KFunction1
 
 sealed class Validated<out E, out A> {
 
-   data class Invalid<E>(val errors: List<E>) : Validated<E, Nothing>()
-   data class Valid<A>(val value: A) : Validated<Nothing, A>()
+   abstract val isValid: Boolean
+   abstract val isInvalid: Boolean
+
+   data class Invalid<E>(val errors: List<E>) : Validated<E, Nothing>() {
+      override val isInvalid: Boolean = true
+      override val isValid: Boolean = false
+   }
+
+   data class Valid<A>(val value: A) : Validated<Nothing, A>() {
+      override val isInvalid: Boolean = false
+      override val isValid: Boolean = true
+   }
 
    companion object {
 
