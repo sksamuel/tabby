@@ -83,6 +83,17 @@ fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> = 
 fun <I, A, E> Parser.Companion.nullable(f: (I) -> Validated<E, A>): Parser<I?, A?, E> = parser(f).nullable()
 
 /**
+ * Creates a String parser that returns a trimmed string.
+ */
+fun <E> Parser.Companion.trimmed(): Parser<String, String, E> = parser { it.trim().valid() }
+
+/**
+ * Returns a [Parser] that adds additional validation to the result of a previous parser.
+ */
+fun <I, A, B, E> Parser<I, A, E>.validate(f: (A) -> Validated<E, B>): Parser<I, B, E> =
+   parser { input -> this@validate.parse(input).flatMap { f(it) } }
+
+/**
  * Returns a [Parser] that parses an Int from a String.
  */
 fun <E> Parser.Companion.int(ifError: (String) -> E): Parser<String, Int, E> = parser {
