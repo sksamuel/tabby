@@ -1,5 +1,7 @@
 package com.sksamuel.tabby.validation
 
+import kotlin.jvm.JvmName
+
 fun interface Parser<I, A, E> {
 
    companion object {
@@ -128,6 +130,7 @@ fun <A, E> Parser<String, A, E>.trim(): Parser<String, A, E> = this.contramap { 
  * Returns a [Parser] that modifies an existing parser by trimming string input prior to
  * invoking the parser.
  */
+@JvmName("trimN")
 fun <A, E> Parser<String?, A, E>.trim(): Parser<String?, A, E> = this.contramap { it?.trim() }
 
 /**
