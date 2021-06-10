@@ -85,8 +85,6 @@ fun <I, A, E> Parser<I, A, E>.repeated(): Parser<List<I>, List<A>, E> {
    }
 }
 
-
-
 /**
  * Modifies an existing String -> String [Parser] to reject blank string inputs.
  */
@@ -112,7 +110,7 @@ fun <I, A, E> Parser<I, A, E>.notNull(ifNull: () -> E): Parser<I?, A, E> {
 }
 
 /**
- * Modifies an existing [Parser] from the given parser that accepts null inputs.
+ * Widens an existing [Parser] to accept null inputs, which are rendered invalid.
  */
 fun <I, A, E> Parser<I, A, E>.nullable(): Parser<I?, A?, E> {
    return Parser { input ->
@@ -125,6 +123,12 @@ fun <I, A, E> Parser<I, A, E>.nullable(): Parser<I?, A?, E> {
  * invoking the parser.
  */
 fun <A, E> Parser<String, A, E>.trim(): Parser<String, A, E> = this.contramap { it.trim() }
+
+/**
+ * Returns a [Parser] that modifies an existing parser by trimming string input prior to
+ * invoking the parser.
+ */
+fun <A, E> Parser<String?, A, E>.trim(): Parser<String?, A, E> = this.contramap { it?.trim() }
 
 /**
  * Returns a [Parser] that maps a result A into a result B.
