@@ -77,7 +77,6 @@ fun <ERROR, A> List<Validated<ERROR, A>>.traverse(): Validated<ERROR, List<A>> {
    return if (errors.isNotEmpty()) errors.invalid() else this.map { it.getUnsafe() }.valid()
 }
 
-
 fun <A> A.valid(): Validated<Nothing, A> = Validated.Valid(this)
 fun <E> E.invalid(): Validated<E, Nothing> = Validated.Invalid(listOf(this))
 fun <E> List<E>.invalid(): Validated<E, Nothing> = Validated.Invalid(this)
@@ -88,4 +87,8 @@ fun <I, A, B, E> Parser<I, A, E>.map(f: (A) -> B): Parser<I, B, E> = { this@map.
 
 fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> = { input ->
    this@mapIfNotNull.invoke(input).map { if (it == null) null else f(it) }
+}
+
+fun <I, A, E> Parser<I, A, E>.repeated(): Parser<List<I>, List<A>, E> = { input ->
+   input.map { this@repeated.invoke(it) }.traverse()
 }
