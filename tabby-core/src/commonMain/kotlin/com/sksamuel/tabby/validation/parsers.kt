@@ -99,16 +99,11 @@ fun <E> Parser<String, String, E>.int(ifError: (String) -> E): Parser<String, In
 }
 
 /**
- * Returns a [Parser] that modifies an existing parser by trimming string input prior to
- * invoking this parser.
+ * Returns a [Parser] that modifies an existing parser by trimming string input.
  */
-fun <I : String?, A, E> Parser<I, A, E>.trim(): Parser<I, A, E> =
-   this@trim.contramap {
-      when (it) {
-         null -> Validated(null) as I
-         else -> it.trim() as I
-      }
-   }
+fun <I, A : String?, E> Parser<I, A, E>.trim(): Parser<I, A, E> =
+   map { if (it == null) null as A else it.trim() as A }
+
 
 /**
  * Returns a [Parser] that maps a result A into a result B.
