@@ -156,10 +156,22 @@ fun <I, A, B, E> Parser<I, A, E>.validate(f: (A) -> Validated<E, B>): Parser<I, 
  * Returns a [Parser] that rejects blank or null inputs.
  */
 fun <E> Parser<String?, String?, E>.notNullOrBlank(ifNullOrBlank: () -> E): Parser<String?, String?, E> {
-   return Parser { input ->
+   return parser { input ->
       when {
          input.isNullOrBlank() -> ifNullOrBlank().invalid()
-         else -> input.valid()
+         else -> this@notNullOrBlank.parse(input)
+      }
+   }
+}
+
+/**
+ * Returns a [Parser] that rejects blank or null inputs.
+ */
+fun <E> Parser<String, String, E>.notNullOrBlank(ifNullOrBlank: () -> E): Parser<String?, String?, E> {
+   return parser { input ->
+      when {
+         input.isNullOrBlank() -> ifNullOrBlank().invalid()
+         else -> this@notNullOrBlank.parse(input)
       }
    }
 }
