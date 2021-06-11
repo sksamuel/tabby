@@ -9,18 +9,6 @@ fun interface Parser<I, A, out E> {
       operator fun <I> invoke(): Parser<I, I, Nothing> = parser { it.valid() }
 
       /**
-       * Creates a String -> String [Parser] that rejects blank or null inputs.
-       */
-      fun <E> notNullOrBlank(ifNullOrBlank: () -> E): Parser<String?, String, E> {
-         return Parser { input ->
-            when {
-               input.isNullOrBlank() -> ifNullOrBlank().invalid()
-               else -> input.valid()
-            }
-         }
-      }
-
-      /**
        * Creates a new [Parser] from String -> Int.
        */
       fun <E> int(ifError: (String) -> E): Parser<String, Int, E> = parser {
@@ -163,6 +151,18 @@ fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> = 
  */
 fun <I, A, B, E> Parser<I, A, E>.validate(f: (A) -> Validated<E, B>): Parser<I, B, E> =
    parser { input -> this@validate.parse(input).flatMap { f(it) } }
+
+/**
+ * Returns a [Parser] that rejects blank or null inputs.
+ */
+fun <E> Parser<String?, String?, E>.notNullOrBlank(ifNullOrBlank: () -> E): Parser<String?, String?, E> {
+   return Parser { input ->
+      when {
+         input.isNullOrBlank() -> ifNullOrBlank().invalid()
+         else -> input.valid()
+      }
+   }
+}
 
 /**
  * Returns a method reference from I to Validated<E,A> as a [Parser].
