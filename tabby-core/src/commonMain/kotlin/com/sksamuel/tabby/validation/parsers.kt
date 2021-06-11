@@ -2,14 +2,11 @@ package com.sksamuel.tabby.validation
 
 import kotlin.jvm.JvmName
 
-fun interface Parser<I, A, E> {
+fun interface Parser<I, A, out E> {
 
    companion object {
 
-      /**
-       * Creates a String -> String [Parser] that trims the input.
-       */
-      fun <E> trimmed(): Parser<String, String, E> = parser { it.trim().valid() }
+      operator fun <I> invoke(): Parser<I, I, Nothing> = parser { it.valid() }
 
       /**
        * Creates a String -> String [Parser] that rejects blank or null inputs.
@@ -146,7 +143,7 @@ fun <A, E> Parser<String, A, E>.trim(): Parser<String, A, E> = this.contramap { 
  * invoking the parser.
  */
 @JvmName("trimN")
-fun <A, E> Parser<String?, A, E>.trim(): Parser<String?, A, E> = this.contramap { it?.trim() }
+fun <A, E> Parser<String?, A, E>.contratrim(): Parser<String?, A, E> = this.contramap { it?.trim() }
 
 /**
  * Returns a [Parser] that maps a result A into a result B.
