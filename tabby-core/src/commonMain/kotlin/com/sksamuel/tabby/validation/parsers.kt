@@ -45,7 +45,7 @@ fun <A, E> Parser<String, A, E>.notBlank(ifBlank: () -> E): Parser<String, A, E>
 }
 
 /**
- * Modifies an existing [Parser] to rejects null inputs.
+ * Widens an existing [Parser] to accept null inputs which are rejected using the given [ifNull] function.
  */
 fun <I, A, E> Parser<I, A, E>.notNull(ifNull: () -> E): Parser<I?, A, E> {
    return Parser { input ->
@@ -57,7 +57,7 @@ fun <I, A, E> Parser<I, A, E>.notNull(ifNull: () -> E): Parser<I?, A, E> {
 }
 
 /**
- * Widens an existing [Parser] to accept null inputs, which are rendered invalid.
+ * Widens an existing [Parser] to accept null inputs which are returned as valid.
  */
 fun <I, A, E> Parser<I, A, E>.nullable(): Parser<I?, A?, E> {
    return Parser { input ->
