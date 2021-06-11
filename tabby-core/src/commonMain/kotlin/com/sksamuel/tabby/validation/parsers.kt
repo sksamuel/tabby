@@ -117,6 +117,14 @@ fun <I, A, B, E> Parser<I, A?, E>.mapIfNotNull(f: (A) -> B): Parser<I, B?, E> = 
 }
 
 /**
+ * Returns a [Parser] that maps a nullable value into a value A.
+ * If the parsed value is not null, then the not null value is returned
+ */
+fun <I, A, E> Parser<I, A?, E>.mapIfNull(f: () -> A): Parser<I, A, E> = parser { input ->
+   this@mapIfNull.parse(input).map { it ?: f() }
+}
+
+/**
  * Returns a [Parser] that adds additional validation to the result of a previous parser.
  */
 fun <I, A, B, E> Parser<I, A, E>.validate(f: (A) -> Validated<E, B>): Parser<I, B, E> =
