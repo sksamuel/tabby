@@ -135,18 +135,6 @@ fun <E> Parser<String?, String?, E>.notNullOrBlank(ifNullOrBlank: () -> E): Pars
 }
 
 /**
- * Returns a [Parser] that rejects blank or null inputs.
- */
-fun <E> Parser<String, String, E>.notNullOrBlank(ifNullOrBlank: () -> E): Parser<String?, String?, E> {
-   return parser { input ->
-      when {
-         input.isNullOrBlank() -> ifNullOrBlank().invalid()
-         else -> this@notNullOrBlank.parse(input)
-      }
-   }
-}
-
-/**
  * Returns a method reference from I to Validated<E,A> as a [Parser].
  */
 fun <I, A, E> (kotlin.reflect.KFunction1<I, Validated<E, A>>).asParser(): Parser<I, A, E> {
