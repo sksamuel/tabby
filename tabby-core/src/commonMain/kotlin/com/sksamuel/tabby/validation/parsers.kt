@@ -9,46 +9,6 @@ fun interface Parser<I, A, out E> {
       operator fun <I> invoke(): Parser<I, I, Nothing> = parser { it.valid() }
 
       /**
-       * Creates a new [Parser] from String -> Int.
-       */
-      fun <E> int(ifError: (String) -> E): Parser<String, Int, E> = parser {
-         when (val int = it.toIntOrNull()) {
-            null -> ifError(it).invalid()
-            else -> int.valid()
-         }
-      }
-
-      /**
-       * Creates a new [Parser] of String -> String that requires the string to be non blank.
-       */
-      fun <E> notBlank(ifBlank: (String) -> E): Parser<String, String, E> = parser {
-         when {
-            it.isBlank() -> ifBlank(it).invalid()
-            else -> it.valid()
-         }
-      }
-
-      /**
-       * Creates a new [Parser] of String -> String that requires the string to have a min length.
-       */
-      fun <E> minlen(len: Int, ifError: (String) -> E): Parser<String, String, E> = parser {
-         when {
-            it.length < len -> ifError(it).invalid()
-            else -> it.valid()
-         }
-      }
-
-      /**
-       * Creates a new [Parser] that parses a Double from a String.
-       */
-      fun <E> double(ifError: (String) -> E): Parser<String, Double, E> = parser {
-         when (val int = it.toDoubleOrNull()) {
-            null -> ifError(it).invalid()
-            else -> int.valid()
-         }
-      }
-
-      /**
        * Creates a new [Parser] that rejects nulls, from the provided non-nullable validating function.
        */
       fun <I, A, E> nullable(f: (I) -> Validated<E, A>): Parser<I?, A?, E> = parser(f).nullable()
@@ -117,6 +77,16 @@ fun <I, E> Parser<I, String?, E>.minlen(len: Int, ifError: (String?) -> E): Pars
    return Parser { input ->
       this@minlen.parse(input)
          .flatMap { if (it == null) Validated(null) else if (it.length < len) ifError(it).invalid() else it.valid() }
+   }
+}
+
+/**
+ * Chains a [Parser] to convert String -> Int
+ */
+fun <E> Parser<String, String, E>.int(ifError: (String) -> E): Parser<String, Int, E> = parser {
+   when (val int = it.toIntOrNull()) {
+      null -> ifError(it).invalid()
+      else -> int.valid()
    }
 }
 
