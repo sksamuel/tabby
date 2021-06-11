@@ -120,6 +120,21 @@ fun <I, A, E> Parser<I, A, E>.nullable(): Parser<I?, A?, E> {
    }
 }
 
+fun <I, E> Parser<I, String, E>.minlen(len: Int, ifError: (String) -> E): Parser<I, String, E> {
+   return Parser { input ->
+      this@minlen.parse(input)
+         .flatMap { if (it.length < len) ifError(it).invalid() else it.valid() }
+   }
+}
+
+@JvmName("minlenNullable")
+fun <I, E> Parser<I, String?, E>.minlen(len: Int, ifError: (String?) -> E): Parser<I, String?, E> {
+   return Parser { input ->
+      this@minlen.parse(input)
+         .flatMap { if (it == null) Validated(null) else if (it.length < len) ifError(it).invalid() else it.valid() }
+   }
+}
+
 /**
  * Returns a [Parser] that modifies an existing parser by trimming string input prior to
  * invoking the parser.
