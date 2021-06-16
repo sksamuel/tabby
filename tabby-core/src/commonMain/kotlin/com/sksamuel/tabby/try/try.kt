@@ -20,7 +20,7 @@ sealed class Try<out A> {
 
    companion object {
 
-      operator fun <A> invoke(f: () -> A): Try<A> = catch { f() }
+      inline operator fun <A> invoke(f: () -> A): Try<A> = catch { f() }
 
       /**
        * Wraps a value in a success but returns the type signature Try.
