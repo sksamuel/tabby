@@ -6,7 +6,7 @@ import com.sksamuel.tabby.either.Either
 import com.sksamuel.tabby.either.left
 import com.sksamuel.tabby.either.right
 
-@Deprecated("use com.sksamuel.tabby.validation.Validated")
+@Deprecated("use com.sksamuel.tabby.validation.Validated which always deals with lists of errors")
 sealed class Validated<out E, out A> {
 
    data class Invalid<E>(val error: E) : Validated<E, Nothing>()
