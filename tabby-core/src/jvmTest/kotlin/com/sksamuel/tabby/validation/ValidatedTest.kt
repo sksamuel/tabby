@@ -97,6 +97,11 @@ class ValidatedTest : FunSpec() {
          ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).valid()
       }
 
+      test("repeated with min length") {
+         val ps = Parser<String>().map { Foo(it) }.repeated(min = 2)
+         ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).valid()
+      }
+
       test("not null") {
          val p = Parser<String>().map { Foo(it) }.notNull { "cannot be null" }
          p.parse(null) shouldBe "cannot be null".invalid()
