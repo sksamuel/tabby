@@ -1,64 +1,64 @@
 package com.sksamuel.tabby.validation
 
-fun <A, B, R, ERROR> Validated.Companion.mapN(
+fun <A, B, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
-   f: (A, B) -> R
-): Validated<ERROR, R> {
+   f: (A, B) -> RETURN
+): Validated<ERROR, RETURN> {
    val errors = listOf(a, b).filterIsInstance<Validated.Invalid<ERROR>>().flatMap { it.errors }
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       f(a.getValueUnsafe(), b.getValueUnsafe()).valid()
    }
 }
 
-fun <A, B, C, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
-   f: (A, B, C) -> R
-): Validated<ERROR, R> {
+   f: (A, B, C) -> RETURN
+): Validated<ERROR, RETURN> {
    val errors = listOf(a, b, c).filterIsInstance<Validated.Invalid<ERROR>>().flatMap { it.errors }
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       f(a.getValueUnsafe(), b.getValueUnsafe(), c.getValueUnsafe()).valid()
    }
 }
 
-fun <A, B, C, D, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, D, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
    d: Validated<ERROR, D>,
-   f: (A, B, C, D) -> R
-): Validated<ERROR, R> {
+   f: (A, B, C, D) -> RETURN
+): Validated<ERROR, RETURN> {
    val errors = listOf(a, b, c, d).filterIsInstance<Validated.Invalid<ERROR>>().flatMap { it.errors }
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       f(a.getValueUnsafe(), b.getValueUnsafe(), c.getValueUnsafe(), d.getValueUnsafe()).valid()
    }
 }
 
-fun <A, B, C, D, E, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, D, E, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
    d: Validated<ERROR, D>,
    e: Validated<ERROR, E>,
-   f: (A, B, C, D, E) -> R
-): Validated<ERROR, R> {
+   f: (A, B, C, D, E) -> RETURN
+): Validated<ERROR, RETURN> {
    val errors = listOf(a, b, c, d, e).filterIsInstance<Validated.Invalid<ERROR>>().flatMap { it.errors }
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       f(a.getValueUnsafe(), b.getValueUnsafe(), c.getValueUnsafe(), d.getValueUnsafe(), e.getValueUnsafe()).valid()
    }
 }
 
-fun <A, B, C, D, E, F, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, D, E, F, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
    d: Validated<ERROR, D>,
    e: Validated<ERROR, E>,
    f: Validated<ERROR, F>,
-   fn: (A, B, C, D, E, F) -> R
-): Validated<ERROR, R> {
+   fn: (A, B, C, D, E, F) -> RETURN
+): Validated<ERROR, RETURN> {
 
    val errors = listOf(a, b, c, d, e, f)
       .filterIsInstance<Validated.Invalid<ERROR>>()
@@ -76,7 +76,7 @@ fun <A, B, C, D, E, F, R, ERROR> Validated.Companion.mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, D, E, F, G, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -84,8 +84,8 @@ fun <A, B, C, D, E, F, G, R, ERROR> Validated.Companion.mapN(
    e: Validated<ERROR, E>,
    f: Validated<ERROR, F>,
    g: Validated<ERROR, G>,
-   fn: (A, B, C, D, E, F, G) -> R
-): Validated<ERROR, R> {
+   fn: (A, B, C, D, E, F, G) -> RETURN
+): Validated<ERROR, RETURN> {
 
    val errors = listOf(a, b, c, d, e, f, g)
       .filterIsInstance<Validated.Invalid<ERROR>>()
@@ -104,7 +104,7 @@ fun <A, B, C, D, E, F, G, R, ERROR> Validated.Companion.mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, H, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, D, E, F, G, H, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -113,8 +113,8 @@ fun <A, B, C, D, E, F, G, H, R, ERROR> Validated.Companion.mapN(
    f: Validated<ERROR, F>,
    g: Validated<ERROR, G>,
    h: Validated<ERROR, H>,
-   fn: (A, B, C, D, E, F, G, H) -> R
-): Validated<ERROR, R> {
+   fn: (A, B, C, D, E, F, G, H) -> RETURN
+): Validated<ERROR, RETURN> {
 
    val errors = listOf(a, b, c, d, e, f, g, h)
       .filterIsInstance<Validated.Invalid<ERROR>>()
@@ -134,7 +134,7 @@ fun <A, B, C, D, E, F, G, H, R, ERROR> Validated.Companion.mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, H, I, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, D, E, F, G, H, I, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -144,8 +144,8 @@ fun <A, B, C, D, E, F, G, H, I, R, ERROR> Validated.Companion.mapN(
    g: Validated<ERROR, G>,
    h: Validated<ERROR, H>,
    i: Validated<ERROR, I>,
-   fn: (A, B, C, D, E, F, G, H, I) -> R
-): Validated<ERROR, R> {
+   fn: (A, B, C, D, E, F, G, H, I) -> RETURN
+): Validated<ERROR, RETURN> {
 
    val errors = listOf(a, b, c, d, e, f, g, h, i)
       .filterIsInstance<Validated.Invalid<ERROR>>()
@@ -166,7 +166,7 @@ fun <A, B, C, D, E, F, G, H, I, R, ERROR> Validated.Companion.mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, H, I, J, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, D, E, F, G, H, I, J, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -177,8 +177,8 @@ fun <A, B, C, D, E, F, G, H, I, J, R, ERROR> Validated.Companion.mapN(
    h: Validated<ERROR, H>,
    i: Validated<ERROR, I>,
    j: Validated<ERROR, J>,
-   fn: (A, B, C, D, E, F, G, H, I, J) -> R
-): Validated<ERROR, R> {
+   fn: (A, B, C, D, E, F, G, H, I, J) -> RETURN
+): Validated<ERROR, RETURN> {
 
    val errors = listOf(a, b, c, d, e, f, g, h, i, j)
       .filterIsInstance<Validated.Invalid<ERROR>>()
@@ -200,7 +200,7 @@ fun <A, B, C, D, E, F, G, H, I, J, R, ERROR> Validated.Companion.mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, H, I, J, K, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, D, E, F, G, H, I, J, K, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -212,8 +212,8 @@ fun <A, B, C, D, E, F, G, H, I, J, K, R, ERROR> Validated.Companion.mapN(
    i: Validated<ERROR, I>,
    j: Validated<ERROR, J>,
    k: Validated<ERROR, K>,
-   fn: (A, B, C, D, E, F, G, H, I, J, K) -> R
-): Validated<ERROR, R> {
+   fn: (A, B, C, D, E, F, G, H, I, J, K) -> RETURN
+): Validated<ERROR, RETURN> {
 
    val errors = listOf(a, b, c, d, e, f, g, h, i, j, k)
       .filterIsInstance<Validated.Invalid<ERROR>>()
@@ -236,7 +236,7 @@ fun <A, B, C, D, E, F, G, H, I, J, K, R, ERROR> Validated.Companion.mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, H, I, J, K, L, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, D, E, F, G, H, I, J, K, L, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -249,8 +249,8 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, R, ERROR> Validated.Companion.mapN(
    j: Validated<ERROR, J>,
    k: Validated<ERROR, K>,
    l: Validated<ERROR, L>,
-   fn: (A, B, C, D, E, F, G, H, I, J, K, L) -> R
-): Validated<ERROR, R> {
+   fn: (A, B, C, D, E, F, G, H, I, J, K, L) -> RETURN
+): Validated<ERROR, RETURN> {
 
    val errors = listOf(a, b, c, d, e, f, g, h, i, j, k, l)
       .filterIsInstance<Validated.Invalid<ERROR>>()
@@ -274,7 +274,7 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, R, ERROR> Validated.Companion.mapN(
    }
 }
 
-fun <A, B, C, D, E, F, G, H, I, J, K, L, M, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, D, E, F, G, H, I, J, K, L, M, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -288,8 +288,8 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, R, ERROR> Validated.Companion.mapN(
    k: Validated<ERROR, K>,
    l: Validated<ERROR, L>,
    m: Validated<ERROR, M>,
-   fn: (A, B, C, D, E, F, G, H, I, J, K, L, M) -> R
-): Validated<ERROR, R> {
+   fn: (A, B, C, D, E, F, G, H, I, J, K, L, M) -> RETURN
+): Validated<ERROR, RETURN> {
 
    val errors = listOf(a, b, c, d, e, f, g, h, i, j, k, l, m)
       .filterIsInstance<Validated.Invalid<ERROR>>()
@@ -315,7 +315,7 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, R, ERROR> Validated.Companion.mapN(
 }
 
 
-fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -330,8 +330,8 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, R, ERROR> Validated.Companion.map
    l: Validated<ERROR, L>,
    m: Validated<ERROR, M>,
    n: Validated<ERROR, N>,
-   fn: (A, B, C, D, E, F, G, H, I, J, K, L, M, N) -> R
-): Validated<ERROR, R> {
+   fn: (A, B, C, D, E, F, G, H, I, J, K, L, M, N) -> RETURN
+): Validated<ERROR, RETURN> {
 
    val errors = listOf(a, b, c, d, e, f, g, h, i, j, k, l, m, n)
       .filterIsInstance<Validated.Invalid<ERROR>>()
@@ -358,7 +358,7 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, R, ERROR> Validated.Companion.map
 }
 
 
-fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, R, ERROR> Validated.Companion.mapN(
+fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, RETURN, ERROR> Validated.Companion.mapN(
    a: Validated<ERROR, A>,
    b: Validated<ERROR, B>,
    c: Validated<ERROR, C>,
@@ -374,8 +374,8 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, R, ERROR> Validated.Companion.
    m: Validated<ERROR, M>,
    n: Validated<ERROR, N>,
    o: Validated<ERROR, O>,
-   fn: (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O) -> R
-): Validated<ERROR, R> {
+   fn: (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O) -> RETURN
+): Validated<ERROR, RETURN> {
 
    val errors = listOf(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o)
       .filterIsInstance<Validated.Invalid<ERROR>>()
