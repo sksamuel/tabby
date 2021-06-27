@@ -98,8 +98,9 @@ class ValidatedTest : FunSpec() {
       }
 
       test("repeated with min length") {
-         val ps = Parser<String>().map { Foo(it) }.repeated(min = 2)
+         val ps = Parser<String>().map { Foo(it) }.repeated(min = 2) { "Must have at least two elements" }
          ps.parse(listOf("a", "b")) shouldBe listOf(Foo("a"), Foo("b")).valid()
+         ps.parse(listOf("a")) shouldBe "Must have at least two elements".invalid()
       }
 
       test("not null") {
