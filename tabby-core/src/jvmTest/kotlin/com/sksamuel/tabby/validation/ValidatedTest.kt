@@ -126,5 +126,13 @@ class ValidatedTest : FunSpec() {
          p.parse("") shouldBe "boom".invalid()
          p.parse("abc") shouldBe Foo("abc").valid()
       }
+
+      test("contains") {
+         val p = Parser<String>().oneOf(listOf("a", "b")) { "boom" }.map { Foo(it) }
+         p.parse("") shouldBe "boom".invalid()
+         p.parse("c") shouldBe "boom".invalid()
+         p.parse("a") shouldBe Foo("a").valid()
+         p.parse("b") shouldBe Foo("b").valid()
+      }
    }
 }
