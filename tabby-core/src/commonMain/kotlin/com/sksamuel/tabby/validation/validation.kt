@@ -21,6 +21,7 @@ sealed class Validated<out E, out A> {
 
    companion object {
       operator fun <A> invoke(value: A) = Valid(value)
+      fun <E> invalid(error: E) = Invalid(listOf(error))
    }
 
    inline fun <B> map(f: (A) -> B): Validated<E, B> = when (this) {

@@ -12,6 +12,10 @@ value class Width(val value: Double)
 class ValidatedTest : FunSpec() {
    init {
 
+      test("parsing strings to domain object") {
+         Parser<String>().parse("input").map { Foo("input") } shouldBe Foo("input").valid()
+      }
+
       test("parser should support default") {
          val p = Parser<String>()
             .mapIfNotNull { Foo(it) }

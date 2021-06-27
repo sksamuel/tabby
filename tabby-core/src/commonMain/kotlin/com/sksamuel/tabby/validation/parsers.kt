@@ -3,8 +3,14 @@ package com.sksamuel.tabby.validation
 fun interface Parser<in I, out A, out E> {
 
    companion object {
+
       /**
-       * Create a new [Parser] for a base input type I.
+       * Returns an identity [Parser] for a type I which is the entry point
+       * to building parsers.
+       *
+       * Eg,
+       *
+       * Parser<T>()...parse(t)
        */
       operator fun <I> invoke(): Parser<I, I, Nothing> = parser { it.valid() }
    }
@@ -77,10 +83,8 @@ fun <I, A : String?, E> Parser<I, A, E>.minlen(len: Int, ifError: (String) -> E)
    }
 
 /**
- * Extends a [Parser] which has a nullable result type to return non-null result types.
- *
- * For any input values which are null, the given function [ifNull] is invoked and the
- * output of that function is used as the return value from the parser.
+ * Narrows a [Parser] to avoid nullable output by invoking the given function [ifNull]
+ * to return a default value if the output of the wrapped parser is null.
  */
 fun <I, A, E> Parser<I, A?, E>.default(ifNull: () -> A): Parser<I, A, E> {
    return parser { input ->
@@ -91,7 +95,8 @@ fun <I, A, E> Parser<I, A?, E>.default(ifNull: () -> A): Parser<I, A, E> {
 }
 
 /**
- * Chains a [Parser] to convert String? -> Int
+ * Chains a [Parser] to convert String? -> Int.
+ * An input of type
  */
 fun <I, A : String?, E> Parser<I, A, E>.int(ifError: (A) -> E): Parser<I, Int, E> =
    flatMap {
