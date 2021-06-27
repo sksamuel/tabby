@@ -142,6 +142,13 @@ class ValidatedTest : FunSpec() {
          p.parse("b") shouldBe Foo("b").valid()
       }
 
+      test("non neg") {
+         val p = Parser<String>().int { "must be int" }.nonneg { "must be >= 0" }
+         p.parse("-1") shouldBe "must be >= 0".invalid()
+         p.parse("0") shouldBe 0.valid()
+         p.parse("1") shouldBe 1.valid()
+      }
+
       test("positive") {
          val p = Parser<String>().int { "must be int" }.positive { "must be > 0" }
          p.parse("0") shouldBe "must be > 0".invalid()

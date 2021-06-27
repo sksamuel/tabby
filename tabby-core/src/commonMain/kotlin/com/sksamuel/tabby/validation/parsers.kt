@@ -159,6 +159,11 @@ fun <I, E> Parser<I, Int, E>.positive(ifError: (Int) -> E): Parser<I, Int, E> =
       if (it > 0) it.valid() else ifError(it).invalid()
    }
 
+fun <I, E> Parser<I, Int, E>.nonneg(ifError: (Int) -> E): Parser<I, Int, E> =
+   flatMap {
+      if (it >= 0) it.valid() else ifError(it).invalid()
+   }
+
 fun <I, E> Parser<I, Int, E>.negative(ifError: (Int) -> E): Parser<I, Int, E> =
    flatMap {
       if (it < 0) it.valid() else ifError(it).invalid()
