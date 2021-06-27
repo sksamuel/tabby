@@ -32,9 +32,21 @@ sealed class Validated<out E, out A> {
     * Returns the value of this Validated if it is an instance of Valid.
     * Otherwise throws an [IllegalStateException].
     */
-   fun getUnsafe(): A = when (this) {
+   @Deprecated("use getValueUnsafe", ReplaceWith("getValueUnsafe()"))
+   fun getUnsafe(): A = getValueUnsafe()
+
+   fun getValueUnsafe(): A = when (this) {
       is Invalid -> throw IllegalStateException("Not a valid instance, was $this")
       is Valid -> this.value
+   }
+
+   /**
+    * Returns the errors contained in this Validated if it is an instance of Invalid.
+    * Otherwise throws an [IllegalStateException].
+    */
+   fun getErrorsUnsafe(): List<E> = when (this) {
+      is Invalid -> this.errors
+      is Valid -> throw IllegalStateException("Not a invalid instance, was $this")
    }
 
    inline fun <B> fold(ifInvalid: (List<E>) -> B, ifValid: (A) -> B): B = when (this) {
