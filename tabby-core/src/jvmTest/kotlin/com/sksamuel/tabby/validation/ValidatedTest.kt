@@ -122,6 +122,13 @@ class ValidatedTest : FunSpec() {
          p.parse("abc") shouldBe Foo("abc").valid()
       }
 
+      test("length") {
+         val p = Parser<String>().length(4) { "must be 4 chars" }.map { Foo(it) }
+         p.parse("abcde") shouldBe "must be 4 chars".invalid()
+         p.parse("abcd") shouldBe Foo("abcd").valid()
+         p.parse("abc") shouldBe "must be 4 chars".invalid()
+      }
+
       test("trim") {
          val p = Parser<String>().trim().map { Foo(it) }
          p.parse(" abcd ") shouldBe Foo("abcd").valid()
