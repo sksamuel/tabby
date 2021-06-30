@@ -147,7 +147,7 @@ class ValidatedTest : FunSpec() {
       }
 
       test("lowercase") {
-         val p = Parser<String>().trim().map { Foo(it) }
+         val p = Parser<String>().lowercase().map { Foo(it) }
          p.parse("ABCD") shouldBe Foo("abcd").valid()
       }
 
