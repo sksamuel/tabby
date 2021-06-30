@@ -141,6 +141,16 @@ class ValidatedTest : FunSpec() {
          p.parse("abc    ") shouldBe Foo("abc").valid()
       }
 
+      test("uppercase") {
+         val p = Parser<String>().uppercase().map { Foo(it) }
+         p.parse("abcd") shouldBe Foo("ABCD").valid()
+      }
+
+      test("lowercase") {
+         val p = Parser<String>().trim().map { Foo(it) }
+         p.parse("ABCD") shouldBe Foo("abcd").valid()
+      }
+
       test("filter") {
          val p = Parser<String>().filter(String::isNotEmpty) { "boom" }.map { Foo(it) }
          p.parse("") shouldBe "boom".invalid()

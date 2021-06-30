@@ -268,6 +268,20 @@ fun <I, E> Parser<I, String, E>.boolean(ifError: (String) -> E): Parser<I, Boole
 fun <I, E> Parser<I, String, E>.trim(): Parser<I, String, E> = map { it.trim() }
 
 /**
+ * Modifies a String -> String [Parser] by uppercasing the output string.
+ *
+ * @return the output of the underlying parser with the output uppercased.
+ */
+fun <I, E> Parser<I, String, E>.uppercase(): Parser<I, String, E> = map { it.uppercase() }
+
+/**
+ * Modifies a String -> String [Parser] by lowercasing the output string.
+ *
+ * @return the output of the underlying parser with the output lowercased.
+ */
+fun <I, E> Parser<I, String, E>.lowercase(): Parser<I, String, E> = map { it.lowercase() }
+
+/**
  * Returns a [Parser] that maps the result of this parser by invoking the given function [f]
  * when the underlying parser returns a valid instance.
  *
