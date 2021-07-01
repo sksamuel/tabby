@@ -76,6 +76,11 @@ inline fun <A, B, E> Validated<E, A>.flatMap(f: (A) -> Validated<E, B>): Validat
    is Validated.Invalid -> this
 }
 
+inline fun <A, E> Validated<E, A>.getValueOrElse(f: (List<E>) -> A): A = when (this) {
+   is Validated.Invalid -> f(this.errors)
+   is Validated.Valid -> this.value
+}
+
 fun <ERROR, A> List<Validated<ERROR, A>>.traverse(): Validated<ERROR, List<A>> {
    val errors = this.filterIsInstance<Validated.Invalid<ERROR>>().flatMap { it.errors }
    return if (errors.isNotEmpty()) errors.invalid() else this.map { it.getUnsafe() }.valid()
