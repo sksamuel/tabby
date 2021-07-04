@@ -12,11 +12,13 @@ import kotlinx.coroutines.delay
  * `io.repeat(Schedule.once)` yields an effect that executes `io`, and then if that
  * succeeds, executes `io` an additional time.
  */
+@Deprecated("Do not use IO, use effect functions")
 fun <A> IO<A>.repeat(schedule: Schedule): IO<A> = repeatWhile(schedule) { it.isSuccess }
 
 /**
  * Retries this effect while it is an error, using the given schedule.
  */
+@Deprecated("Do not use IO, use effect functions")
 fun <A> IO<A>.retry(schedule: Schedule): IO<A> = repeatWhile(schedule) { it.isFailure }
 
 /**
