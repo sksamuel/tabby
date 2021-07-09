@@ -16,6 +16,16 @@ fun interface Parser<in I, out A, out E> {
    }
 
    fun parse(input: I): Validated<E, A>
+
+   /**
+    * Creates a new [Parser] from J -> A by transforming an input J into a value I and then
+    * feeding that I into the given parser of I -> A.
+    */
+   @ExperimentalTabby
+   fun <J> contramap(f: (J) -> I): Parser<J, A, E> {
+      val self = this
+      return parser { self.parse(f(it)) }
+   }
 }
 
 /**
@@ -355,14 +365,6 @@ fun <I, A, E> (kotlin.reflect.KFunction1<I, Validated<E, A>>).asParser(): Parser
    val self = this@asParser
    return parser { self.invoke(it) }
 }
-
-/**
- * Creates a new [Parser] from J -> A by transforming an input J into a value I and then
- * feeding that I into the given parser of I -> A.
- */
-@ExperimentalTabby
-fun <I, J, A, E> Parser<I, A, E>.contramap(f: (J) -> I): Parser<J, A, E> =
-   parser { this@contramap.parse(f(it)) }
 
 @Retention(value = AnnotationRetention.BINARY)
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
