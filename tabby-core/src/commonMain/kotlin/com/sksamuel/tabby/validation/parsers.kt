@@ -16,16 +16,6 @@ fun interface Parser<in I, out A, out E> {
    }
 
    fun parse(input: I): Validated<E, A>
-
-   /**
-    * Creates a new [Parser] from J -> A by transforming an input J into a value I and then
-    * feeding that I into the given parser of I -> A.
-    */
-   @ExperimentalTabby
-   fun <J> contramap(f: (J) -> I): Parser<J, A, E> {
-      val self = this
-      return parser { self.parse(f(it)) }
-   }
 }
 
 /**
