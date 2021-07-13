@@ -152,15 +152,32 @@ fun <A, R> Try<Option<A>>.trifold(ifError: (Throwable) -> R, ifEmpty: () -> R, i
    )
 }
 
+
+@Deprecated("Renamed to notnull")
+fun <A> Try<A?>.absolve(f: () -> Throwable): Try<A> = notnull(f)
+
 /**
- * If this Try contains a null, will return a [Try.Failure] containing the error generated
- * from the given function [f]. Otherwise returns a [Try.Success] with the non-null value.
+ * Returns a [Try.Failure] if this instance is a success that contains null.
+ * The exception will be generated from the given function.
+ *
+ * If this instance is already a failure, then this is a no-op.
+ * If this instance is a success that contains a not-null value, then this is a no-op.
  */
-fun <A> Try<A?>.absolve(f: () -> Throwable): Try<A> =
+fun <A> Try<A?>.notnull(f: () -> Throwable): Try<A> =
    fold(
       { it.failure() },
       { it?.success() ?: f().failure() }
    )
+
+/**
+ * Returns a [Try.Failure] if this instance is a success that contains null.
+ * The failure will contain a [NoSuchElementException] exception.
+ *
+ * If this instance is already a failure, then this is a no-op.
+ * If this instance is a success that contains a not-null value, then this is a no-op.
+ */
+fun <A> Try<A?>.notnull(): Try<A> = notnull { NoSuchElementException() }
+
 
 fun <A> Try<A>.recover(f: (Throwable) -> A): A = fold({ f(it) }, { it })
 
