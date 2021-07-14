@@ -3,10 +3,20 @@ package com.sksamuel.tabby.`try`
 import kotlin.js.JsName
 
 interface Catch {
+
    @JsName("getValue")
    fun <A> Try<A>.value(): A = fold({ throw it }, { it })
+
    fun <A> Try<A>.raise(): Unit {
       if (this is Try.Failure) throw this.error
+   }
+
+   fun <A, B, C> using(a: Try<A>, b: Try<B>, c: (A, B) -> C): Try<C> {
+      return Try.mapN(a, b, c)
+   }
+
+   fun <A, B, C> usingt(a: Try<A>, b: Try<B>, c: (A, B) -> Try<C>): Try<C> {
+      return Try.mapN(a, b, c).flatten()
    }
 }
 
