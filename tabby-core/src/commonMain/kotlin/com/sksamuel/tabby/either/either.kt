@@ -2,6 +2,8 @@
 
 package com.sksamuel.tabby.either
 
+import com.sksamuel.tabby.`try`.failure
+import com.sksamuel.tabby.`try`.success
 import com.sksamuel.tabby.option.Option
 import com.sksamuel.tabby.option.none
 import com.sksamuel.tabby.option.some
@@ -136,6 +138,8 @@ inline fun <B> either(f: () -> B): Either<Throwable, B> = try {
 } catch (t: Throwable) {
    t.left()
 }
+
+fun <A> Either<Throwable, A>.toTry() = fold({ it.failure() }, { it.success() })
 
 // if this is a left, invokes the given function to return the error into a right, otherwise returns the right
 inline fun <A, B> Either<A, B>.recover(ifLeft: (A) -> B): Either<A, B> =

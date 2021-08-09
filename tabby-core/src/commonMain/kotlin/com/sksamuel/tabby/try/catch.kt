@@ -15,8 +15,12 @@ interface Catch {
       return Try.mapN(a, b, c)
    }
 
-   fun <A, B, C> usingt(a: Try<A>, b: Try<B>, c: (A, B) -> Try<C>): Try<C> {
+   fun <A, B, T> usingt(a: Try<A>, b: Try<B>, c: (A, B) -> Try<T>): Try<T> {
       return Try.mapN(a, b, c).flatten()
+   }
+
+   fun <A, B, C, T> usingt(a: Try<A>, b: Try<B>, c: Try<C>, f: (A, B, C) -> Try<T>): Try<T> {
+      return Try.mapN(a, b, c, f).flatten()
    }
 }
 
