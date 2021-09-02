@@ -1,6 +1,6 @@
 object Libs {
 
-   const val kotlinVersion = "1.5.30-RC"
+   const val kotlinVersion = "1.5.30"
    const val dokkaVersion = "0.10.1"
 
    object Kotest {
@@ -18,7 +18,7 @@ object Libs {
    }
 
    object Coroutines {
-      private const val version = "1.5.1"
+      private const val version = "1.5.2"
       const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
       const val coreJs = "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$version"
       const val coreJvm = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$version"
