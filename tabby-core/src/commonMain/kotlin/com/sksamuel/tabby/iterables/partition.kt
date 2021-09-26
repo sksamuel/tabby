@@ -15,7 +15,7 @@ fun <A> Iterable<A>.tripartition(
       } else if (isSecond(element)) {
          second.add(element)
       } else {
-         second.add(element)
+         third.add(element)
       }
    }
 
@@ -38,7 +38,7 @@ fun <A, B> Iterable<A>.tripartition(
       } else if (isSecond(element)) {
          second.add(mapFn(element))
       } else {
-         second.add(mapFn(element))
+         third.add(mapFn(element))
       }
    }
 
