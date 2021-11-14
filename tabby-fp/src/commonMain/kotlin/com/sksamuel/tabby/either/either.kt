@@ -4,9 +4,6 @@ package com.sksamuel.tabby.either
 
 import com.sksamuel.tabby.results.failure
 import com.sksamuel.tabby.results.success
-import com.sksamuel.tabby.validated.Validated
-import com.sksamuel.tabby.validated.invalid
-import com.sksamuel.tabby.validated.valid
 
 /**
  * An internal, non-biased implementation of Either.
@@ -91,8 +88,6 @@ sealed class Either<out A, out B> {
    fun getRightUnsafe(): B = fold({ throw RuntimeException("Expected right but was $it") }, { it })
 
    fun getLeftUnsafe(): A = fold({ it }, { throw RuntimeException("Expected left but was $it") })
-
-   fun toValidated(): Validated<A, B> = fold({ it.invalid() }, { it.valid() })
 
    inline fun <reified C> filterRightIsInstance(otherwise: (B) -> Any): Either<A, C> = when (this) {
       is Left -> this
