@@ -30,11 +30,12 @@ class ScheduleForeverTest : FunSpec() {
          var counter = 0
          val start = System.currentTimeMillis()
          repeat(Schedule.delay(25.milliseconds)) {
-            counter++
             if (counter == 10)
                "stop".failure()
-            else
+            else {
+               counter++
                "go".success()
+            }
          }
          val duration = System.currentTimeMillis() - start
          counter shouldBe 10
