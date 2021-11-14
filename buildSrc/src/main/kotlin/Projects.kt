@@ -1,4 +1,4 @@
 object Projects {
-   const val Core = ":tabby-core"
+   const val Fp = ":tabby-fp"
    const val Jackson = ":tabby-jackson"
 }

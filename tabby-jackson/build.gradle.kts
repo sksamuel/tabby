@@ -32,7 +32,7 @@ kotlin {
          dependsOn(commonMain)
          dependencies {
             implementation(kotlin("reflect"))
-            api(project(Projects.Core))
+            api(project(Projects.Fp))
             implementation(Libs.Jackson.core)
             implementation(Libs.Jackson.databind)
             implementation(Libs.Jackson.kotlin)

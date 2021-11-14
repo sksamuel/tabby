@@ -19,25 +19,8 @@ import com.fasterxml.jackson.databind.ser.BeanPropertyWriter
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier
 import com.fasterxml.jackson.databind.ser.Serializers
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
-import com.sksamuel.tabby.option.Option
-import com.sksamuel.tabby.option.none
-import com.sksamuel.tabby.option.toOption
 import com.sksamuel.tabby.tristate.Tristate
 import com.sksamuel.tabby.tristate.toTristate
-
-object OptionSerializer : StdSerializer<Option<*>>(Option::class.java) {
-   override fun serialize(value: Option<*>, gen: JsonGenerator, provider: SerializerProvider) {
-      value.fold({ gen.writeNull() }, { provider.defaultSerializeValue(it, gen) })
-   }
-}
-
-class OptionDeserializer(private val type: JavaType) : StdDeserializer<Option<*>>(Option::class.java) {
-   override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Option<*> {
-      return ctxt.readValue<Any>(p, type).toOption()
-   }
-
-   override fun getNullValue(ctxt: DeserializationContext?): Option<*> = none
-}
 
 object TristateSerializer : StdSerializer<Tristate<*>>(Tristate::class.java) {
 
@@ -74,7 +57,6 @@ internal class TabbySerializers : Serializers.Base() {
       beanDesc: BeanDescription
    ): JsonSerializer<*>? {
       return when {
-         Option::class.java.isAssignableFrom(type.rawClass) -> OptionSerializer
          Tristate::class.java.isAssignableFrom(type.rawClass) -> TristateSerializer
          else -> null
       }
@@ -88,7 +70,6 @@ internal class TabbyDeserializers : Deserializers.Base() {
       beanDesc: BeanDescription?
    ): JsonDeserializer<*>? {
       return when (type.rawClass) {
-         Option::class.java -> OptionDeserializer(type.findTypeParameters(Option::class.java)[0])
          Tristate::class.java -> TristateDeserializer(type.findTypeParameters(Tristate::class.java)[0])
          else -> null
       }
