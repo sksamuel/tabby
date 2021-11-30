@@ -2,19 +2,18 @@ buildscript {
    repositories {
       mavenCentral()
       mavenLocal()
-      maven("https://dl.bintray.com/kotlin/kotlin-eap")
-      maven("https://kotlin.bintray.com/kotlinx")
       gradlePluginPortal()
    }
 }
 
+
 plugins {
    java
-   kotlin("multiplatform") version Libs.kotlinVersion
+   kotlin("multiplatform").version(Libs.kotlinVersion)
    id("java-library")
    id("maven-publish")
    signing
-   id("org.jetbrains.dokka") version Libs.dokkaVersion
+   id("org.jetbrains.dokka").version(Libs.dokkaVersion)
 }
 
 tasks {
@@ -26,10 +25,7 @@ allprojects {
 
    repositories {
       mavenCentral()
-      jcenter()
       google()
-      maven("https://kotlin.bintray.com/kotlinx")
-      maven("https://dl.bintray.com/kotlin/kotlin-eap")
    }
 
    group = "com.sksamuel.tabby"
@@ -50,7 +46,7 @@ kotlin {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
    kotlinOptions.jvmTarget = "1.8"
-   kotlinOptions.apiVersion = "1.5"
+   kotlinOptions.apiVersion = "1.6"
 }
 
 val publications: PublicationContainer = (extensions.getByName("publishing") as PublishingExtension).publications

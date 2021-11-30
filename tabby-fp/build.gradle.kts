@@ -30,7 +30,6 @@ kotlin {
          dependsOn(commonMain)
          dependencies {
             implementation(kotlin("reflect"))
-            implementation("io.github.microutils:kotlin-logging-jvm:2.0.6")
          }
       }
 
@@ -41,12 +40,6 @@ kotlin {
             implementation(Libs.Kotest.assertions)
             implementation(Libs.Kotest.junit5)
          }
-      }
-
-      all {
-         languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
-         languageSettings.useExperimentalAnnotation("kotlin.experimental.ExperimentalTypeInference")
-         languageSettings.useExperimentalAnnotation("kotlin.OverloadResolutionByLambdaReturnType")
       }
    }
 }

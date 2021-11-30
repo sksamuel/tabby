@@ -46,11 +46,6 @@ kotlin {
             implementation(Libs.Kotest.junit5)
          }
       }
-
-      all {
-         languageSettings.useExperimentalAnnotation("kotlin.time.ExperimentalTime")
-         languageSettings.useExperimentalAnnotation("kotlin.experimental.ExperimentalTypeInference")
-      }
    }
 }
 
