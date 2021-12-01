@@ -5,8 +5,8 @@ package com.sksamuel.tabby.effects
 import com.sksamuel.tabby.effects.Decision.Halt
 import kotlin.random.Random
 import kotlin.time.Duration
-import kotlin.time.milliseconds
-import kotlin.time.nanoseconds
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.nanoseconds
 
 /**
  * A [Decision] is the outcome of a [Schedule].
@@ -105,7 +105,7 @@ fun interface Schedule {
       fun delay(duration: Duration): Schedule = Delay(duration)
 
       fun exponential(duration: Duration, factor: Double): Schedule =
-         delay { (duration.inMilliseconds * (factor * it + 1)).toLong().milliseconds }
+         delay { (duration.inWholeMilliseconds * (factor * it + 1)).toLong().milliseconds }
 
       /**
        * Returns a new [Schedule] that continues forever and delays a duration calculated
@@ -137,7 +137,7 @@ fun Schedule.jittered(): Schedule = jittered(0.0, 2.0)
  * Returns a new [Schedule] that randomly modifies the size of the delays of this schedule.
  */
 fun Schedule.jittered(min: Double, max: Double): Schedule = delayM {
-   (it.inNanoseconds * Random.nextDouble(min, max)).nanoseconds
+   (it.inWholeNanoseconds * Random.nextDouble(min, max)).nanoseconds
 }
 
 /**

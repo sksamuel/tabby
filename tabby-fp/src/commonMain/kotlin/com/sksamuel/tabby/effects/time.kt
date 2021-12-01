@@ -1,6 +1,7 @@
 package com.sksamuel.tabby.effects
 
 import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
 /**
@@ -8,6 +9,7 @@ import kotlin.time.measureTimedValue
  *
  * Any errors in [onResult] are discarded.
  */
+@ExperimentalTime
 suspend fun <A> time(onResult: suspend (Duration) -> Unit, f: suspend () -> Result<A>): Result<A> {
    val (result, time) = measureTimedValue { f() }
    runCatching { onResult(time) }
