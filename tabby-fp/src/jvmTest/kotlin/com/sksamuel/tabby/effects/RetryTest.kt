@@ -6,9 +6,11 @@ import com.sksamuel.tabby.results.success
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.longs.shouldBeBetween
 import io.kotest.matchers.shouldBe
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
-import kotlin.time.milliseconds
 
+@OptIn(ExperimentalTime::class)
 class RetryTest : FunSpec() {
    init {
 
@@ -33,7 +35,7 @@ class RetryTest : FunSpec() {
       test("retry with delayed schedule") {
          measureTime {
             retry(Schedule.iterations(3).delay(100.milliseconds)) { "boom".failure() }
-         }.toLongMilliseconds().shouldBeBetween(300, 400)
+         }.inWholeMilliseconds.shouldBeBetween(300, 400)
       }
    }
 }

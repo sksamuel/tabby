@@ -4,7 +4,7 @@ import com.sksamuel.tabby.results.success
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.longs.shouldBeBetween
 import io.kotest.matchers.shouldBe
-import kotlin.time.milliseconds
+import kotlin.time.Duration.Companion.milliseconds
 
 class ScheduleNTest : FunSpec() {
    init {
