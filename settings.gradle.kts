@@ -9,10 +9,7 @@ pluginManagement {
    }
 }
 
-// std-lib extensions
-include("tabby-core")
-
-// contains functional programming helpers, such as extension methods for Result, effects and Validation
+// std-lib extensions for results, effects and validations
 include("tabby-fp")
 
 // contains jackson modules for fp types
