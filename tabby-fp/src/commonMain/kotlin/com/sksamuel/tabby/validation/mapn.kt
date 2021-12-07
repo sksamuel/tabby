@@ -7,7 +7,7 @@ fun <A, B, RETURN, ERROR> Validated.Companion.mapN(
 ): Validated<ERROR, RETURN> {
    val errors = listOf(a, b).filterIsInstance<Validated.Invalid<ERROR>>().flatMap { it.errors }
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
-      f(a.getValueUnsafe(), b.getValueUnsafe()).valid()
+      f(a.getOrThrow(), b.getOrThrow()).valid()
    }
 }
 
@@ -19,7 +19,7 @@ fun <A, B, C, RETURN, ERROR> Validated.Companion.mapN(
 ): Validated<ERROR, RETURN> {
    val errors = listOf(a, b, c).filterIsInstance<Validated.Invalid<ERROR>>().flatMap { it.errors }
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
-      f(a.getValueUnsafe(), b.getValueUnsafe(), c.getValueUnsafe()).valid()
+      f(a.getOrThrow(), b.getOrThrow(), c.getOrThrow()).valid()
    }
 }
 
@@ -32,7 +32,7 @@ fun <A, B, C, D, RETURN, ERROR> Validated.Companion.mapN(
 ): Validated<ERROR, RETURN> {
    val errors = listOf(a, b, c, d).filterIsInstance<Validated.Invalid<ERROR>>().flatMap { it.errors }
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
-      f(a.getValueUnsafe(), b.getValueUnsafe(), c.getValueUnsafe(), d.getValueUnsafe()).valid()
+      f(a.getOrThrow(), b.getOrThrow(), c.getOrThrow(), d.getOrThrow()).valid()
    }
 }
 
@@ -46,7 +46,7 @@ fun <A, B, C, D, E, RETURN, ERROR> Validated.Companion.mapN(
 ): Validated<ERROR, RETURN> {
    val errors = listOf(a, b, c, d, e).filterIsInstance<Validated.Invalid<ERROR>>().flatMap { it.errors }
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
-      f(a.getValueUnsafe(), b.getValueUnsafe(), c.getValueUnsafe(), d.getValueUnsafe(), e.getValueUnsafe()).valid()
+      f(a.getOrThrow(), b.getOrThrow(), c.getOrThrow(), d.getOrThrow(), e.getOrThrow()).valid()
    }
 }
 
@@ -66,12 +66,12 @@ fun <A, B, C, D, E, F, RETURN, ERROR> Validated.Companion.mapN(
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
       ).valid()
    }
 }
@@ -93,13 +93,13 @@ fun <A, B, C, D, E, F, G, RETURN, ERROR> Validated.Companion.mapN(
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
       ).valid()
    }
 }
@@ -122,14 +122,14 @@ fun <A, B, C, D, E, F, G, H, RETURN, ERROR> Validated.Companion.mapN(
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
       ).valid()
    }
 }
@@ -153,15 +153,15 @@ fun <A, B, C, D, E, F, G, H, I, RETURN, ERROR> Validated.Companion.mapN(
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
       ).valid()
    }
 }
@@ -186,16 +186,16 @@ fun <A, B, C, D, E, F, G, H, I, J, RETURN, ERROR> Validated.Companion.mapN(
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
       ).valid()
    }
 }
@@ -221,17 +221,17 @@ fun <A, B, C, D, E, F, G, H, I, J, K, RETURN, ERROR> Validated.Companion.mapN(
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
-         k.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
+         k.getOrThrow(),
       ).valid()
    }
 }
@@ -258,18 +258,18 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, RETURN, ERROR> Validated.Companion.mapN
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
-         k.getValueUnsafe(),
-         l.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
+         k.getOrThrow(),
+         l.getOrThrow(),
       ).valid()
    }
 }
@@ -297,19 +297,19 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, RETURN, ERROR> Validated.Companion.m
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
-         k.getValueUnsafe(),
-         l.getValueUnsafe(),
-         m.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
+         k.getOrThrow(),
+         l.getOrThrow(),
+         m.getOrThrow(),
       ).valid()
    }
 }
@@ -339,20 +339,20 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, RETURN, ERROR> Validated.Companio
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
-         k.getValueUnsafe(),
-         l.getValueUnsafe(),
-         m.getValueUnsafe(),
-         n.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
+         k.getOrThrow(),
+         l.getOrThrow(),
+         m.getOrThrow(),
+         n.getOrThrow(),
       ).valid()
    }
 }
@@ -383,21 +383,21 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, RETURN, ERROR> Validated.Compa
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
-         k.getValueUnsafe(),
-         l.getValueUnsafe(),
-         m.getValueUnsafe(),
-         n.getValueUnsafe(),
-         o.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
+         k.getOrThrow(),
+         l.getOrThrow(),
+         m.getOrThrow(),
+         n.getOrThrow(),
+         o.getOrThrow(),
       ).valid()
    }
 }
@@ -429,22 +429,22 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, RETURN, ERROR> Validated.Co
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
-         k.getValueUnsafe(),
-         l.getValueUnsafe(),
-         m.getValueUnsafe(),
-         n.getValueUnsafe(),
-         o.getValueUnsafe(),
-         p.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
+         k.getOrThrow(),
+         l.getOrThrow(),
+         m.getOrThrow(),
+         n.getOrThrow(),
+         o.getOrThrow(),
+         p.getOrThrow(),
       ).valid()
    }
 }
@@ -476,23 +476,23 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, RETURN, ERROR> Validated
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
-         k.getValueUnsafe(),
-         l.getValueUnsafe(),
-         m.getValueUnsafe(),
-         n.getValueUnsafe(),
-         o.getValueUnsafe(),
-         p.getValueUnsafe(),
-         q.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
+         k.getOrThrow(),
+         l.getOrThrow(),
+         m.getOrThrow(),
+         n.getOrThrow(),
+         o.getOrThrow(),
+         p.getOrThrow(),
+         q.getOrThrow(),
       ).valid()
    }
 }
@@ -525,24 +525,24 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, RETURN, ERROR> Valida
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
-         k.getValueUnsafe(),
-         l.getValueUnsafe(),
-         m.getValueUnsafe(),
-         n.getValueUnsafe(),
-         o.getValueUnsafe(),
-         p.getValueUnsafe(),
-         q.getValueUnsafe(),
-         r.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
+         k.getOrThrow(),
+         l.getOrThrow(),
+         m.getOrThrow(),
+         n.getOrThrow(),
+         o.getOrThrow(),
+         p.getOrThrow(),
+         q.getOrThrow(),
+         r.getOrThrow(),
       ).valid()
    }
 }
@@ -576,25 +576,25 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, RETURN, ERROR> Val
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
-         k.getValueUnsafe(),
-         l.getValueUnsafe(),
-         m.getValueUnsafe(),
-         n.getValueUnsafe(),
-         o.getValueUnsafe(),
-         p.getValueUnsafe(),
-         q.getValueUnsafe(),
-         r.getValueUnsafe(),
-         s.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
+         k.getOrThrow(),
+         l.getOrThrow(),
+         m.getOrThrow(),
+         n.getOrThrow(),
+         o.getOrThrow(),
+         p.getOrThrow(),
+         q.getOrThrow(),
+         r.getOrThrow(),
+         s.getOrThrow(),
       ).valid()
    }
 }
@@ -630,26 +630,26 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, RETURN, ERROR> 
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
-         k.getValueUnsafe(),
-         l.getValueUnsafe(),
-         m.getValueUnsafe(),
-         n.getValueUnsafe(),
-         o.getValueUnsafe(),
-         p.getValueUnsafe(),
-         q.getValueUnsafe(),
-         r.getValueUnsafe(),
-         s.getValueUnsafe(),
-         t.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
+         k.getOrThrow(),
+         l.getOrThrow(),
+         m.getOrThrow(),
+         n.getOrThrow(),
+         o.getOrThrow(),
+         p.getOrThrow(),
+         q.getOrThrow(),
+         r.getOrThrow(),
+         s.getOrThrow(),
+         t.getOrThrow(),
       ).valid()
    }
 }
@@ -686,27 +686,27 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, RETURN, ERRO
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
-         k.getValueUnsafe(),
-         l.getValueUnsafe(),
-         m.getValueUnsafe(),
-         n.getValueUnsafe(),
-         o.getValueUnsafe(),
-         p.getValueUnsafe(),
-         q.getValueUnsafe(),
-         r.getValueUnsafe(),
-         s.getValueUnsafe(),
-         t.getValueUnsafe(),
-         u.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
+         k.getOrThrow(),
+         l.getOrThrow(),
+         m.getOrThrow(),
+         n.getOrThrow(),
+         o.getOrThrow(),
+         p.getOrThrow(),
+         q.getOrThrow(),
+         r.getOrThrow(),
+         s.getOrThrow(),
+         t.getOrThrow(),
+         u.getOrThrow(),
       ).valid()
    }
 }
@@ -744,28 +744,28 @@ fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, RETURN, E
 
    return if (errors.isNotEmpty()) Validated.Invalid(errors) else {
       fn(
-         a.getValueUnsafe(),
-         b.getValueUnsafe(),
-         c.getValueUnsafe(),
-         d.getValueUnsafe(),
-         e.getValueUnsafe(),
-         f.getValueUnsafe(),
-         g.getValueUnsafe(),
-         h.getValueUnsafe(),
-         i.getValueUnsafe(),
-         j.getValueUnsafe(),
-         k.getValueUnsafe(),
-         l.getValueUnsafe(),
-         m.getValueUnsafe(),
-         n.getValueUnsafe(),
-         o.getValueUnsafe(),
-         p.getValueUnsafe(),
-         q.getValueUnsafe(),
-         r.getValueUnsafe(),
-         s.getValueUnsafe(),
-         t.getValueUnsafe(),
-         u.getValueUnsafe(),
-         v.getValueUnsafe(),
+         a.getOrThrow(),
+         b.getOrThrow(),
+         c.getOrThrow(),
+         d.getOrThrow(),
+         e.getOrThrow(),
+         f.getOrThrow(),
+         g.getOrThrow(),
+         h.getOrThrow(),
+         i.getOrThrow(),
+         j.getOrThrow(),
+         k.getOrThrow(),
+         l.getOrThrow(),
+         m.getOrThrow(),
+         n.getOrThrow(),
+         o.getOrThrow(),
+         p.getOrThrow(),
+         q.getOrThrow(),
+         r.getOrThrow(),
+         s.getOrThrow(),
+         t.getOrThrow(),
+         u.getOrThrow(),
+         v.getOrThrow(),
       ).valid()
    }
 }
