@@ -29,14 +29,7 @@ sealed class Validated<out E, out A> {
       is Invalid -> this
    }
 
-   /**
-    * Returns the value of this Validated if it is an instance of Valid.
-    * Otherwise throws an [IllegalStateException].
-    */
-   @Deprecated("use getValueUnsafe", ReplaceWith("getValueUnsafe()"))
-   fun getUnsafe(): A = getValueUnsafe()
-
-   fun getValueUnsafe(): A = when (this) {
+   fun getOrThrow(): A = when (this) {
       is Invalid -> throw IllegalStateException("Not a valid instance, was $this")
       is Valid -> this.value
    }
@@ -45,7 +38,7 @@ sealed class Validated<out E, out A> {
     * Returns the errors contained in this Validated if it is an instance of Invalid.
     * Otherwise throws an [IllegalStateException].
     */
-   fun getErrorsUnsafe(): List<E> = when (this) {
+   fun getErrorsOrThrow(): List<E> = when (this) {
       is Invalid -> this.errors
       is Valid -> throw IllegalStateException("Not a invalid instance, was $this")
    }
@@ -76,14 +69,14 @@ inline fun <A, B, E> Validated<E, A>.flatMap(f: (A) -> Validated<E, B>): Validat
    is Validated.Invalid -> this
 }
 
-inline fun <A, E> Validated<E, A>.getValueOrElse(f: (List<E>) -> A): A = when (this) {
+inline fun <A, E> Validated<E, A>.getOrElse(f: (List<E>) -> A): A = when (this) {
    is Validated.Invalid -> f(this.errors)
    is Validated.Valid -> this.value
 }
 
 fun <ERROR, A> List<Validated<ERROR, A>>.traverse(): Validated<ERROR, List<A>> {
    val errors = this.filterIsInstance<Validated.Invalid<ERROR>>().flatMap { it.errors }
-   return if (errors.isNotEmpty()) errors.invalid() else this.map { it.getUnsafe() }.valid()
+   return if (errors.isNotEmpty()) errors.invalid() else this.map { it.getOrThrow() }.valid()
 }
 
 fun <A> A.valid(): Validated<Nothing, A> = Validated.Valid(this)
