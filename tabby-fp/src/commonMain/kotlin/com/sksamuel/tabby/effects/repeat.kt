@@ -1,7 +1,6 @@
 package com.sksamuel.tabby.effects
 
 import kotlinx.coroutines.delay
-import kotlin.time.ExperimentalTime
 
 /**
  * Repeats this effect according to the specified schedule or until the first failure.
@@ -23,7 +22,6 @@ suspend fun <A> retry(schedule: Schedule, f: suspend () -> Result<A>): Result<A>
 /**
  * Runs the given effect while the predicate is true.
  */
-@OptIn(ExperimentalTime::class)
 internal suspend fun <A> repeatWhile(
    schedule: Schedule,
    f: suspend () -> Result<A>,
@@ -34,7 +32,7 @@ internal suspend fun <A> repeatWhile(
    while (predicate(result)) {
       when (val decision = next.decide()) {
          is Decision.Continue -> {
-            delay(decision.delay)
+            delay(decision.delay.inWholeMilliseconds)
             result = f()
             next = decision.next
          }

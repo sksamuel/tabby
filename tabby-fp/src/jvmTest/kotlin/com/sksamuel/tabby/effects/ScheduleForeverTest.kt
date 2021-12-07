@@ -7,9 +7,7 @@ import io.kotest.matchers.longs.shouldBeBetween
 import io.kotest.matchers.shouldBe
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.ExperimentalTime
 
-@ExperimentalTime
 class ScheduleForeverTest : FunSpec() {
    init {
 
