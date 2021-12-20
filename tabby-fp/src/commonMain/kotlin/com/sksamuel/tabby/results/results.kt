@@ -14,6 +14,9 @@ fun <A> A?.failureIfNull(): Result<A> =
 fun <A> A?.failureIfNull(message: String): Result<A> =
    if (this == null) Result.failure(RuntimeException(message)) else Result.success(this)
 
+fun <A> A?.failureIfNull(f: () -> Exception): Result<A> =
+   if (this == null) Result.failure(f()) else Result.success(this)
+
 /**
  * If this [Result] is a failure, returns [other], otherwise returns this.
  */
