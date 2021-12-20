@@ -5,7 +5,7 @@ package com.sksamuel.tabby.results
  */
 fun <A> Result<A>.orElse(other: Result<A>): Result<A> = if (this.isFailure) other else this
 
-fun <A> Result<A>.orElse(f: () -> Result<A>): Result<A> = if (this.isFailure) f() else this
+inline fun <A> Result<A>.orElse(f: () -> Result<A>): Result<A> = if (this.isFailure) f() else this
 
 /**
  * Returns a successful [Result] which contains Unit.
