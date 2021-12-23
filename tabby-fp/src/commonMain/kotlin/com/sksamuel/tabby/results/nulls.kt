@@ -35,7 +35,7 @@ fun <A> Result<A?>.absolve(f: () -> Exception): Result<A> = fold(
    { Result.failure(it) }
 )
 
-fun <A> A?.forEach(f: (A) -> Unit) {
+inline fun <A> A?.forEach(f: (A) -> Unit) {
    if (this != null) f(this)
 }
 
