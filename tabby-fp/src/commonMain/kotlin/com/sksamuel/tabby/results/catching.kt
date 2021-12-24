@@ -1,7 +1,13 @@
 package com.sksamuel.tabby.results
 
-object Catch {
-   fun <A> Result<A>.get() = this.getOrThrow()
+object Catching {
+   fun <A> Result<A>.bind() = this.getOrThrow()
 }
 
-inline fun <R> catching(f: Catch.() -> R): Result<R> = runCatching { Catch.f() }
+inline fun <R> catching(f: Catching.() -> R): Result<R> {
+   return try {
+      Result.success(Catching.f())
+   } catch (e: Throwable) {
+      Result.failure(e)
+   }
+}
