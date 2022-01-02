@@ -1,12 +1,12 @@
 package com.sksamuel.tabby.results
 
-object Catching {
+interface Catching {
    fun <A> Result<A>.bind() = this.getOrThrow()
 }
 
 inline fun <R> catching(f: Catching.() -> R): Result<R> {
    return try {
-      Result.success(Catching.f())
+      Result.success(object : Catching {}.f())
    } catch (e: Throwable) {
       Result.failure(e)
    }
