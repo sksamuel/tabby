@@ -2,7 +2,7 @@ package com.sksamuel.tabby.results
 
 /**
  * If this [Result] is a success that contains null, will replace the null with the
- * value of the function [f]. Otherwise, returns as is..
+ * value of the function [f]. Otherwise, returns as is.
  */
 inline fun <A> Result<A?>.withDefault(f: () -> A): Result<A> {
    return this.fold({ it?.success() ?: f().success() }, { it.failure() })
@@ -24,3 +24,5 @@ inline fun <A, B> Result<A>.flatMap(fn: (A) -> Result<B>): Result<B> =
 inline fun <A> Result<A?>.flatMapNull(fn: () -> Result<A>): Result<A> =
    flatMap { it?.success() ?: fn() }
 
+inline fun <A> Result<A>.mapError(f: (Throwable) -> Throwable): Result<A> =
+   fold({ it.success() }, { f(it).failure() })
