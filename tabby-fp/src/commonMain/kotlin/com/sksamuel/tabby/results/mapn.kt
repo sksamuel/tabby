@@ -32,7 +32,7 @@ inline fun <A, B, C, D, R> Result.Companion.mapN(
    if (a.isFailure) return a as Result<R>
    if (b.isFailure) return b as Result<R>
    if (c.isFailure) return c as Result<R>
-   if (d.isFailure) return c as Result<R>
+   if (d.isFailure) return d as Result<R>
    return fn(a.getOrThrow(), b.getOrThrow(), c.getOrThrow(), d.getOrThrow()).success()
 }
 
@@ -47,7 +47,7 @@ inline fun <A, B, C, D, E, R> Result.Companion.mapN(
    if (a.isFailure) return a as Result<R>
    if (b.isFailure) return b as Result<R>
    if (c.isFailure) return c as Result<R>
-   if (d.isFailure) return c as Result<R>
-   if (e.isFailure) return c as Result<R>
+   if (d.isFailure) return d as Result<R>
+   if (e.isFailure) return e as Result<R>
    return fn(a.getOrThrow(), b.getOrThrow(), c.getOrThrow(), d.getOrThrow(), e.getOrThrow()).success()
 }
