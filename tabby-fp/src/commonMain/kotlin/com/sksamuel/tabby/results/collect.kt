@@ -28,3 +28,8 @@ fun <A> Collection<Result<A>>.collect(): Pair<List<Throwable>, List<A>> {
    val values = successes.mapNotNull { it.getOrNull() }
    return Pair(throwables, values)
 }
+
+fun <A, B> Collection<A>.collectBy(f: (A) -> Result<B>): Pair<List<Throwable>, List<A>> {
+   val (failures, successes) = this.partition { f(it).isFailure }
+   return Pair(failures.map { f(it).exceptionOrThrow() }, successes)
+}
