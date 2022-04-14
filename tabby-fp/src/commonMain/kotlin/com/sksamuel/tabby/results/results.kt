@@ -16,4 +16,4 @@ fun <A> Result<Result<A>>.flatten(): Result<A> = this.fold({ it }, { it.failure(
 
 fun <A> Result<A>.exceptionOrThrow() = this.exceptionOrNull() ?: throw IllegalStateException("Expected exception")
 
-fun <A> Result<A>.onSuccessIfNotNull(f: (A) -> Unit) = this.onSuccess { if (it != null) f(it) }
+fun <A> Result<A?>.onSuccessIfNotNull(f: (A) -> Unit) = this.onSuccess { if (it != null) f(it) }
