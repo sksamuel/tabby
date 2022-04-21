@@ -37,7 +37,7 @@ kotlin {
       jvm {
          compilations.all {
             kotlinOptions {
-               jvmTarget = "1.8"
+               jvmTarget = "11"
             }
          }
       }
@@ -45,7 +45,7 @@ kotlin {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-   kotlinOptions.jvmTarget = "1.8"
+   kotlinOptions.jvmTarget = "11"
    kotlinOptions.apiVersion = "1.6"
 }
 
