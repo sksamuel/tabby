@@ -11,13 +11,7 @@ repositories {
 kotlin {
 
    targets {
-      jvm {
-         compilations.all {
-            kotlinOptions {
-               jvmTarget = "1.8"
-            }
-         }
-      }
+      jvm()
    }
 
    sourceSets {
@@ -50,8 +44,8 @@ kotlin {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-   kotlinOptions.jvmTarget = "1.8"
-   kotlinOptions.apiVersion = "1.5"
+   kotlinOptions.jvmTarget = "11"
+   kotlinOptions.apiVersion = "1.6"
 }
 
 tasks.named<Test>("jvmTest") {
