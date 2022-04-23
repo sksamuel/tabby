@@ -42,8 +42,8 @@ fun Decision.plusDuration(duration: Duration): Decision {
 }
 
 /**
- * A Schedule returns a [Decision]. A schedule can decide to [Halt] the effect, or
- * [Continue] the effect with a delay. The delay can be zero.
+ * A Schedule returns a [Decision]. A schedule can decide to [Decision.Halt] the effect, or
+ * [Decision.Continue] the effect with a delay. The delay can be zero.
  */
 fun interface Schedule {
 
@@ -134,7 +134,8 @@ fun interface Schedule {
 fun Schedule.jittered(): Schedule = jittered(0.0, 2.0)
 
 /**
- * Returns a new [Schedule] that randomly modifies the size of the delays of this schedule.
+ * Returns a new [Schedule] that randomly modifies the size of the delays of this schedule
+ * by adding a random value between [min] and [max].
  */
 fun Schedule.jittered(min: Double, max: Double): Schedule = delayM {
    (it.inWholeNanoseconds * Random.nextDouble(min, max)).nanoseconds
