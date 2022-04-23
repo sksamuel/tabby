@@ -20,6 +20,9 @@ data class NonEmptyList<A> private constructor(private val values: List<A>) {
    operator fun plus(other: NonEmptyList<A>): NonEmptyList<A> = NonEmptyList(values + other.values)
 
    fun asList(): List<A> = values
+
+   fun <B> map(f: (A) -> B): NonEmptyList<B> = NonEmptyList(values.map(f))
+   fun flatMap(f: (A) -> NonEmptyList<A>): NonEmptyList<A> = map(f).flatten()
 }
 
 fun <A> NonEmptyList<NonEmptyList<A>>.flatten(): NonEmptyList<A> = NonEmptyList.unsafe(asList().flatMap { it.asList() })
