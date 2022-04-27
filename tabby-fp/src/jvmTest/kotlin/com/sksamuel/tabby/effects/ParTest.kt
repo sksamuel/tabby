@@ -1,3 +1,9 @@
+import com.sksamuel.tabby.effects.parN
+import com.sksamuel.tabby.results.success
+import kotlinx.coroutines.delay
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
+
 //package com.sksamuel.tabby.effects
 //
 //import com.sksamuel.tabby.Tuple3
@@ -163,3 +169,22 @@
 //      }
 //   }
 //}
+
+
+
+@OptIn(ExperimentalTime::class)
+suspend fun main() {
+   repeat(10) {
+      val time = measureTime {
+         repeat(1000) {
+            parN(
+               { delay(1).success() },
+               { delay(1).success() },
+               { delay(1).success() },
+               { delay(1).success() },
+            )
+         }
+      }
+      println(time)
+   }
+}
