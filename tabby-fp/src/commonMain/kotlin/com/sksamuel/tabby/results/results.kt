@@ -30,7 +30,7 @@ fun <A> Result<A>.failIf(p: (A) -> Boolean, exception: Exception) =
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns false,
  * then a failed Result is returned, otherwise this is returned.
  */
-fun <A> Result<A>.failIfNot(p: (A) -> Boolean) = failIfNot(p, "failure")
+fun <A> Result<A>.failIfNot(p: (A) -> Boolean) = failIfNot(p, RuntimeException("failure"))
 
 /**
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns false,
