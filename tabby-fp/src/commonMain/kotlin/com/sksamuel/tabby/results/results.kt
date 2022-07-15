@@ -50,6 +50,8 @@ fun <A> Result<A>.failIfNot(p: (A) -> Boolean, exception: Exception) =
  */
 fun Result.Companion.unit() = Unit.success()
 
+fun <A> Result<A>.omit(): Result<Unit> = this.flatMap { Unit.success() }
+
 fun <A> Result<Result<A>>.flatten(): Result<A> = this.fold({ it }, { it.failure() })
 
 fun <A> Result<A>.exceptionOrThrow() = this.exceptionOrNull() ?: throw IllegalStateException("Expected exception")
