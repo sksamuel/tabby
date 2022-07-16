@@ -4,9 +4,8 @@ package com.sksamuel.tabby.results
  * If this [Result] is a success that contains null, will replace the null with the
  * value of the function [f]. Otherwise, returns as is.
  */
-inline fun <A> Result<A?>.withDefault(f: () -> A): Result<A> {
-   return this.fold({ it?.success() ?: f().success() }, { it.failure() })
-}
+@Deprecated("Use replaceNull", ReplaceWith("replaceNull(f)"))
+inline fun <A> Result<A?>.withDefault(f: () -> A): Result<A> = replaceNull(f)
 
 /**
  * Maps this [Result] if it is a sucess that does not contain null. If the Result is a failure,

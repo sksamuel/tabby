@@ -39,3 +39,6 @@ inline fun <A> A?.forEach(f: (A) -> Unit) {
    if (this != null) f(this)
 }
 
+inline fun <A> Result<A?>.replaceNull(f: () -> A): Result<A> {
+   return this.fold({ it?.success() ?: f().success() }, { it.failure() })
+}
