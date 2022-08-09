@@ -1,7 +1,5 @@
 package com.sksamuel.tabby.results
 
-import kotlin.jvm.JvmName
-
 /**
  * If this [Result] is a failure, returns [other], otherwise returns this.
  */
@@ -44,9 +42,7 @@ fun <A> Result<A>.failIfNot(p: (A) -> Boolean, message: String) = failIfNot(p, R
  * If this [Result] is a success containing null, returns a failure with the given message.
  * Otherwise, returns the input.
  */
-@JvmName("failIfNullString")
-fun <A> Result<A?>.failIfNull(fn: () -> String): Result<A> =
-   flatMap { it?.success() ?: Result.failure(Exception(fn())) }
+fun <A> Result<A?>.failIfNull(message: String): Result<A> = failIfNull { Exception(message) }
 
 /**
  * If this [Result] is a success containing null, returns a failure with the given exception.
