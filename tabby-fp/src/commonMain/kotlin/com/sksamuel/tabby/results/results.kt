@@ -51,6 +51,19 @@ fun <A> Result<A?>.failIfNull(message: String): Result<A> = failIfNull { Excepti
 fun <A> Result<A?>.failIfNull(fn: () -> Exception): Result<A> =
    flatMap { it?.success() ?: Result.failure(fn()) }
 
+/**
+ * If this [Result] is a success containing a non-null, returns a failure with the given message.
+ * Otherwise, returns the input.
+ */
+fun <A> Result<A?>.failIfNotNull(message: String): Result<A> = failIfNotNull { Exception(message) }
+
+/**
+ * If this [Result] is a success containing a non-null, returns a failure with the given exception.
+ * Otherwise, returns the input.
+ */
+fun <A> Result<A?>.failIfNotNull(fn: () -> Exception): Result<A> =
+   flatMap { it?.success() ?: Result.failure(fn()) }
+
 
 /**
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns false,
