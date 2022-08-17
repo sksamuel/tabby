@@ -46,7 +46,7 @@ kotlin {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
    kotlinOptions.jvmTarget = "11"
-   kotlinOptions.apiVersion = "1.6"
+   kotlinOptions.apiVersion = "1.7"
 }
 
 val publications: PublicationContainer = (extensions.getByName("publishing") as PublishingExtension).publications
