@@ -171,20 +171,19 @@ import kotlin.time.measureTime
 //}
 
 
-
-@OptIn(ExperimentalTime::class)
-suspend fun main() {
-   repeat(10) {
-      val time = measureTime {
-         repeat(1000) {
-            parN(
-               { delay(1).success() },
-               { delay(1).success() },
-               { delay(1).success() },
-               { delay(1).success() },
-            )
-         }
-      }
-      println(time)
-   }
-}
+//
+//suspend fun main() {
+//   repeat(10) {
+//      val time = measureTime {
+//         repeat(1000) {
+//            parN(
+//               { delay(1).success() },
+//               { delay(1).success() },
+//               { delay(1).success() },
+//               { delay(1).success() },
+//            )
+//         }
+//      }
+//      println(time)
+//   }
+//}
