@@ -11,7 +11,7 @@ inline fun <A, B> Result<List<A>>.mapElements(f: (A) -> B): Result<List<B>> = ma
 /**
  * If the [Result] is a success, filters the contained list, otherwise returns this.
  */
-inline fun <A, B> Result<List<A>>.filterElements(p: (A) -> Boolean): Result<List<A>> = map { it.filter(p) }
+inline fun <A> Result<List<A>>.filterElements(p: (A) -> Boolean): Result<List<A>> = map { it.filter(p) }
 
 fun <A> Result<List<A>>.firstOrNull(f: (A) -> Boolean): Result<A?> = map { it.firstOrNull(f) }
 
