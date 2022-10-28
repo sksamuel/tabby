@@ -21,7 +21,7 @@ fun <A> A?.failureIfNull(f: () -> Exception): Result<A> =
  * If this Result is a success that contains null, then returns a failure containing
  * the given message. Otherwise, returns this.
  */
-@Deprecated("use failIfnull")
+@Deprecated("use failIfNull", ReplaceWith("failIfNull(message)"))
 fun <A> Result<A?>.absolve(message: String): Result<A> = fold(
    { if (it == null) Result.failure(Exception(message)) else Result.success(it) },
    { Result.failure(it) }
@@ -31,7 +31,7 @@ fun <A> Result<A?>.absolve(message: String): Result<A> = fold(
  * If this Result is a success that contains null, then returns a failure containing
  * the given message. Otherwise, returns this.
  */
-@Deprecated("use failIfnull")
+@Deprecated("use failIfNull", ReplaceWith("failIfNull(f)"))
 fun <A> Result<A?>.absolve(f: () -> Exception): Result<A> = fold(
    { if (it == null) Result.failure(f()) else Result.success(it) },
    { Result.failure(it) }
