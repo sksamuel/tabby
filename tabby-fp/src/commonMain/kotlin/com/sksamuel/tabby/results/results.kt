@@ -11,19 +11,33 @@ inline fun <A> Result<A>.orElse(f: () -> Result<A>): Result<A> = if (this.isFail
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
  * then a failed Result is returned, otherwise this is returned.
  */
-fun <A> Result<A>.failIf(p: (A) -> Boolean) = failIf(p, RuntimeException("failure"))
+fun <A> Result<A>.failIf(p: (A) -> Boolean): Result<A> = failIf(p, RuntimeException("failure"))
 
 /**
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
  * then a failed Result is returned, otherwise this is returned.
  */
-fun <A> Result<A>.failIf(p: (A) -> Boolean, message: String) = failIf(p, RuntimeException(message))
+fun <A> Result<A>.failIf(message: String, p: (A) -> Boolean): Result<A> = failIf(RuntimeException(message), p)
 
 /**
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
  * then a failed Result is returned, otherwise this is returned.
  */
-fun <A> Result<A>.failIf(p: (A) -> Boolean, exception: Exception) =
+@Deprecated("use", ReplaceWith("failIf(message, p)"))
+fun <A> Result<A>.failIf(p: (A) -> Boolean, message: String): Result<A> = failIf(message, p)
+
+/**
+ * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
+ * then a failed Result is returned, otherwise this is returned.
+ */
+@Deprecated("Use failIf(exception, p)", ReplaceWith("failIf(exception, p)"))
+fun <A> Result<A>.failIf(p: (A) -> Boolean, exception: Exception): Result<A> = failIf(exception, p)
+
+/**
+ * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
+ * then a failed Result is returned containing the given [exception], otherwise [this] is returned.
+ */
+fun <A> Result<A>.failIf(exception: Exception, p: (A) -> Boolean): Result<A> =
    flatMap { if (p(it)) exception.failure() else it.success() }
 
 /**

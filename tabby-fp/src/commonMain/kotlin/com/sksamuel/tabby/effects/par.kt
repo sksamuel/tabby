@@ -11,12 +11,18 @@ import kotlinx.coroutines.coroutineScope
 
 private val emptyEffect: () -> Result<Unit> = { Result.success(Unit) }
 
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
 suspend fun <A, B> parN(
    effectA: suspend () -> Result<A>,
    effectB: suspend () -> Result<B>,
 ): Result<Pair<A, B>> =
    parN(effectA, effectB, emptyEffect, emptyEffect, emptyEffect, emptyEffect).map { Pair(it.a, it.b) }
 
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
 suspend fun <A, B, C> parN(
    effectA: suspend () -> Result<A>,
    effectB: suspend () -> Result<B>,
@@ -24,6 +30,9 @@ suspend fun <A, B, C> parN(
 ): Result<Triple<A, B, C>> =
    parN(effectA, effectB, effectC, emptyEffect, emptyEffect, emptyEffect).map { Triple(it.a, it.b, it.c) }
 
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
 suspend fun <A, B, C, D> parN(
    effectA: suspend () -> Result<A>,
    effectB: suspend () -> Result<B>,
@@ -32,6 +41,9 @@ suspend fun <A, B, C, D> parN(
 ): Result<Tuple4<A, B, C, D>> =
    parN(effectA, effectB, effectC, effectD, emptyEffect, emptyEffect).map { Tuple4(it.a, it.b, it.c, it.d) }
 
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
 suspend fun <A, B, C, D, E> parN(
    effectA: suspend () -> Result<A>,
    effectB: suspend () -> Result<B>,
@@ -41,6 +53,9 @@ suspend fun <A, B, C, D, E> parN(
 ): Result<Tuple5<A, B, C, D, E>> =
    parN(effectA, effectB, effectC, effectD, effectE, emptyEffect).map { Tuple5(it.a, it.b, it.c, it.d, it.e) }
 
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
 suspend fun <A, B, C, D, E, F> parN(
    effectA: suspend () -> Result<A>,
    effectB: suspend () -> Result<B>,
@@ -52,6 +67,9 @@ suspend fun <A, B, C, D, E, F> parN(
    parN(effectA, effectB, effectC, effectD, effectE, effectF, emptyEffect, emptyEffect)
       .map { Tuple6(it.a, it.b, it.c, it.d, it.e, it.f) }
 
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
 suspend fun <A, B, C, D, E, F, G> parN(
    effectA: suspend () -> Result<A>,
    effectB: suspend () -> Result<B>,
@@ -64,6 +82,9 @@ suspend fun <A, B, C, D, E, F, G> parN(
    parN(effectA, effectB, effectC, effectD, effectE, effectF, effectG, emptyEffect)
       .map { Tuple7(it.a, it.b, it.c, it.d, it.e, it.f, it.g) }
 
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
 suspend fun <A, B, C, D, E, F, G, H> parN(
    effectA: suspend () -> Result<A>,
    effectB: suspend () -> Result<B>,
