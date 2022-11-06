@@ -1,12 +1,18 @@
 package com.sksamuel.tabby.results
 
-@Deprecated("use mapElements")
+@Deprecated("use mapElements", ReplaceWith("mapElements(f)"))
 inline fun <A, B> Result<List<A>>.mapList(f: (A) -> B): Result<List<B>> = mapElements(f)
 
 /**
  * If the [Result] is a success, maps over each element of the contained list, otherwise returns this.
  */
 inline fun <A, B> Result<List<A>>.mapElements(f: (A) -> B): Result<List<B>> = map { it.map(f) }
+
+/**
+ * If the [Result] is a success, maps over each element of the contained list, otherwise returns this.
+ * If the function returns null, the result is ignored and filtered.
+ */
+inline fun <A, B> Result<List<A>>.mapElementsNotNull(f: (A) -> B?): Result<List<B>> = map { it.mapNotNull(f) }
 
 /**
  * If the [Result] is a success, filters the contained list, otherwise returns this.
