@@ -32,5 +32,5 @@ inline fun <A> Result<A?>.flatMapIfNull(fn: () -> Result<A>): Result<A> =
 inline fun <A> Result<A>.mapError(f: (Throwable) -> Throwable): Result<A> =
    fold({ it.success() }, { f(it).failure() })
 
-inline fun <A> Result<A>.flatApply(f: (A) -> Result<Unit>): Result<A> =
+inline fun <A> Result<A>.flatApply(f: (A) -> Result<*>): Result<A> =
    flatMap { a -> f(a).map { a } }
