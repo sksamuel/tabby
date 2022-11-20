@@ -11,13 +11,13 @@ inline fun <A> Result<A>.orElse(f: () -> Result<A>): Result<A> = if (this.isFail
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
  * then a failed Result is returned, otherwise this is returned.
  */
-fun <A> Result<A>.failIf(p: (A) -> Boolean): Result<A> = failIf(p, RuntimeException("failure"))
+inline fun <A> Result<A>.failIf(p: (A) -> Boolean): Result<A> = failIf(RuntimeException("failure"), p)
 
 /**
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
  * then a failed Result is returned, otherwise this is returned.
  */
-fun <A> Result<A>.failIf(message: String, p: (A) -> Boolean): Result<A> = failIf(RuntimeException(message), p)
+inline fun <A> Result<A>.failIf(message: String, p: (A) -> Boolean): Result<A> = failIf(RuntimeException(message), p)
 
 /**
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
@@ -37,20 +37,20 @@ fun <A> Result<A>.failIf(p: (A) -> Boolean, exception: Exception): Result<A> = f
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
  * then a failed Result is returned containing the given [exception], otherwise [this] is returned.
  */
-fun <A> Result<A>.failIf(exception: Exception, p: (A) -> Boolean): Result<A> =
+inline fun <A> Result<A>.failIf(exception: Exception, p: (A) -> Boolean): Result<A> =
    flatMap { if (p(it)) exception.failure() else it.success() }
 
 /**
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns false,
  * then a failed Result is returned, otherwise this is returned.
  */
-fun <A> Result<A>.failIfNot(p: (A) -> Boolean) = failIfNot(p, RuntimeException("failure"))
+inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean) = failIfNot(p, RuntimeException("failure"))
 
 /**
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns false,
  * then a failed Result is returned, otherwise this is returned.
  */
-fun <A> Result<A>.failIfNot(p: (A) -> Boolean, message: String) = failIfNot(p, RuntimeException(message))
+inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean, message: String) = failIfNot(p, RuntimeException(message))
 
 /**
  * If this [Result] is a success containing null, returns a failure with the given message.
@@ -62,7 +62,7 @@ fun <A> Result<A?>.failIfNull(message: String): Result<A> = failIfNull { Excepti
  * If this [Result] is a success containing null, returns a failure with the given exception.
  * Otherwise, returns the input.
  */
-fun <A> Result<A?>.failIfNull(fn: () -> Exception): Result<A> =
+inline fun <A> Result<A?>.failIfNull(fn: () -> Exception): Result<A> =
    flatMap { it?.success() ?: Result.failure(fn()) }
 
 /**
@@ -75,15 +75,14 @@ fun <A> Result<A?>.failIfNotNull(message: String): Result<A> = failIfNotNull { E
  * If this [Result] is a success containing a non-null, returns a failure with the given exception.
  * Otherwise, returns the input.
  */
-fun <A> Result<A?>.failIfNotNull(fn: () -> Exception): Result<A> =
+inline fun <A> Result<A?>.failIfNotNull(fn: () -> Exception): Result<A> =
    flatMap { it?.success() ?: Result.failure(fn()) }
-
 
 /**
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns false,
  * then a failed Result is returned, otherwise this is returned.
  */
-fun <A> Result<A>.failIfNot(p: (A) -> Boolean, exception: Exception) =
+inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean, exception: Exception) =
    flatMap { if (!p(it)) exception.failure() else it.success() }
 
 /**
