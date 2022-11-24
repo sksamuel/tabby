@@ -79,6 +79,8 @@ fun <A> Result<A?>.failIfNull(message: String): Result<A> = failIfNull { Excepti
 inline fun <A> Result<A?>.failIfNull(fn: () -> Exception): Result<A> =
    flatMap { it?.success() ?: Result.failure(fn()) }
 
+fun <A> Result<A?>.failIfNull() = failIfNull { NoSuchElementException() }
+
 /**
  * If this [Result] is a success containing a non-null, returns a failure with the given message.
  * Otherwise, returns the input.
