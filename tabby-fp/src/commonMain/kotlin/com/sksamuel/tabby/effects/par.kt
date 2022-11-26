@@ -124,3 +124,19 @@ suspend fun <A, B, C, D, E, F, G, H> parN(
       Tuple8(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await())
    }
 }
+
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
+suspend fun <A> parN(
+   vararg effects: suspend () -> Result<A>,
+): Result<List<A>> = runCatching {
+   coroutineScope {
+      val defers = effects.map {
+         async {
+            it.invoke().getOrThrow()
+         }
+      }
+      awaitAll(*defers.toTypedArray())
+   }
+}
