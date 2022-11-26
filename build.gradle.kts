@@ -30,6 +30,12 @@ allprojects {
 
    group = "com.sksamuel.tabby"
    version = Ci.publishVersion
+
+   tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+      kotlinOptions.jvmTarget = "11"
+      kotlinOptions.languageVersion = "1.7"
+      kotlinOptions.apiVersion = "1.7"
+   }
 }
 
 kotlin {
@@ -44,10 +50,6 @@ kotlin {
    }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-   kotlinOptions.jvmTarget = "11"
-   kotlinOptions.apiVersion = "1.6"
-}
 
 val publications: PublicationContainer = (extensions.getByName("publishing") as PublishingExtension).publications
 

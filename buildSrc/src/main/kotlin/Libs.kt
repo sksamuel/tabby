@@ -1,6 +1,6 @@
 object Libs {
 
-   const val kotlinVersion = "1.6.21"
+   const val kotlinVersion = "1.7.10"
    const val dokkaVersion = "0.10.1"
 
    object Kotest {
@@ -11,7 +11,7 @@ object Libs {
    }
 
    object Jackson {
-      private const val version = "2.13.3"
+      private const val version = "2.14.0"
       const val core = "com.fasterxml.jackson.core:jackson-core:$version"
       const val databind = "com.fasterxml.jackson.core:jackson-databind:$version"
       const val kotlin = "com.fasterxml.jackson.module:jackson-module-kotlin:$version"
