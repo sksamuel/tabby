@@ -6,7 +6,7 @@ on:
          version:
             description: "The release version"
             required: true
-            default: "2.1."
+            default: "3.0."
          branch:
             description: "The branch to release from"
             required: true
@@ -24,8 +24,8 @@ jobs:
 
          -  uses: actions/setup-java@v3
             with:
-               distribution: "adopt"
-               java-version: "11"
+               distribution: "temurin"
+               java-version: "17"
 
          -  name: publish multiplatform release
             run: ./gradlew publishKotlinMultiplatformPublicationToDeployRepository
