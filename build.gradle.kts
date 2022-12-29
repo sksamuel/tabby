@@ -9,11 +9,11 @@ buildscript {
 
 plugins {
    java
-   kotlin("multiplatform").version(Libs.kotlinVersion)
+   kotlin("multiplatform").version("1.8.0")
    id("java-library")
    id("maven-publish")
    signing
-   id("org.jetbrains.dokka").version(Libs.dokkaVersion)
+   id("org.jetbrains.dokka").version("0.10.1")
 }
 
 tasks {
@@ -32,9 +32,9 @@ allprojects {
    version = Ci.publishVersion
 
    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-      kotlinOptions.jvmTarget = "11"
-      kotlinOptions.languageVersion = "1.7"
-      kotlinOptions.apiVersion = "1.7"
+      kotlinOptions.jvmTarget = "17"
+      kotlinOptions.languageVersion = "1.8"
+      kotlinOptions.apiVersion = "1.8"
    }
 }
 

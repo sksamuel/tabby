@@ -12,7 +12,7 @@ kotlin {
 
    targets {
       jvm()
-      js {
+      js(IR) {
          browser()
          nodejs()
       }
@@ -22,7 +22,7 @@ kotlin {
 
       val commonMain by getting {
          dependencies {
-            implementation(Libs.Coroutines.core)
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
          }
       }
 
@@ -36,9 +36,9 @@ kotlin {
       val jvmTest by getting {
          dependsOn(jvmMain)
          dependencies {
-            implementation(Libs.Kotest.shared)
-            implementation(Libs.Kotest.assertions)
-            implementation(Libs.Kotest.junit5)
+            implementation("io.kotest:kotest-assertions-shared:5.5.4")
+            implementation("io.kotest:kotest-assertions-core:5.5.4")
+            implementation("io.kotest:kotest-runner-junit5:5.5.4")
          }
       }
    }
