@@ -20,10 +20,6 @@ kotlin {
 
    targets {
       jvm()
-      js(IR) {
-         browser()
-         nodejs()
-      }
    }
 
    sourceSets {
@@ -38,6 +34,8 @@ kotlin {
          dependsOn(commonMain)
          dependencies {
             implementation(kotlin("reflect"))
+            implementation("io.ktor:ktor-server-core:2.2.1")
+            implementation("io.ktor:ktor-server-netty:2.2.1")
          }
       }
 

@@ -32,21 +32,18 @@ allprojects {
    version = Ci.publishVersion
 
    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-      kotlinOptions.jvmTarget = "17"
-      kotlinOptions.languageVersion = "1.8"
-      kotlinOptions.apiVersion = "1.8"
+      kotlinOptions {
+         jvmTarget = "17"
+         languageVersion = "1.8"
+         apiVersion = "1.8"
+         freeCompilerArgs = listOf("-Xcontext-receivers")
+      }
    }
 }
 
 kotlin {
    targets {
-      jvm {
-         compilations.all {
-            kotlinOptions {
-               jvmTarget = "11"
-            }
-         }
-      }
+      jvm()
    }
 }
 
