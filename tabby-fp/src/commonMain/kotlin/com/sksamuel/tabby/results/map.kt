@@ -34,3 +34,9 @@ inline fun <A> Result<A>.mapError(f: (Throwable) -> Throwable): Result<A> =
 
 inline fun <A> Result<A>.flatApply(f: (A) -> Result<*>): Result<A> =
    flatMap { a -> f(a).map { a } }
+
+inline fun <A, B> Result<A>.mapIf(p: (A) -> Boolean, f: (A) -> B, g: (A) -> B): Result<B> =
+   map { if (p(it)) f(it) else g(it) }
+
+inline fun <A, B> Result<A>.flatMapIf(p: (A) -> Boolean, f: (A) -> Result<B>, g: (A) -> Result<B>): Result<B> =
+   flatMap { if (p(it)) f(it) else g(it) }
