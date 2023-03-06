@@ -13,6 +13,7 @@ inline fun <A> Result<A>.orElse(f: () -> Result<A>): Result<A> =
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
  * then a failed Result is returned, otherwise this is returned.
  */
+@Deprecated("use variant with a real error")
 inline fun <A> Result<A>.failIf(p: (A) -> Boolean): Result<A> =
    failIf(RuntimeException("failure"), p)
 
@@ -29,13 +30,6 @@ inline fun <A> Result<A>.failIf(message: String, p: (A) -> Boolean): Result<A> =
  */
 inline fun <A> Result<A>.failIf(exceptionFn: (A) -> Exception, p: (A) -> Boolean): Result<A> =
    flatMap { if (p(it)) exceptionFn(it).failure() else it.success() }
-
-/**
- * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
- * then a failed Result is returned, otherwise this is returned.
- */
-inline fun <A> Result<A>.failIf(exceptionFn: (A) -> String, p: (A) -> Boolean): Result<A> =
-   flatMap { if (p(it)) RuntimeException(exceptionFn(it)).failure() else it.success() }
 
 /**
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
@@ -90,6 +84,7 @@ inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean, exception: Exception) =
  * If this [Result] is a success containing null, returns a failure with the given message.
  * Otherwise, returns the input.
  */
+@Deprecated("use variant with a real error")
 fun <A> Result<A?>.failIfNull(message: String): Result<A> = failIfNull { Exception(message) }
 
 /**

@@ -36,7 +36,6 @@ allprojects {
          jvmTarget = "17"
          languageVersion = "1.7"
          apiVersion = "1.7"
-         freeCompilerArgs = listOf("-Xcontext-receivers")
       }
    }
 }
