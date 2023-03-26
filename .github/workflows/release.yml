@@ -25,19 +25,18 @@ jobs:
          -  uses: actions/setup-java@v3
             with:
                distribution: "temurin"
-               java-version: "17"
+               java-version: "11"
 
-         -  name: publish multiplatform release
-            run: ./gradlew publishKotlinMultiplatformPublicationToDeployRepository
+         -  name: publish to sonatype
+            run: ./gradlew publish
 
-         -  name: publish jvm release
-            run: ./gradlew publishJvmPublicationToDeployRepository
-
-         -  name: publish js release
-            run: ./gradlew publishJsPublicationToDeployRepository
+         -  name: tag release
+            run: |
+               git tag v${{ github.event.inputs.version }}
+               git push --tags
 
 env:
-   GRADLE_OPTS: -Dorg.gradle.configureondemand=true -Dorg.gradle.parallel=false -Dkotlin.incremental=false -Dorg.gradle.jvmargs="-Xmx3g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
+   GRADLE_OPTS: -Dorg.gradle.configureondemand=true -Dorg.gradle.parallel=false -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
    RELEASE_VERSION: ${{ github.event.inputs.version }}
    OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
    OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
