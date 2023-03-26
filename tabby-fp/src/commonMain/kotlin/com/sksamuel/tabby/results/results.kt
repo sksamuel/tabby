@@ -9,33 +9,6 @@ fun <A> Result<A>.orElse(other: Result<A>): Result<A> =
 inline fun <A> Result<A>.orElse(f: () -> Result<A>): Result<A> =
    if (this.isFailure) f() else this
 
-
-/**
- * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns false,
- * then a failed Result is returned, otherwise this is returned.
- */
-inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean) = failIfNot(p, RuntimeException("failure"))
-
-/**
- * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns false,
- * then a failed Result is returned, otherwise this is returned.
- */
-inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean, message: String) = failIfNot(p, RuntimeException(message))
-
-/**
- * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns false,
- * then a failed Result is returned, otherwise this is returned.
- */
-inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean, f: (A) -> Exception) =
-   flatMap { if (!p(it)) f(it).failure() else it.success() }
-
-/**
- * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns false,
- * then a failed Result is returned, otherwise this is returned.
- */
-inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean, exception: Exception) =
-   flatMap { if (!p(it)) exception.failure() else it.success() }
-
 /**
  * If this [Result] is a success containing null, returns a failure with the given message.
  * Otherwise, returns the input.
