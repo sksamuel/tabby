@@ -18,6 +18,7 @@ inline fun <A> Result<A>.failIfNot(exceptionFn: (A) -> Exception, p: (A) -> Bool
  * then a failed Result is returned, otherwise this is returned.
  */
 @Deprecated("use failIfNot(message, p)")
+@JvmName("failIfNotMessage")
 inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean, message: String) =
    failIfNot(p, RuntimeException(message))
 
@@ -26,6 +27,7 @@ inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean, message: String) =
  * then a failed Result is returned, otherwise this is returned.
  */
 @Deprecated("use failIfNot(exceptionFn, p)")
+@JvmName("failIfNotExceptionFn")
 inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean, f: (A) -> Exception) =
    flatMap { if (!p(it)) f(it).failure() else it.success() }
 
@@ -34,5 +36,6 @@ inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean, f: (A) -> Exception) =
  * then a failed Result is returned, otherwise this is returned.
  */
 @Deprecated("use failIfNot(exceptionFn, p)")
+@JvmName("failIfNotException")
 inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean, exception: Exception) =
    flatMap { if (!p(it)) exception.failure() else it.success() }
