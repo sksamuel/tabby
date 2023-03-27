@@ -38,12 +38,6 @@ fun <A> Result<A?>.failIfNotNull(message: String): Result<A> = failIfNotNull { E
 inline fun <A> Result<A?>.failIfNotNull(fn: () -> Exception): Result<A> =
    flatMap { it?.success() ?: Result.failure(fn()) }
 
-fun Result<Boolean>.failIfFalse(): Result<Unit> =
-   flatMap { if (it) Result.unit() else Result.failure(NoSuchElementException()) }
-
-fun Result<Boolean>.failIfFalse(fn: () -> Exception): Result<Unit> =
-   flatMap { if (it) Result.unit() else Result.failure(fn()) }
-
 /**
  * Returns a successful [Result] which contains Unit.
  */
