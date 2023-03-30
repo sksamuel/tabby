@@ -25,15 +25,3 @@ inline fun <A> Result<A?>.replaceNull(f: () -> A): Result<A> {
    return this.fold({ it?.success() ?: f().success() }, { it.failure() })
 }
 
-inline fun <A> Result<A?>.onFailureOrNull(f: () -> Unit): Result<A?> {
-   return this.fold(
-      {
-         if (it == null) f()
-         it.success()
-      },
-      {
-         f()
-         it.failure()
-      }
-   )
-}
