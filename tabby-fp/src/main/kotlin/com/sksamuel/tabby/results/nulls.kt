@@ -17,26 +17,6 @@ fun <A> A?.failureIfNull(message: String): Result<A> =
 fun <A> A?.failureIfNull(f: () -> Exception): Result<A> =
    if (this == null) Result.failure(f()) else Result.success(this)
 
-/**
- * If this Result is a success that contains null, then returns a failure containing
- * the given message. Otherwise, returns this.
- */
-@Deprecated("use failIfNull", ReplaceWith("failIfNull(message)"))
-fun <A> Result<A?>.absolve(message: String): Result<A> = fold(
-   { if (it == null) Result.failure(Exception(message)) else Result.success(it) },
-   { Result.failure(it) }
-)
-
-/**
- * If this Result is a success that contains null, then returns a failure containing
- * the given message. Otherwise, returns this.
- */
-@Deprecated("use failIfNull", ReplaceWith("failIfNull(f)"))
-fun <A> Result<A?>.absolve(f: () -> Exception): Result<A> = fold(
-   { if (it == null) Result.failure(f()) else Result.success(it) },
-   { Result.failure(it) }
-)
-
 inline fun <A> A?.forEach(f: (A) -> Unit) {
    if (this != null) f(this)
 }
