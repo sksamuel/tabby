@@ -5,7 +5,7 @@ package com.sksamuel.tabby.results
  * then a failed Result is returned, otherwise this is returned.
  */
 inline fun <A> Result<A>.failIfNot(p: (A) -> Boolean) =
-   failIfNot({ RuntimeException("failure") }, p)
+   failIfNot({ RuntimeException() }, p)
 
 inline fun <A> Result<A>.failIfNot(message: String, p: (A) -> Boolean) =
    failIfNot({ RuntimeException(message) }, p)

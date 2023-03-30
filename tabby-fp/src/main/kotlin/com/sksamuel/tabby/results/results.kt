@@ -3,10 +3,13 @@ package com.sksamuel.tabby.results
 /**
  * If this [Result] is a failure, returns [other], otherwise returns this.
  */
-fun <A> Result<A>.orElse(other: Result<A>): Result<A> =
-   if (this.isFailure) other else this
+@Deprecated("use recover", ReplaceWith("recover(f)"))
+fun <A> Result<A>.orElse(other: Result<A>): Result<A> = recover { other }
 
-inline fun <A> Result<A>.orElse(f: () -> Result<A>): Result<A> =
+@Deprecated("use recover", ReplaceWith("recover(f)"))
+inline fun <A> Result<A>.orElse(f: () -> Result<A>): Result<A> = recover(f)
+
+inline fun <A> Result<A>.recover(f: () -> Result<A>): Result<A> =
    if (this.isFailure) f() else this
 
 /**
