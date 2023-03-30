@@ -3,8 +3,12 @@ package com.sksamuel.tabby.results
 /**
  * Discards any failed Result's in the collection, returning only the successful values.
  */
+@Deprecated("Use collectSuccess", ReplaceWith("collectSuccess()"))
 fun <A> Collection<Result<A>>.successes(): List<A> = collectSuccess()
 
+/**
+ * Discards any failed Result's in the collection, returning only the successful values.
+ */
 fun <A> Collection<Result<A>>.collectSuccess(): List<A> {
    return fold(emptyList()) { acc, op ->
       op.fold({ acc + it }, { acc })
@@ -14,8 +18,12 @@ fun <A> Collection<Result<A>>.collectSuccess(): List<A> {
 /**
  * Discards any successful Result's in the collection, returning only the errors.
  */
+@Deprecated("Use collectFailure", ReplaceWith("collectFailure()"))
 fun <A> Collection<Result<A>>.failures(): List<Throwable> = collectFailure()
 
+/**
+ * Discards any successful Result's in the collection, returning only the errors.
+ */
 fun <A> Collection<Result<A>>.collectFailure(): List<Throwable> {
    return fold(emptyList()) { acc, op ->
       op.fold({ acc }, { acc + it })
