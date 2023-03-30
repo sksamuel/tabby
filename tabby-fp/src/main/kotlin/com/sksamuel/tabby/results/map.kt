@@ -10,7 +10,10 @@ inline fun <A, B> Result<A?>.mapIfNotNull(fn: (A) -> B): Result<B?> =
 inline fun <A> Result<A?>.mapIfNull(fn: () -> A): Result<A> =
    map { it ?: fn() }
 
-inline fun <A> Result<A>.mapError(f: (Throwable) -> Throwable): Result<A> =
+@Deprecated("use mapFailure", ReplaceWith("mapFailure(f)"))
+inline fun <A> Result<A>.mapError(f: (Throwable) -> Throwable): Result<A> = mapFailure(f)
+
+inline fun <A> Result<A>.mapFailure(f: (Throwable) -> Throwable): Result<A> =
    fold({ it.success() }, { f(it).failure() })
 
 inline fun <A, B> Result<A>.mapIf(p: (A) -> Boolean, f: (A) -> A): Result<A> =
