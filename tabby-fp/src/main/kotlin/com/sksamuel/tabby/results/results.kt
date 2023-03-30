@@ -10,45 +10,26 @@ inline fun <A> Result<A>.orElse(f: () -> Result<A>): Result<A> =
    if (this.isFailure) f() else this
 
 /**
- * If this [Result] is a success containing null, returns a failure with the given message.
- * Otherwise, returns the input.
- */
-@Deprecated("use variant with an exception")
-fun <A> Result<A?>.failIfNull(message: String): Result<A> = failIfNull { Exception(message) }
-
-/**
- * If this [Result] is a success containing null, returns a failure with the given exception.
- * Otherwise, returns the input.
- */
-inline fun <A> Result<A?>.failIfNull(fn: () -> Exception): Result<A> =
-   flatMap { it?.success() ?: Result.failure(fn()) }
-
-fun <A> Result<A?>.failIfNull() = failIfNull { NoSuchElementException() }
-
-/**
- * If this [Result] is a success containing a non-null, returns a failure with the given message.
- * Otherwise, returns the input.
- */
-fun <A> Result<A?>.failIfNotNull(message: String): Result<A> = failIfNotNull { Exception(message) }
-
-/**
- * If this [Result] is a success containing a non-null, returns a failure with the given exception.
- * Otherwise, returns the input.
- */
-inline fun <A> Result<A?>.failIfNotNull(fn: () -> Exception): Result<A> =
-   flatMap { it?.success() ?: Result.failure(fn()) }
-
-/**
  * Returns a successful [Result] which contains Unit.
  */
 fun Result.Companion.unit() = Unit.success()
 
+/**
+ * If this [Result] is a success, returns a new result containing [Unit],
+ * otherwise returns the receiver.
+ */
 fun <A> Result<A>.omit(): Result<Unit> = this.flatMap { Unit.success() }
 
 fun <A> Result<Result<A>>.flatten(): Result<A> = this.fold({ it }, { it.failure() })
 
-fun <A> Result<A>.exceptionOrThrow() = this.exceptionOrNull() ?: throw IllegalStateException("Expected exception")
+/**
+ * If this [Result] is a failure, returns the failure exception, otherwise throws an
+ * [IllegalStateException].
+ */
+fun <A> Result<A>.exceptionOrThrow(): Throwable =
+   this.exceptionOrNull() ?: throw IllegalStateException("Expected exception")
 
-fun <A> Result<A?>.onSuccessIfNotNull(f: (A) -> Unit) = this.onSuccess { if (it != null) f(it) }
-
-fun <A> Result<A>.onEach(f: () -> Unit) = this.onSuccess { f() }.onFailure { f() }
+/**
+ * Executes this side effecting function and returns the receiver
+ */
+inline fun <A> Result<A>.onEach(f: () -> Unit) = this.onSuccess { f() }.onFailure { f() }

@@ -20,5 +20,19 @@ class OnSuccessTest : FunSpec() {
          Result.success(name).onSuccessIfNotNull { fired = true }
          fired.shouldBeFalse()
       }
+
+      test("onSuccessIfNull with non null") {
+         val name: String? = "sam"
+         var fired = false
+         Result.success(name).onSuccessIfNull { fired = true }
+         fired.shouldBeFalse()
+      }
+
+      test("onSuccessIfNull with null") {
+         val name: String? = null
+         var fired = false
+         Result.success(name).onSuccessIfNull { fired = true }
+         fired.shouldBeTrue()
+      }
    }
 }
