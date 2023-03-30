@@ -7,8 +7,14 @@ package com.sksamuel.tabby.results
 inline fun <A, B> Result<A?>.mapIfNotNull(fn: (A) -> B): Result<B?> =
    map { if (it == null) null else fn(it) }
 
+inline fun <A, B> Result<A?>.mapCatchingIfNotNull(fn: (A) -> B): Result<B?> =
+   flatMapIfNotNull { runCatching { fn(it) } }
+
 inline fun <A> Result<A?>.mapIfNull(fn: () -> A): Result<A> =
    map { it ?: fn() }
+
+inline fun <A> Result<A?>.mapCatchingIfNull(fn: () -> A): Result<A?> =
+   flatMapIfNull { runCatching { fn() } }
 
 @Deprecated("use mapFailure", ReplaceWith("mapFailure(f)"))
 inline fun <A> Result<A>.mapError(f: (Throwable) -> Throwable): Result<A> = mapFailure(f)
