@@ -16,12 +16,3 @@ fun <A> A?.failureIfNull(message: String): Result<A> =
 
 fun <A> A?.failureIfNull(f: () -> Exception): Result<A> =
    if (this == null) Result.failure(f()) else Result.success(this)
-
-/**
- * If this [Result] is a success that contains null, will replace the null with the
- * value of the function [f]. Otherwise, returns as is.
- */
-inline fun <A> Result<A?>.replaceNull(f: () -> A): Result<A> {
-   return this.fold({ it?.success() ?: f().success() }, { it.failure() })
-}
-
