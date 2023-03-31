@@ -6,13 +6,7 @@ import com.sksamuel.tabby.results.failure
 import com.sksamuel.tabby.results.success
 
 /**
- * An internal, non-biased implementation of Either.
- *
- * This class is similar to Arrow's Either (which in turn is based on Scala's) but allows
- * for non-effect based handling.
- *
- * The terminology deliberately departs from the terminology used by other FP libraries
- * in order to make the learning curve shallower for those who are from a non-FP background.
+ * A right-biased implementation of Either.
  */
 sealed class Either<out A, out B> {
 
@@ -122,7 +116,6 @@ inline fun <B> either(f: () -> B): Either<Throwable, B> = try {
    t.left()
 }
 
-fun <A> Either<Throwable, A>.toResult(): Result<A> = fold({ it.failure() }, { it.success() })
 
 // if this is a left, invokes the given function to return the error into a right, otherwise returns the right
 inline fun <A, B> Either<A, B>.recover(ifLeft: (A) -> B): Either<A, B> =
