@@ -2,9 +2,6 @@
 
 package com.sksamuel.tabby.either
 
-import com.sksamuel.tabby.results.failure
-import com.sksamuel.tabby.results.success
-
 /**
  * A right-biased implementation of Either.
  */
@@ -26,6 +23,7 @@ sealed class Either<out A, out B> {
       }
 
       fun <A> success(a: A) = Right(a)
+
       fun failure(t: Throwable) = Left(t)
    }
 
@@ -44,8 +42,6 @@ sealed class Either<out A, out B> {
          is Left -> Left(f(a))
          is Right -> this
       }
-
-   inline fun <D> mapRight(f: (B) -> D): Either<A, D> = map(f)
 
    inline fun <D> map(f: (B) -> D): Either<A, D> =
       when (this) {
@@ -72,17 +68,33 @@ sealed class Either<out A, out B> {
    inline fun <C, D> bimap(ifLeft: (A) -> C, ifRight: (B) -> D): Either<C, D> =
       fold({ ifLeft(it).left() }, { ifRight(it).right() })
 
-   // process the given function if this is a left, and then return this
+   /**
+    * If this [Either] is a left, then runs the side effecting function [f],
+    * and returns the receiver.
+    */
    inline fun onLeft(f: (A) -> Unit): Either<A, B> =
       fold({ f(it); this }, { this })
 
+   /**
+    * If this [Either] is a right, then runs the side effecting function [f],
+    * and returns the receiver.
+    */
    inline fun onRight(f: (B) -> Unit): Either<A, B> =
       fold({ this }, { f(it); this })
+
+   inline fun onEach(ifLeft: (A) -> Unit, ifRight: (B) -> Unit): Either<A, B> {
+      when (this) {
+         is Left -> ifLeft(this.a)
+         is Right -> ifRight(this.b)
+      }
+      return this
+   }
 
    fun getRightUnsafe(): B = fold({ throw RuntimeException("Expected right but was $it") }, { it })
 
    fun getLeftUnsafe(): A = fold({ it }, { throw RuntimeException("Expected left but was $it") })
 
+   @Deprecated("To be replaced")
    inline fun <reified C> filterRightIsInstance(otherwise: (B) -> Any): Either<A, C> = when (this) {
       is Left -> this
       is Right -> when (val b = this.b) {
@@ -90,15 +102,11 @@ sealed class Either<out A, out B> {
          else -> (otherwise(this.b) as A).left()
       }
    }
-
-   fun onEach(ifLeft: (A) -> Unit, ifRight: (B) -> Unit): Either<A, B> {
-      when (this) {
-         is Left -> ifLeft(this.a)
-         is Right -> ifRight(this.b)
-      }
-      return this
-   }
 }
+
+fun <A> A.left() = Either.Left(this)
+
+fun <B> B.right() = Either.Right(this)
 
 inline fun <A, B> Either<A, B>.orElse(other: () -> Either<A, B>): Either<A, B> {
    return fold({ other() }, { it.right() })
@@ -131,15 +139,6 @@ fun <A, B> Either<A, Either<A, B>>.flatten(): Either<A, B> = when (this) {
    is Either.Right -> b
 }
 
-inline fun <A, B, D> Either<A, B>.flatMap(f: (B) -> Either<A, D>): Either<A, D> = when (this) {
-   is Either.Left -> this
-   is Either.Right -> f(b)
-}
-
-inline fun <A, B, C> Either<A, B>.flatMapLeft(f: (A) -> Either<C, B>): Either<C, B> = when (this) {
-   is Either.Left -> f(a)
-   is Either.Right -> this
-}
 
 /**
  * Splits a list of [Either] into a pair of lists, one containing left instances and one containing right instances.
@@ -167,42 +166,3 @@ fun <A, B> B.rightIf(a: A, eval: (B) -> Boolean): Either<A, B> = if (eval(this))
 
 fun <A, B> B?.rightIfNotNull(ifNull: () -> A): Either<A, B> =
    this?.right() ?: ifNull().left()
-
-fun <A> A.left() = Either.Left(this)
-fun <B> B.right() = Either.Right(this)
-
-fun <A, B, C> Either<A, B>.zip(other: Either<A, C>): Either<A, Pair<B, C>> {
-   return this.flatMap { b ->
-      other.map { c -> Pair(b, c) }
-   }
-}
-
-fun <E, A, B, C> Either<E, A>.zip(b: Either<E, B>, c: Either<E, C>): Either<E, Triple<A, B, C>> {
-   return this.flatMap { a ->
-      b.flatMap { b ->
-         c.map { c ->
-            Triple(a, b, c)
-         }
-      }
-   }
-}
-
-fun <A, B, C, D> Either<A, B>.mapN(other: Either<A, C>, f: (B, C) -> D): Either<A, D> {
-   return this.flatMap { b ->
-      other.map { c -> f(b, c) }
-   }
-}
-
-fun <A, B, C, D> Either<A, B>.mapNWith(other: Either<A, C>, f: (B, C) -> Either<A, D>): Either<A, D> {
-   return this.flatMap { b ->
-      other.flatMap { c -> f(b, c) }
-   }
-}
-
-fun <A, B, C> Either<A, List<B>>.mapK(f: (B) -> C): Either<A, List<C>> = fold({ it.left() }, { it.map(f).right() })
-
-inline fun <reified A, reified B> List<Either<A, B>>.sequence(): Either<List<A>, List<B>> {
-   val `as` = filterIsInstance<A>()
-   val bs = filterIsInstance<B>()
-   return if (`as`.isEmpty()) bs.right() else `as`.left()
-}
