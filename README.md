@@ -2,10 +2,9 @@
 
 Just some basic Kotlin helpers.
 
-* tabby-fp: std-lib result and effects extensions.
-* tabby-jackson: jackson json helpers
+* tabby-fp: std-lib result extensions.
 
 ### Versions
 
 * Use 2.0.x for Kotlin 1.6.x
-* Use 2.1.x for Kotlin 1.7.x
+* Use 2.2.x for Kotlin 1.7.x
