@@ -28,3 +28,5 @@ inline fun <A> Result<List<A>>.mapIfEmpty(f: () -> List<A>): Result<List<A>> =
 
 inline fun <A> Result<List<A>>.flatMapIfEmpty(f: () -> Result<List<A>>): Result<List<A>> =
    flatMap { if (it.isEmpty()) f() else it.success() }
+
+fun <A> List<A>.firstOrFailure(p: (A) -> Boolean) = runCatching { this.first(p) }
