@@ -12,6 +12,8 @@ import com.sksamuel.tabby.Tuple9
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 
 private val emptyEffect: () -> Result<Unit> = { Result.success(Unit) }
 
@@ -223,7 +225,18 @@ suspend fun <A, B, C, D, E, F, G, H, I, J> parN(
          effectJ().getOrThrow()
       }
       awaitAll(a, b, c, d, e, f, g, h, i, j)
-      Tuple10(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await(), i.await(), j.await())
+      Tuple10(
+         a.await(),
+         b.await(),
+         c.await(),
+         d.await(),
+         e.await(),
+         f.await(),
+         g.await(),
+         h.await(),
+         i.await(),
+         j.await()
+      )
    }
 }
 
@@ -278,7 +291,19 @@ suspend fun <A, B, C, D, E, F, G, H, I, J, K> parN(
          effectK().getOrThrow()
       }
       awaitAll(a, b, c, d, e, f, g, h, i, j, k)
-      Tuple11(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await(), i.await(), j.await(), k.await())
+      Tuple11(
+         a.await(),
+         b.await(),
+         c.await(),
+         d.await(),
+         e.await(),
+         f.await(),
+         g.await(),
+         h.await(),
+         i.await(),
+         j.await(),
+         k.await()
+      )
    }
 }
 
@@ -337,7 +362,20 @@ suspend fun <A, B, C, D, E, F, G, H, I, J, K, L> parN(
          effectL().getOrThrow()
       }
       awaitAll(a, b, c, d, e, f, g, h, i, j, k, l)
-      Tuple12(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await(), i.await(), j.await(), k.await(), l.await())
+      Tuple12(
+         a.await(),
+         b.await(),
+         c.await(),
+         d.await(),
+         e.await(),
+         f.await(),
+         g.await(),
+         h.await(),
+         i.await(),
+         j.await(),
+         k.await(),
+         l.await()
+      )
    }
 }
 
@@ -354,6 +392,29 @@ suspend fun <A> parN(effects: List<suspend () -> Result<A>>): Result<List<A>> = 
       val deferred = effects.map {
          async {
             it.invoke().getOrThrow()
+         }
+      }
+      awaitAll(*deferred.toTypedArray())
+   }
+}
+
+/**
+ * Executes the given effects in parallel, failing fast, with at most [concurrent] effects running at once.
+ */
+suspend fun <A> parN(concurrent: Int, vararg effects: suspend () -> Result<A>): Result<List<A>> =
+   parN(concurrent, effects.toList())
+
+/**
+ * Executes the given effects in parallel, failing fast, with at most [concurrent] effects running at once.
+ */
+suspend fun <A> parN(concurrent: Int, effects: List<suspend () -> Result<A>>): Result<List<A>> = runCatching {
+   val semaphore = Semaphore(concurrent)
+   coroutineScope {
+      val deferred = effects.map {
+         async {
+            semaphore.withPermit {
+               it.invoke().getOrThrow()
+            }
          }
       }
       awaitAll(*deferred.toTypedArray())
