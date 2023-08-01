@@ -17,7 +17,7 @@ fun <A> Collection<Result<A>>.sequence(): Result<List<A>> {
  *
  * Specifically, returns the first failed Result, or a List of all successful results.
  */
-fun <A> Collection<Result<A>>.tranpose(): Result<List<A>> {
+fun <A> Collection<Result<A>>.transpose(): Result<List<A>> {
    return map {
       if (it.isFailure) return it.exceptionOrNull()!!.failure()
       else it.getOrThrow()
