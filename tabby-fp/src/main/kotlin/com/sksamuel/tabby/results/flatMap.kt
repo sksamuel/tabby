@@ -14,9 +14,3 @@ inline fun <A, B> Result<A?>.flatMapIfNotNull(fn: (A) -> Result<B>): Result<B?> 
 
 inline fun <A> Result<A?>.flatMapIfNull(fn: () -> Result<A>): Result<A> =
    flatMap { it?.success() ?: fn() }
-
-@Deprecated("use then", ReplaceWith("then(f)"))
-inline fun <A> Result<A>.flatApply(f: (A) -> Result<*>): Result<A> = then(f)
-
-inline fun <A> Result<A>.then(f: (A) -> Result<*>): Result<A> =
-   flatMap { a -> f(a).map { a } }
