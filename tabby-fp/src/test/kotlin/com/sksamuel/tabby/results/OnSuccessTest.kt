@@ -71,35 +71,35 @@ class OnSuccessTest : FunSpec() {
          fired.shouldBeTrue()
       }
 
-      test("onSuccessOnlyIf with delegate") {
+      test("onSuccessIf with delegate") {
          val inputParam = "test-string"
          val delegate: (String) -> Boolean = { true }
          var seenValue: String? = null
-         Result.success(inputParam).onSuccessOnlyIf(delegate) { seenValue = it }
+         Result.success(inputParam).onSuccessIf(delegate) { seenValue = it }
          seenValue shouldBe inputParam
       }
 
-      test("onSuccessOnlyIfNotNull with null") {
+      test("onSuccessIfNotNull with null") {
          val inputParam: String = "test-string"
          val delegate: (String?) -> Boolean = { false }
          var seenValue: String? = null
-         Result.success(inputParam).onSuccessOnlyIfNotNull(delegate) { seenValue = it }
+         Result.success(inputParam).onSuccessIfNotNull(delegate) { seenValue = it }
          seenValue.shouldBeNull()
       }
 
-      test("onSuccessOnlyIfNotNull with not null and false") {
+      test("onSuccessIfNotNull with not null and false") {
          val inputParam = "test-string"
          val delegate: (String) -> Boolean = { false }
          var seenValue: String? = null
-         Result.success(inputParam).onSuccessOnlyIfNotNull(delegate) { seenValue = it }
+         Result.success(inputParam).onSuccessIfNotNull(delegate) { seenValue = it }
          seenValue.shouldBeNull()
       }
 
-      test("onSuccessOnlyIfNotNull with not null and true") {
+      test("onSuccessIfNotNull with not null and true") {
          val inputParam = "test-string"
          val delegate: (String) -> Boolean = { true }
          var seenValue: String? = null
-         Result.success(inputParam).onSuccessOnlyIfNotNull(delegate) { seenValue = it }
+         Result.success(inputParam).onSuccessIfNotNull(delegate) { seenValue = it }
          seenValue shouldBe inputParam
       }
    }

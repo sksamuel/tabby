@@ -9,7 +9,7 @@ inline fun <A> Result<A?>.onSuccessIfNull(f: () -> Unit): Result<A?> =
       it.success()
    }, { it.failure() })
 
-inline fun <A> Result<A>.onSuccessOnlyIf(predicate: (A) -> Boolean, f: (A) -> Unit): Result<A> =
+inline fun <A> Result<A>.onSuccessIf(predicate: (A) -> Boolean, f: (A) -> Unit): Result<A> =
    this.fold({
       if (predicate(it)) f(it)
       it.success()
@@ -27,7 +27,7 @@ inline fun Result<Boolean>.onSuccessIfFalse(f: () -> Unit): Result<Boolean> =
       it.success()
    }, { it.failure() })
 
-inline fun <A> Result<A?>.onSuccessOnlyIfNotNull(predicate: (A) -> Boolean, f: (A) -> Unit): Result<A?> =
+inline fun <A> Result<A?>.onSuccessIfNotNull(predicate: (A) -> Boolean, f: (A) -> Unit): Result<A?> =
    this.fold({
       if ((it != null) && predicate(it)) f(it)
       it.success()
