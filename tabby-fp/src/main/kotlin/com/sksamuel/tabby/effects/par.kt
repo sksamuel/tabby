@@ -3,6 +3,14 @@ package com.sksamuel.tabby.effects
 import com.sksamuel.tabby.Tuple10
 import com.sksamuel.tabby.Tuple11
 import com.sksamuel.tabby.Tuple12
+import com.sksamuel.tabby.Tuple13
+import com.sksamuel.tabby.Tuple14
+import com.sksamuel.tabby.Tuple15
+import com.sksamuel.tabby.Tuple16
+import com.sksamuel.tabby.Tuple17
+import com.sksamuel.tabby.Tuple18
+import com.sksamuel.tabby.Tuple19
+import com.sksamuel.tabby.Tuple20
 import com.sksamuel.tabby.Tuple4
 import com.sksamuel.tabby.Tuple5
 import com.sksamuel.tabby.Tuple6
@@ -418,5 +426,357 @@ suspend fun <A> parN(concurrent: Int, effects: List<suspend () -> Result<A>>): R
          }
       }
       awaitAll(*deferred.toTypedArray())
+   }
+}
+
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
+suspend fun <A, B, C, D, E, F, G, H, I, J, K, L, M> parN(
+   effectA: suspend () -> Result<A>,
+   effectB: suspend () -> Result<B>,
+   effectC: suspend () -> Result<C>,
+   effectD: suspend () -> Result<D>,
+   effectE: suspend () -> Result<E>,
+   effectF: suspend () -> Result<F>,
+   effectG: suspend () -> Result<G>,
+   effectH: suspend () -> Result<H>,
+   effectI: suspend () -> Result<I>,
+   effectJ: suspend () -> Result<J>,
+   effectK: suspend () -> Result<K>,
+   effectL: suspend () -> Result<L>,
+   effectM: suspend () -> Result<M>,
+): Result<Tuple13<A, B, C, D, E, F, G, H, I, J, K, L, M>> = runCatching {
+   coroutineScope {
+      val a = async { effectA().getOrThrow() }
+      val b = async { effectB().getOrThrow() }
+      val c = async { effectC().getOrThrow() }
+      val d = async { effectD().getOrThrow() }
+      val e = async { effectE().getOrThrow() }
+      val f = async { effectF().getOrThrow() }
+      val g = async { effectG().getOrThrow() }
+      val h = async { effectH().getOrThrow() }
+      val i = async { effectI().getOrThrow() }
+      val j = async { effectJ().getOrThrow() }
+      val k = async { effectK().getOrThrow() }
+      val l = async { effectL().getOrThrow() }
+      val m = async { effectM().getOrThrow() }
+      awaitAll(a, b, c, d, e, f, g, h, i, j, k, l, m)
+      Tuple13(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await(), i.await(), j.await(), k.await(), l.await(), m.await())
+   }
+}
+
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
+suspend fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N> parN(
+   effectA: suspend () -> Result<A>,
+   effectB: suspend () -> Result<B>,
+   effectC: suspend () -> Result<C>,
+   effectD: suspend () -> Result<D>,
+   effectE: suspend () -> Result<E>,
+   effectF: suspend () -> Result<F>,
+   effectG: suspend () -> Result<G>,
+   effectH: suspend () -> Result<H>,
+   effectI: suspend () -> Result<I>,
+   effectJ: suspend () -> Result<J>,
+   effectK: suspend () -> Result<K>,
+   effectL: suspend () -> Result<L>,
+   effectM: suspend () -> Result<M>,
+   effectN: suspend () -> Result<N>,
+): Result<Tuple14<A, B, C, D, E, F, G, H, I, J, K, L, M, N>> = runCatching {
+   coroutineScope {
+      val a = async { effectA().getOrThrow() }
+      val b = async { effectB().getOrThrow() }
+      val c = async { effectC().getOrThrow() }
+      val d = async { effectD().getOrThrow() }
+      val e = async { effectE().getOrThrow() }
+      val f = async { effectF().getOrThrow() }
+      val g = async { effectG().getOrThrow() }
+      val h = async { effectH().getOrThrow() }
+      val i = async { effectI().getOrThrow() }
+      val j = async { effectJ().getOrThrow() }
+      val k = async { effectK().getOrThrow() }
+      val l = async { effectL().getOrThrow() }
+      val m = async { effectM().getOrThrow() }
+      val n = async { effectN().getOrThrow() }
+      awaitAll(a, b, c, d, e, f, g, h, i, j, k, l, m, n)
+      Tuple14(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await(), i.await(), j.await(), k.await(), l.await(), m.await(), n.await())
+   }
+}
+
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
+suspend fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O> parN(
+   effectA: suspend () -> Result<A>,
+   effectB: suspend () -> Result<B>,
+   effectC: suspend () -> Result<C>,
+   effectD: suspend () -> Result<D>,
+   effectE: suspend () -> Result<E>,
+   effectF: suspend () -> Result<F>,
+   effectG: suspend () -> Result<G>,
+   effectH: suspend () -> Result<H>,
+   effectI: suspend () -> Result<I>,
+   effectJ: suspend () -> Result<J>,
+   effectK: suspend () -> Result<K>,
+   effectL: suspend () -> Result<L>,
+   effectM: suspend () -> Result<M>,
+   effectN: suspend () -> Result<N>,
+   effectO: suspend () -> Result<O>,
+): Result<Tuple15<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>> = runCatching {
+   coroutineScope {
+      val a = async { effectA().getOrThrow() }
+      val b = async { effectB().getOrThrow() }
+      val c = async { effectC().getOrThrow() }
+      val d = async { effectD().getOrThrow() }
+      val e = async { effectE().getOrThrow() }
+      val f = async { effectF().getOrThrow() }
+      val g = async { effectG().getOrThrow() }
+      val h = async { effectH().getOrThrow() }
+      val i = async { effectI().getOrThrow() }
+      val j = async { effectJ().getOrThrow() }
+      val k = async { effectK().getOrThrow() }
+      val l = async { effectL().getOrThrow() }
+      val m = async { effectM().getOrThrow() }
+      val n = async { effectN().getOrThrow() }
+      val o = async { effectO().getOrThrow() }
+      awaitAll(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o)
+      Tuple15(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await(), i.await(), j.await(), k.await(), l.await(), m.await(), n.await(), o.await())
+   }
+}
+
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
+suspend fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P> parN(
+   effectA: suspend () -> Result<A>,
+   effectB: suspend () -> Result<B>,
+   effectC: suspend () -> Result<C>,
+   effectD: suspend () -> Result<D>,
+   effectE: suspend () -> Result<E>,
+   effectF: suspend () -> Result<F>,
+   effectG: suspend () -> Result<G>,
+   effectH: suspend () -> Result<H>,
+   effectI: suspend () -> Result<I>,
+   effectJ: suspend () -> Result<J>,
+   effectK: suspend () -> Result<K>,
+   effectL: suspend () -> Result<L>,
+   effectM: suspend () -> Result<M>,
+   effectN: suspend () -> Result<N>,
+   effectO: suspend () -> Result<O>,
+   effectP: suspend () -> Result<P>,
+): Result<Tuple16<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>> = runCatching {
+   coroutineScope {
+      val a = async { effectA().getOrThrow() }
+      val b = async { effectB().getOrThrow() }
+      val c = async { effectC().getOrThrow() }
+      val d = async { effectD().getOrThrow() }
+      val e = async { effectE().getOrThrow() }
+      val f = async { effectF().getOrThrow() }
+      val g = async { effectG().getOrThrow() }
+      val h = async { effectH().getOrThrow() }
+      val i = async { effectI().getOrThrow() }
+      val j = async { effectJ().getOrThrow() }
+      val k = async { effectK().getOrThrow() }
+      val l = async { effectL().getOrThrow() }
+      val m = async { effectM().getOrThrow() }
+      val n = async { effectN().getOrThrow() }
+      val o = async { effectO().getOrThrow() }
+      val p = async { effectP().getOrThrow() }
+      awaitAll(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+      Tuple16(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await(), i.await(), j.await(), k.await(), l.await(), m.await(), n.await(), o.await(), p.await())
+   }
+}
+
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
+suspend fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q> parN(
+   effectA: suspend () -> Result<A>,
+   effectB: suspend () -> Result<B>,
+   effectC: suspend () -> Result<C>,
+   effectD: suspend () -> Result<D>,
+   effectE: suspend () -> Result<E>,
+   effectF: suspend () -> Result<F>,
+   effectG: suspend () -> Result<G>,
+   effectH: suspend () -> Result<H>,
+   effectI: suspend () -> Result<I>,
+   effectJ: suspend () -> Result<J>,
+   effectK: suspend () -> Result<K>,
+   effectL: suspend () -> Result<L>,
+   effectM: suspend () -> Result<M>,
+   effectN: suspend () -> Result<N>,
+   effectO: suspend () -> Result<O>,
+   effectP: suspend () -> Result<P>,
+   effectQ: suspend () -> Result<Q>,
+): Result<Tuple17<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>> = runCatching {
+   coroutineScope {
+      val a = async { effectA().getOrThrow() }
+      val b = async { effectB().getOrThrow() }
+      val c = async { effectC().getOrThrow() }
+      val d = async { effectD().getOrThrow() }
+      val e = async { effectE().getOrThrow() }
+      val f = async { effectF().getOrThrow() }
+      val g = async { effectG().getOrThrow() }
+      val h = async { effectH().getOrThrow() }
+      val i = async { effectI().getOrThrow() }
+      val j = async { effectJ().getOrThrow() }
+      val k = async { effectK().getOrThrow() }
+      val l = async { effectL().getOrThrow() }
+      val m = async { effectM().getOrThrow() }
+      val n = async { effectN().getOrThrow() }
+      val o = async { effectO().getOrThrow() }
+      val p = async { effectP().getOrThrow() }
+      val q = async { effectQ().getOrThrow() }
+      awaitAll(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q)
+      Tuple17(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await(), i.await(), j.await(), k.await(), l.await(), m.await(), n.await(), o.await(), p.await(), q.await())
+   }
+}
+
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
+suspend fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R> parN(
+   effectA: suspend () -> Result<A>,
+   effectB: suspend () -> Result<B>,
+   effectC: suspend () -> Result<C>,
+   effectD: suspend () -> Result<D>,
+   effectE: suspend () -> Result<E>,
+   effectF: suspend () -> Result<F>,
+   effectG: suspend () -> Result<G>,
+   effectH: suspend () -> Result<H>,
+   effectI: suspend () -> Result<I>,
+   effectJ: suspend () -> Result<J>,
+   effectK: suspend () -> Result<K>,
+   effectL: suspend () -> Result<L>,
+   effectM: suspend () -> Result<M>,
+   effectN: suspend () -> Result<N>,
+   effectO: suspend () -> Result<O>,
+   effectP: suspend () -> Result<P>,
+   effectQ: suspend () -> Result<Q>,
+   effectR: suspend () -> Result<R>,
+): Result<Tuple18<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>> = runCatching {
+   coroutineScope {
+      val a = async { effectA().getOrThrow() }
+      val b = async { effectB().getOrThrow() }
+      val c = async { effectC().getOrThrow() }
+      val d = async { effectD().getOrThrow() }
+      val e = async { effectE().getOrThrow() }
+      val f = async { effectF().getOrThrow() }
+      val g = async { effectG().getOrThrow() }
+      val h = async { effectH().getOrThrow() }
+      val i = async { effectI().getOrThrow() }
+      val j = async { effectJ().getOrThrow() }
+      val k = async { effectK().getOrThrow() }
+      val l = async { effectL().getOrThrow() }
+      val m = async { effectM().getOrThrow() }
+      val n = async { effectN().getOrThrow() }
+      val o = async { effectO().getOrThrow() }
+      val p = async { effectP().getOrThrow() }
+      val q = async { effectQ().getOrThrow() }
+      val r = async { effectR().getOrThrow() }
+      awaitAll(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r)
+      Tuple18(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await(), i.await(), j.await(), k.await(), l.await(), m.await(), n.await(), o.await(), p.await(), q.await(), r.await())
+   }
+}
+
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
+suspend fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S> parN(
+   effectA: suspend () -> Result<A>,
+   effectB: suspend () -> Result<B>,
+   effectC: suspend () -> Result<C>,
+   effectD: suspend () -> Result<D>,
+   effectE: suspend () -> Result<E>,
+   effectF: suspend () -> Result<F>,
+   effectG: suspend () -> Result<G>,
+   effectH: suspend () -> Result<H>,
+   effectI: suspend () -> Result<I>,
+   effectJ: suspend () -> Result<J>,
+   effectK: suspend () -> Result<K>,
+   effectL: suspend () -> Result<L>,
+   effectM: suspend () -> Result<M>,
+   effectN: suspend () -> Result<N>,
+   effectO: suspend () -> Result<O>,
+   effectP: suspend () -> Result<P>,
+   effectQ: suspend () -> Result<Q>,
+   effectR: suspend () -> Result<R>,
+   effectS: suspend () -> Result<S>,
+): Result<Tuple19<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>> = runCatching {
+   coroutineScope {
+      val a = async { effectA().getOrThrow() }
+      val b = async { effectB().getOrThrow() }
+      val c = async { effectC().getOrThrow() }
+      val d = async { effectD().getOrThrow() }
+      val e = async { effectE().getOrThrow() }
+      val f = async { effectF().getOrThrow() }
+      val g = async { effectG().getOrThrow() }
+      val h = async { effectH().getOrThrow() }
+      val i = async { effectI().getOrThrow() }
+      val j = async { effectJ().getOrThrow() }
+      val k = async { effectK().getOrThrow() }
+      val l = async { effectL().getOrThrow() }
+      val m = async { effectM().getOrThrow() }
+      val n = async { effectN().getOrThrow() }
+      val o = async { effectO().getOrThrow() }
+      val p = async { effectP().getOrThrow() }
+      val q = async { effectQ().getOrThrow() }
+      val r = async { effectR().getOrThrow() }
+      val s = async { effectS().getOrThrow() }
+      awaitAll(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s)
+      Tuple19(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await(), i.await(), j.await(), k.await(), l.await(), m.await(), n.await(), o.await(), p.await(), q.await(), r.await(), s.await())
+   }
+}
+
+/**
+ * Executes the given effects in parallel, failing fast.
+ */
+suspend fun <A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T> parN(
+   effectA: suspend () -> Result<A>,
+   effectB: suspend () -> Result<B>,
+   effectC: suspend () -> Result<C>,
+   effectD: suspend () -> Result<D>,
+   effectE: suspend () -> Result<E>,
+   effectF: suspend () -> Result<F>,
+   effectG: suspend () -> Result<G>,
+   effectH: suspend () -> Result<H>,
+   effectI: suspend () -> Result<I>,
+   effectJ: suspend () -> Result<J>,
+   effectK: suspend () -> Result<K>,
+   effectL: suspend () -> Result<L>,
+   effectM: suspend () -> Result<M>,
+   effectN: suspend () -> Result<N>,
+   effectO: suspend () -> Result<O>,
+   effectP: suspend () -> Result<P>,
+   effectQ: suspend () -> Result<Q>,
+   effectR: suspend () -> Result<R>,
+   effectS: suspend () -> Result<S>,
+   effectT: suspend () -> Result<T>,
+): Result<Tuple20<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>> = runCatching {
+   coroutineScope {
+      val a = async { effectA().getOrThrow() }
+      val b = async { effectB().getOrThrow() }
+      val c = async { effectC().getOrThrow() }
+      val d = async { effectD().getOrThrow() }
+      val e = async { effectE().getOrThrow() }
+      val f = async { effectF().getOrThrow() }
+      val g = async { effectG().getOrThrow() }
+      val h = async { effectH().getOrThrow() }
+      val i = async { effectI().getOrThrow() }
+      val j = async { effectJ().getOrThrow() }
+      val k = async { effectK().getOrThrow() }
+      val l = async { effectL().getOrThrow() }
+      val m = async { effectM().getOrThrow() }
+      val n = async { effectN().getOrThrow() }
+      val o = async { effectO().getOrThrow() }
+      val p = async { effectP().getOrThrow() }
+      val q = async { effectQ().getOrThrow() }
+      val r = async { effectR().getOrThrow() }
+      val s = async { effectS().getOrThrow() }
+      val t = async { effectT().getOrThrow() }
+      awaitAll(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t)
+      Tuple20(a.await(), b.await(), c.await(), d.await(), e.await(), f.await(), g.await(), h.await(), i.await(), j.await(), k.await(), l.await(), m.await(), n.await(), o.await(), p.await(), q.await(), r.await(), s.await(), t.await())
    }
 }
