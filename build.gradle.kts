@@ -21,46 +21,48 @@ plugins {
    kotlin("jvm").version("1.7.21")
 }
 
-allprojects {
-   apply(plugin = "org.jetbrains.kotlin.jvm")
+apply(plugin = "org.jetbrains.kotlin.jvm")
 
-   group = "com.sksamuel.tabby"
-   version = Ci.publishVersion
+group = "com.sksamuel.tabby"
+version = Ci.publishVersion
 
-   repositories {
-      mavenLocal()
-      mavenCentral()
-      maven {
-         url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-      }
+repositories {
+   mavenLocal()
+   mavenCentral()
+   maven {
+      url = uri("https://oss.sonatype.org/content/repositories/snapshots")
    }
+}
 
-   dependencies {
-      testImplementation("io.kotest:kotest-assertions-core:5.5.5")
-      testImplementation("io.kotest:kotest-assertions-shared:5.5.5")
-      testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
+dependencies {
+   testImplementation("io.kotest:kotest-assertions-core:5.5.5")
+   testImplementation("io.kotest:kotest-assertions-shared:5.5.5")
+   testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
+   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+   implementation(kotlin("reflect"))
+}
+
+apply(from = "../publish.gradle.kts")
+
+tasks.named<Test>("test") {
+   useJUnitPlatform()
+   testLogging {
+      showExceptions = true
+      showStandardStreams = true
+      exceptionFormat = TestExceptionFormat.FULL
    }
+}
 
-   tasks.named<Test>("test") {
-      useJUnitPlatform()
-      testLogging {
-         showExceptions = true
-         showStandardStreams = true
-         exceptionFormat = TestExceptionFormat.FULL
-      }
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+   kotlinOptions {
+      jvmTarget = "11"
+      languageVersion = "1.7"
+      apiVersion = "1.7"
    }
+}
 
-   tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-      kotlinOptions {
-         jvmTarget = "11"
-         languageVersion = "1.7"
-         apiVersion = "1.7"
-      }
-   }
-
-   java {
-      toolchain {
-         languageVersion.set(JavaLanguageVersion.of(11))
-      }
+java {
+   toolchain {
+      languageVersion.set(JavaLanguageVersion.of(11))
    }
 }

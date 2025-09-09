@@ -4,5 +4,3 @@ pluginManagement {
       gradlePluginPortal()
    }
 }
-
-include("tabby-fp")
