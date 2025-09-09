@@ -4,6 +4,7 @@ package com.sksamuel.tabby.results
  * If all inputs are successes, then executes the function [fn], otherwise returns
  * the first failed result.
  */
+@Suppress("UNCHECKED_CAST")
 inline fun <A, B, R> Result.Companion.mapN(
    a: Result<A>,
    b: Result<B>,
@@ -18,6 +19,7 @@ inline fun <A, B, R> Result.Companion.mapN(
  * If all inputs are successes, then executes the function [fn], otherwise returns
  * the first failed result.
  */
+@Suppress("UNCHECKED_CAST")
 inline fun <A, B, C, R> Result.Companion.mapN(
    a: Result<A>,
    b: Result<B>,
@@ -34,6 +36,7 @@ inline fun <A, B, C, R> Result.Companion.mapN(
  * If all inputs are successes, then executes the function [fn], otherwise returns
  * the first failed result.
  */
+@Suppress("UNCHECKED_CAST")
 inline fun <A, B, C, D, R> Result.Companion.mapN(
    a: Result<A>,
    b: Result<B>,
@@ -52,6 +55,7 @@ inline fun <A, B, C, D, R> Result.Companion.mapN(
  * If all inputs are successes, then executes the function [fn], otherwise returns
  * the first failed result.
  */
+@Suppress("UNCHECKED_CAST")
 inline fun <A, B, C, D, E, R> Result.Companion.mapN(
    a: Result<A>,
    b: Result<B>,
@@ -72,6 +76,7 @@ inline fun <A, B, C, D, E, R> Result.Companion.mapN(
  * If all inputs are successes, then executes the function [fn], otherwise returns
  * the first failed result.
  */
+@Suppress("UNCHECKED_CAST")
 inline fun <A, B, C, D, E, F, R> Result.Companion.mapN(
    a: Result<A>,
    b: Result<B>,
