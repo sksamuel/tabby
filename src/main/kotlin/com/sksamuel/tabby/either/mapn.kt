@@ -1,5 +1,6 @@
 package com.sksamuel.tabby.either
 
+@Suppress("UNCHECKED_CAST")
 inline fun <A, B, ERROR, R> Either.Companion.mapN(
    a: Either<ERROR, A>,
    b: Either<ERROR, B>,
@@ -10,6 +11,7 @@ inline fun <A, B, ERROR, R> Either.Companion.mapN(
    return fn(a.getRightUnsafe(), b.getRightUnsafe()).right()
 }
 
+@Suppress("UNCHECKED_CAST")
 inline fun <A, B, C, ERROR, R> Either.Companion.mapN(
    a: Either<ERROR, A>,
    b: Either<ERROR, B>,
@@ -22,6 +24,7 @@ inline fun <A, B, C, ERROR, R> Either.Companion.mapN(
    return fn(a.getRightUnsafe(), b.getRightUnsafe(), c.getRightUnsafe()).right()
 }
 
+@Suppress("UNCHECKED_CAST")
 inline fun <A, B, C, D, ERROR, R> Either.Companion.mapN(
    a: Either<ERROR, A>,
    b: Either<ERROR, B>,
@@ -36,6 +39,7 @@ inline fun <A, B, C, D, ERROR, R> Either.Companion.mapN(
    return fn(a.getRightUnsafe(), b.getRightUnsafe(), c.getRightUnsafe(), d.getRightUnsafe()).right()
 }
 
+@Suppress("UNCHECKED_CAST")
 inline fun <A, B, C, D, E, ERROR, R> Either.Companion.mapN(
    a: Either<ERROR, A>,
    b: Either<ERROR, B>,
@@ -52,6 +56,7 @@ inline fun <A, B, C, D, E, ERROR, R> Either.Companion.mapN(
    return fn(a.getRightUnsafe(), b.getRightUnsafe(), c.getRightUnsafe(), d.getRightUnsafe(), e.getRightUnsafe()).right()
 }
 
+@Suppress("UNCHECKED_CAST")
 inline fun <A, B, C, D, E, F, ERROR, R> Either.Companion.mapN(
    a: Either<ERROR, A>,
    b: Either<ERROR, B>,
@@ -77,6 +82,7 @@ inline fun <A, B, C, D, E, F, ERROR, R> Either.Companion.mapN(
    ).right()
 }
 
+@Suppress("UNCHECKED_CAST")
 inline fun <A, B, C, D, E, F, G, ERROR, R> Either.Companion.mapN(
    a: Either<ERROR, A>,
    b: Either<ERROR, B>,
