@@ -18,7 +18,7 @@ plugins {
    id("java-library")
    id("maven-publish")
    id("signing")
-   kotlin("jvm").version("1.7.21")
+   kotlin("jvm").version("2.2.10")
 }
 
 apply(plugin = "org.jetbrains.kotlin.jvm")
