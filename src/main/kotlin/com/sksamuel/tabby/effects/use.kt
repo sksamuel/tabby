@@ -10,5 +10,7 @@ import com.sksamuel.tabby.results.flatMap
  * of a successful result.
  */
 inline fun <R : AutoCloseable, A> Result<R>.use(f: (R) -> Result<A>): Result<A> {
-   return flatMap { it.use(f) }
+   return flatMap { resource ->
+      runCatching { resource.use { f(it).getOrThrow() } }
+   }
 }
