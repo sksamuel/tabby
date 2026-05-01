@@ -3,6 +3,7 @@
 package com.sksamuel.tabby.effects
 
 import com.sksamuel.tabby.effects.Decision.Halt
+import kotlin.math.pow
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -104,8 +105,15 @@ fun interface Schedule {
        */
       fun delay(duration: Duration): Schedule = Delay(duration)
 
+      /**
+       * Returns a [Schedule] that continues forever with an exponentially growing delay.
+       *
+       * The delay for iteration `n` (zero-indexed) is `duration * factor.pow(n)`.
+       * For example, `exponential(100.milliseconds, 2.0)` yields delays of
+       * 100ms, 200ms, 400ms, 800ms, ...
+       */
       fun exponential(duration: Duration, factor: Double): Schedule =
-         delay { (duration.inWholeMilliseconds * (factor * it + 1)).toLong().milliseconds }
+         delay { (duration.inWholeMilliseconds * factor.pow(it)).toLong().milliseconds }
 
       /**
        * Returns a new [Schedule] that continues forever and delays a duration calculated
