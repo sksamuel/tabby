@@ -1,12 +1,16 @@
 package com.sksamuel.tabby.either
 
 /**
- * Gather's together Either's effects.
+ * Gathers together Either's effects.
  *
- * Specifically, returns the first [Either.Left], or a List of all [Either.Right]s.
+ * If any element is an [Either.Left], returns a [Either.Left] containing all the left values.
+ * Otherwise returns an [Either.Right] containing all the right values.
  */
-inline fun <reified A, reified B> List<Either<A, B>>.sequence(): Either<List<A>, List<B>> {
-   val `as` = filterIsInstance<A>()
-   val bs = filterIsInstance<B>()
-   return if (`as`.isEmpty()) bs.right() else `as`.left()
+fun <A, B> List<Either<A, B>>.sequence(): Either<List<A>, List<B>> {
+   val lefts = filterIsInstance<Either.Left<A>>().map { it.a }
+   return if (lefts.isEmpty()) {
+      filterIsInstance<Either.Right<B>>().map { it.b }.right()
+   } else {
+      lefts.left()
+   }
 }
