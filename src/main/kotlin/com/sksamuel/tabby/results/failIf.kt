@@ -5,14 +5,14 @@ package com.sksamuel.tabby.results
  * then a failed Result is returned, otherwise this is returned.
  */
 inline fun <A> Result<A>.failIf(p: (A) -> Boolean): Result<A> =
-   failIf(RuntimeException("failure"), p)
+   failIf({ RuntimeException("failure") }, p)
 
 /**
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
  * then a failed Result is returned, otherwise this is returned.
  */
 inline fun <A> Result<A>.failIf(message: String, p: (A) -> Boolean): Result<A> =
-   failIf(RuntimeException(message), p)
+   failIf({ RuntimeException(message) }, p)
 
 /**
  * If this [Result] is a success, invokes the given predicate [p]. If the predicate returns true,
