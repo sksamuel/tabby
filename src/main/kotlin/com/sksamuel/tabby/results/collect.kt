@@ -44,7 +44,10 @@ fun <A> Collection<Result<A>>.collect(): Pair<List<Throwable>, List<A>> {
    return Pair(throwables, values)
 }
 
-fun <A, B> Collection<A>.collectBy(f: (A) -> Result<B>): Pair<List<Throwable>, List<A>> {
-   val (failures, successes) = this.partition { f(it).isFailure }
-   return Pair(failures.map { f(it).exceptionOrThrow() }, successes)
-}
+/**
+ * Applies [f] to each element, then returns a pair of two lists - the first
+ * containing all errors produced by [f], and the second containing all
+ * successful values produced by [f].
+ */
+fun <A, B> Collection<A>.collectBy(f: (A) -> Result<B>): Pair<List<Throwable>, List<B>> =
+   map(f).collect()
