@@ -1,5 +1,6 @@
 package com.sksamuel.tabby.nel
 
+@ConsistentCopyVisibility
 data class NonEmptyList<A> private constructor(private val values: List<A>) {
 
    companion object {
