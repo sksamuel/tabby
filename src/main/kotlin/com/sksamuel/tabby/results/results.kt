@@ -3,7 +3,7 @@ package com.sksamuel.tabby.results
 /**
  * If this [Result] is a failure, returns [other], otherwise returns this.
  */
-@Deprecated("use recover", ReplaceWith("recover(f)"))
+@Deprecated("use recover", ReplaceWith("recover { other }"))
 fun <A> Result<A>.orElse(other: Result<A>): Result<A> = recover { other }
 
 @Deprecated("use recover", ReplaceWith("recover(f)"))
