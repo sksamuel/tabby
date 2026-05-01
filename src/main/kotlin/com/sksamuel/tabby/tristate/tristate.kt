@@ -37,6 +37,14 @@ sealed class Tristate<out A> {
       Unspecified -> null
    }
 
+   /**
+    * Returns the value if this is a [Some], `null` if this is a [None], or throws an
+    * [IllegalStateException] if this is [Unspecified].
+    *
+    * Differs from [getValueOrNull] (which returns `null` for [Unspecified] too) and from
+    * [getValueOrThrow] (which throws for [None] too): [None] is treated as a legitimate
+    * absent value, while [Unspecified] is treated as a programmer error.
+    */
    fun getOrThrow(): A? = when (this) {
       is Some -> this.value
       is None -> null
