@@ -12,7 +12,7 @@ class MapIfTest : FunSpec() {
       }
 
       test("mapIf should not invoke if the predicate is false") {
-         Result.success("foo").mapIf({ it == "foo" }) { "bar" }.getOrThrow() shouldBe "bar"
+         Result.success("foo").mapIf({ it == "baz" }) { "bar" }.getOrThrow() shouldBe "foo"
       }
 
       test("mapIf should not invoke for a failure") {
