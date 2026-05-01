@@ -17,14 +17,14 @@ fun Result<Boolean>.getOrFalse(): Boolean = getOrElse { false }
 
 
 fun Result<Boolean>.failIfTrue(): Result<Unit> =
-   flatMap { if (it) Result.unit() else Result.failure(NoSuchElementException()) }
+   flatMap { if (it) Result.failure(NoSuchElementException()) else Result.unit() }
 
 /**
  * If this [Result] is successful and contains the value true, returns a failed
  * result with the error given by the function [fn].
  */
 fun Result<Boolean>.failIfTrue(fn: () -> Exception): Result<Unit> =
-   flatMap { if (it) Result.unit() else Result.failure(fn()) }
+   flatMap { if (it) Result.failure(fn()) else Result.unit() }
 
 /**
  * Returns the result of this [Result] if successful, otherwise returns true.
